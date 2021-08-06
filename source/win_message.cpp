@@ -20,14 +20,6 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
     {
         baseMsg->hitTest(MouseMove, &pt);
-        if (baseMsg->checkLeave() && BaseElement::g_before_leave_id != nullptr)
-        {
-            char temp[20];
-            sprintf(temp, "%d", BaseElement::g_before_leave_id->getSelfID());
-            OutputDebugStringA(temp);
-            OutputDebugStringA("LEAVE\n");
-            baseMsg->hitTest(MouseLeave, &pt);
-        }
     }
     break;
 

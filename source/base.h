@@ -3,10 +3,13 @@
 #include <stdint.h>
 #include <Windows.h>
 
-typedef unsigned __int32 idSize;
-typedef unsigned __int32 msgTypeSize;
+typedef uint32_t idSize;
+typedef uint32_t msgTypeSize;
 typedef RECT baseRect;
 typedef POINT mousePt;
+typedef LONG ptSize;
+
+#define MAX_ELEM_ONE_PAGE 100000
 
 enum MsgBaseType
 {
@@ -26,21 +29,21 @@ class BaseMessage
 {
 public:
     static HWND g_hwnd;
-    static void hitTest(MsgBaseType msg_type, mousePt* pt);
-    static void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
-    static bool checkLeave();
+    void hitTest(MsgBaseType msg_type, mousePt* pt);
+    void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
 protected:
-    virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
+    //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
 
 private:
-    static BaseElement* inRange(mousePt* pt);
-    static void initAll(mousePt* pt);
+    void initAll(mousePt* pt);
+    bool checkLeave();
+    BaseElement* inRange(mousePt* pt);
 };
 
 
 /// GLOBAL baseMsg;
-static const BaseMessage* const baseMsg = nullptr;
+static BaseMessage* const baseMsg = nullptr;
 
 
 class BaseAction : public BaseMessage
@@ -48,32 +51,29 @@ class BaseAction : public BaseMessage
 public:
     mousePt pt;
 
-    virtual void realAction(BaseElement* base) {}
+    virtual void realAction(BaseElement* base) = 0;
 
     BaseAction::BaseAction() { pt.x = 0; pt.y = 0; }
 
     BaseAction::~BaseAction() {}
 
 private:
-    virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) {}
+    //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) {}
 };
 
 
-class BaseElement : public BaseMessage
+class BaseElement
 {
 public:
-    static BaseElement* g_before_leave_id;
-    static BaseElement* g_hitTest_id;
-    static idSize g_increase_id;
-    static BaseElement* g_prev;
-    static BaseElement* g_first_element;
-
     idSize getSelfID() const { return self_id; }
-    baseRect* getRect() { return &base_rect; }
-    BaseElement* getNext() const { return next; }
-    void setRect(baseRect* rect) { base_rect = *rect; }
 
-    virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) override;
+    const baseRect* getRect() { return &g_real_rect[self_id]; }
+    void setRect(const baseRect* rect) { g_real_rect[self_id] = *rect; }
+
+    static idSize getIncreaseID() { return g_increase_id; }
+    static BaseElement* getElementByID(idSize node_id)
+    { return g_node_id[node_id]; }
+    static BaseElement* getNowHitID() { return g_hitTest_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
@@ -82,11 +82,22 @@ public:
     BaseElement::~BaseElement();
 
 private:
+    void msgRoute(MsgBaseType msg_type, mousePt* pt);
+
+    /// <summary>
+    /// TODO: use dry array struct for simple experiment purpose;
+    /// need to improve performance if necessary;
+    /// </summary>
+    static baseRect g_real_rect[MAX_ELEM_ONE_PAGE];
+    static BaseElement* g_node_id[MAX_ELEM_ONE_PAGE];
+
+    volatile static idSize g_increase_id;
+    static BaseElement* g_hitTest_id;
+    static BaseElement* g_before_leave_id;
+
     const idSize self_id = g_increase_id;
-
     bool self_visible = true;
-    baseRect base_rect;
-
+    
     struct LinkedMsg
     {
         MsgBaseType linked_msg_type = MsgNone;
@@ -95,8 +106,9 @@ private:
     } linked_msg;
     msgTypeSize linked_msg_size = 0;
 
-    BaseElement* prev = nullptr;
-    BaseElement* next = nullptr;
+    //BaseElement* prev = nullptr;
+    //BaseElement* next = nullptr;
+    friend class BaseMessage;
 };
 
 
@@ -108,11 +120,6 @@ public:
     VirtualElement::VirtualElement()
     {
         base = new BaseElement;
-
-        if (!BaseElement::g_first_element)
-        {
-            BaseElement::g_first_element = base;
-        }
     }
 
     VirtualElement::~VirtualElement() {}

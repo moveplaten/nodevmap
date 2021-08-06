@@ -2,9 +2,9 @@
 
 BaseElement* BaseElement::g_before_leave_id = nullptr;
 BaseElement* BaseElement::g_hitTest_id = nullptr;
-idSize BaseElement::g_increase_id = 0;
-BaseElement* BaseElement::g_prev = nullptr;
-BaseElement* BaseElement::g_first_element = nullptr;
+volatile idSize BaseElement::g_increase_id = 0;
+baseRect BaseElement::g_real_rect[MAX_ELEM_ONE_PAGE];
+BaseElement* BaseElement::g_node_id[MAX_ELEM_ONE_PAGE];
 
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
@@ -67,10 +67,11 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 
 BaseElement::BaseElement()
 {
+    g_node_id[self_id] = this;
     ++g_increase_id;
-    prev = BaseElement::g_prev;
-    BaseElement::g_prev = this;
-    prev ? prev->next = this : prev;
+    //prev = BaseElement::g_prev;
+    //BaseElement::g_prev = this;
+    //prev ? prev->next = this : prev;
 }
 
 BaseElement::~BaseElement()

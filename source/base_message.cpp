@@ -1,4 +1,5 @@
 #include "base.h"
+#include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
 
@@ -8,7 +9,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     {
         initAll(pt);
     }
-    if (msg_type == MouseLeave)
+    else if (msg_type == MouseLeave)
     {
         BaseElement::g_before_leave_id->msgRoute(MouseLeave, pt);
     }
@@ -21,52 +22,33 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
             fetch->msgRoute(msg_type, pt);
         }
     }
+
+    if (msg_type == MouseMove)
+    {
+        if (checkLeave() && BaseElement::g_before_leave_id != nullptr)
+        {
+            char temp[20];
+            sprintf(temp, "%d", BaseElement::g_before_leave_id->getSelfID());
+            OutputDebugStringA(temp);
+            OutputDebugStringA("LEAVE\n");
+            hitTest(MouseLeave, pt);
+        }
+    }
 }
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    BaseElement* fetch = BaseElement::g_first_element;
-
-    for (idSize i = 0; i < BaseElement::g_increase_id - 1; ++i)
+    for (idSize i = 0; i < BaseElement::getIncreaseID(); ++i)
     {
-        fetch->msgRoute(MsgInit, pt);
-        fetch = fetch->getNext();
-    }
-}
-
-bool checkLeave()
-{
-    bool resetStamp1 = false;
-    static BaseElement* stamp[2] = { nullptr, nullptr };
-
-    if (stamp[0] == nullptr)
-    {
-        stamp[0] = BaseElement::g_hitTest_id;
-        resetStamp1 = true;
-    }
-    else
-    {
-        stamp[1] = BaseElement::g_hitTest_id;
-    }
-
-    size_t check_sub = stamp[0] - stamp[1];
-    BaseElement* p_leave_id;
-
-    if (resetStamp1) { p_leave_id = stamp[1]; stamp[1] = nullptr; }
-    else { p_leave_id = stamp[0]; stamp[0] = nullptr; }
-
-    if (check_sub == 0) return false;
-    else
-    {
-        BaseElement::g_before_leave_id = p_leave_id;
-        return true;
+        BaseElement::getElementByID(i)->msgRoute(MsgInit, pt);
     }
 }
 
 bool BaseMessage::checkLeave()
 {
     static BaseElement* prev_hit = nullptr;
-    size_t check_sub = prev_hit - BaseElement::g_hitTest_id;
+    BaseElement* now_hit = BaseElement::g_hitTest_id;
+    size_t check_sub = prev_hit - now_hit;
 
     if (check_sub == 0)
     {
@@ -75,27 +57,24 @@ bool BaseMessage::checkLeave()
     else
     {
         BaseElement::g_before_leave_id = prev_hit;
-        prev_hit = BaseElement::g_hitTest_id;
+        prev_hit = now_hit;
         return true;
     }
 }
 
 BaseElement* BaseMessage::inRange(mousePt* pt)
 {
-    BaseElement* fetch = BaseElement::g_first_element;
-    if (PtInRect(fetch->getRect(), *pt))
-    {
-        BaseElement::g_hitTest_id = fetch;
-        return fetch;
-    }
+    ptSize pt_x = pt->x;
+    ptSize pt_y = pt->y;
 
-    for (idSize i = 0; i < BaseElement::g_increase_id - 1; ++i)
+    for (idSize i = 0; i < BaseElement::g_increase_id; ++i)
     {
-        fetch = fetch->getNext();
-        if (PtInRect(fetch->getRect(), *pt))
+        baseRect* rect = &BaseElement::g_real_rect[i];
+        if (rect->left <= pt_x && rect->right > pt_x &&
+            rect->top <= pt_y && rect->bottom > pt_y)
         {
-            BaseElement::g_hitTest_id = fetch;
-            return fetch;
+            BaseElement::g_hitTest_id = BaseElement::g_node_id[i];
+            return BaseElement::g_node_id[i];
         }
     }
 

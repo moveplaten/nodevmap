@@ -7,8 +7,7 @@ class ActInit : public BaseAction
         baseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
-        baseRect* brect = base->getRect();
-        *brect = rect;
+        base->setRect(&rect);
         HDC hdc = GetDC(g_hwnd);
         HBRUSH hColor = CreateSolidBrush(RGB(255, 0, 0));
         FillRect(hdc, &rect, hColor);
@@ -69,8 +68,7 @@ class Act2Init : public BaseAction
         rect.right = 90;
         rect.top = 10;
         rect.bottom = 50;
-        baseRect* brect = base->getRect();
-        *brect = rect;
+        base->setRect(&rect);
         HDC hdc = GetDC(g_hwnd);
         HBRUSH hColor = CreateSolidBrush(RGB(0, 255, 0));
         FillRect(hdc, &rect, hColor);
@@ -136,7 +134,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     //baseMsg->hitTest(MouseLButtonDown, &pt);
     //baseMsg->hitTest(MouseLButtonUp, &pt);
     BaseElement b;
-
+    const baseRect* brec = BaseElement::getElementByID(0)->getRect();
+    BaseElement::getElementByID(1)->setRect(brec);
 
     WNDCLASS wc;
     ZeroMemory(&wc, sizeof(wc));
