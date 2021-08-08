@@ -1,4 +1,4 @@
-#include "base.h"
+#include "base/base.h"
 #include <Windows.h>
 #include <stdio.h>
 
@@ -20,6 +20,11 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
     {
         baseMsg->hitTest(MouseMove, &pt);
+
+        if ((DWORD)wParam && MK_LBUTTON)
+        {
+            baseMsg->hitTest(MouseMove_MouseLButtonDown, &pt);
+        }
     }
     break;
 

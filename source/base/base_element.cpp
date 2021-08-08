@@ -78,3 +78,29 @@ BaseElement::~BaseElement()
 {
 
 }
+
+ElemMap* ElementGenerator::g_elements_map = nullptr;
+
+ElementGenerator::ElementGenerator(const std::string& str,
+    MsgBaseType msg_type, BaseAction* msg_act)
+{
+    if (!g_elements_map)
+    {
+        static ElemMap elements;
+        g_elements_map = &elements;
+    }
+
+    auto ret = g_elements_map->find(str);
+    if (ret == g_elements_map->end())
+    {
+        BaseElement* base = new BaseElement;
+        base->linkMsg(msg_type, msg_act);
+        g_elements_map->insert({ str, base });
+    }
+    else
+    {
+        auto elem = *ret;
+        BaseElement* base = elem.second;
+        base->linkMsg(msg_type, msg_act);
+    }
+}

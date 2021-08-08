@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
+#include <map>
+
 #include <Windows.h>
 
 typedef uint32_t idSize;
@@ -111,16 +114,24 @@ private:
     friend class BaseMessage;
 };
 
+typedef std::map<std::string, BaseElement*> ElemMap;
 
-class VirtualElement
+#define ELEM_GEN(x, y, z)\
+ElementGenerator x##y##z(#x, y, &z);
+
+class ElementGenerator
 {
 public:
-    BaseElement* base;
+    ElementGenerator::ElementGenerator(const std::string& str,
+        MsgBaseType msg_type, BaseAction* msg_act);
 
-    VirtualElement::VirtualElement()
-    {
-        base = new BaseElement;
-    }
+    ElementGenerator::~ElementGenerator() {}
 
-    VirtualElement::~VirtualElement() {}
+private:
+    static ElemMap* g_elements_map;
 };
+
+static void elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act)
+{
+    ElementGenerator(str, msg_type, msg_act);
+}
