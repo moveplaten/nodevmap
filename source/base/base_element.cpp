@@ -32,11 +32,18 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
     }
 }
 
+void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
+{
+    world_pt = *pt;
+    local_pt.x = pt->x - base->getRect()->left;
+    local_pt.y = pt->y - base->getRect()->top;
+}
+
 void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
     if (linked_msg.linked_msg_type == msg_type)
     {
-        linked_msg.linked_msg_act->pt = *pt;
+        linked_msg.linked_msg_act->mousePtToLocal(this, pt);
         linked_msg.linked_msg_act->realAction(this);
     }
     else if (linked_msg.next_linked_msg)
@@ -48,7 +55,6 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
         {
             if (next_linked_msg->linked_msg_type == msg_type)
             {
-                next_linked_msg->linked_msg_act->pt = *pt;
                 fetch_msg_act = next_linked_msg->linked_msg_act;
                 break;
             }
@@ -60,6 +66,7 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 
         if (fetch_msg_act)
         {
+            fetch_msg_act->mousePtToLocal(this, pt);
             fetch_msg_act->realAction(this);
         }
     }

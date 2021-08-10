@@ -52,16 +52,23 @@ static BaseMessage* const baseMsg = nullptr;
 class BaseAction : public BaseMessage
 {
 public:
-    mousePt pt;
+    mousePt local_pt;
+    mousePt world_pt;
 
     virtual void realAction(BaseElement* base) = 0;
 
-    BaseAction::BaseAction() { pt.x = 0; pt.y = 0; }
+    BaseAction::BaseAction()
+    {
+        local_pt.x = 0; local_pt.y = 0;
+        world_pt.x = 0; world_pt.y = 0;
+    }
 
     BaseAction::~BaseAction() {}
 
 private:
-    //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) {}
+    void mousePtToLocal(BaseElement* base, mousePt* pt);
+
+    friend class BaseElement;
 };
 
 
