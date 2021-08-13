@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include <string>
 #include <map>
+#include "elem_storage.h"
 
 #include <Windows.h>
 
-typedef uint32_t idSize;
 typedef uint32_t msgTypeSize;
 typedef RECT baseRect;
 typedef POINT mousePt;
@@ -32,6 +32,7 @@ class BaseMessage
 {
 public:
     static HWND g_hwnd;
+    static ElemStorage* g_store;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
     void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
@@ -71,41 +72,50 @@ private:
     friend class BaseElement;
 };
 
+class BaseContent : public ElemContent
+{
+public:
+    baseRect rect;
+    BaseElement* elem = nullptr;
+};
 
 class BaseElement
 {
 public:
-    idSize getSelfID() const { return self_id; }
+    elemIDSize getSelfID() const { return self_id; }
 
-    const baseRect* getRect() { return &g_real_rect[self_id]; }
-    void setRect(const baseRect* rect) { g_real_rect[self_id] = *rect; }
+    const baseRect* getRect()
+    {
+        BaseContent* content = (BaseContent*)elem_stores->readOneElem(self_id);
+        return &(content->rect);
+    }
+    void setRect(const baseRect* rect)
+    {
+        BaseContent* content = (BaseContent*)elem_stores->getContents();
+        content[self_id].rect = *rect;
+    }
 
-    static idSize getIncreaseID() { return g_increase_id; }
-    static BaseElement* getElementByID(idSize node_id)
-    { return g_node_id[node_id]; }
+    elemIDSize getIncreaseID() { return elem_stores->getTotalUsed(); }
+    BaseElement* getElementByID(elemIDSize id)
+    {
+        BaseContent* content = (BaseContent*)elem_stores->readOneElem(id);
+        return content->elem;
+    }
     static BaseElement* getNowHitID() { return g_hitTest_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement();
+    BaseElement::BaseElement(ElemStorage* const store, const elemIDSize id);
 
     BaseElement::~BaseElement();
 
 private:
     void msgRoute(MsgBaseType msg_type, mousePt* pt);
 
-    /// <summary>
-    /// TODO: use dry array struct for simple experiment purpose;
-    /// need to improve performance if necessary;
-    /// </summary>
-    static baseRect g_real_rect[MAX_ELEM_ONE_PAGE];
-    static BaseElement* g_node_id[MAX_ELEM_ONE_PAGE];
-
-    volatile static idSize g_increase_id;
     static BaseElement* g_hitTest_id;
     static BaseElement* g_before_leave_id;
 
-    const idSize self_id = g_increase_id;
+    const elemIDSize self_id;
     bool self_visible = true;
     
     struct LinkedMsg
@@ -116,8 +126,7 @@ private:
     } linked_msg;
     msgTypeSize linked_msg_size = 0;
 
-    //BaseElement* prev = nullptr;
-    //BaseElement* next = nullptr;
+    ElemStorage* const elem_stores;
     friend class BaseMessage;
 };
 

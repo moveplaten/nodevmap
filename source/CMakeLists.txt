@@ -5,6 +5,7 @@ include_directories("./")
 set(nodevmap_SOURCES
     base/base_message.cpp
     base/base_element.cpp
+    base/elem_storage.cpp
     port-win/win_main.cpp
     port-win/win_message.cpp
     )

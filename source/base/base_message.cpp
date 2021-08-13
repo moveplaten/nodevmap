@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
+ElemStorage* BaseMessage::g_store = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -38,9 +39,10 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    for (idSize i = 0; i < BaseElement::getIncreaseID(); ++i)
+    for (elemIDSize i = 0; i < g_store->getTotalUsed(); ++i)
     {
-        BaseElement::getElementByID(i)->msgRoute(MsgInit, pt);
+        BaseContent* content = (BaseContent*)g_store->readOneElem(i);
+        content->elem->msgRoute(MsgInit, pt);
     }
 }
 
@@ -66,15 +68,17 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
+    BaseContent* content = (BaseContent*)g_store->getContents();
+    elemIDSize total = g_store->getTotalUsed();
 
-    for (idSize i = 0; i < BaseElement::g_increase_id; ++i)
+    for (elemIDSize i = 0; i < total; ++i)
     {
-        baseRect* rect = &BaseElement::g_real_rect[i];
+        baseRect* rect = &content[i].rect;
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {
-            BaseElement::g_hitTest_id = BaseElement::g_node_id[i];
-            return BaseElement::g_node_id[i];
+            BaseElement::g_hitTest_id = content[i].elem;
+            return content[i].elem;
         }
     }
 

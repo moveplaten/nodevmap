@@ -12,10 +12,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 
-    BaseElement b;
-    const baseRect* brec = BaseElement::getElementByID(0)->getRect();
-    BaseElement::getElementByID(1)->setRect(brec);
+    BaseElement b(nullptr, 0);
     elemGen("test0", MsgNone, nullptr);
+    ElemStorage e(1000, 80);
 
     WNDCLASS wc;
     ZeroMemory(&wc, sizeof(wc));

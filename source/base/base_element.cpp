@@ -2,9 +2,6 @@
 
 BaseElement* BaseElement::g_before_leave_id = nullptr;
 BaseElement* BaseElement::g_hitTest_id = nullptr;
-volatile idSize BaseElement::g_increase_id = 0;
-baseRect BaseElement::g_real_rect[MAX_ELEM_ONE_PAGE];
-BaseElement* BaseElement::g_node_id[MAX_ELEM_ONE_PAGE];
 
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
@@ -72,13 +69,16 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-BaseElement::BaseElement()
+BaseElement::BaseElement(ElemStorage* const store, const elemIDSize id)
+    :elem_stores(store), self_id(id)
 {
-    g_node_id[self_id] = this;
-    ++g_increase_id;
-    //prev = BaseElement::g_prev;
-    //BaseElement::g_prev = this;
-    //prev ? prev->next = this : prev;
+    if (store)
+    {
+        BaseContent content;
+        content.rect = { 0 };
+        content.elem = this;
+        store->changeOneElem(self_id, &content);
+    }
 }
 
 BaseElement::~BaseElement()
@@ -87,20 +87,27 @@ BaseElement::~BaseElement()
 }
 
 ElemMap* ElementGenerator::g_elements_map = nullptr;
+BaseContent* g_content; //for debug use
 
 ElementGenerator::ElementGenerator(const std::string& str,
     MsgBaseType msg_type, BaseAction* msg_act)
 {
+    static ElemStorage store(MAX_ELEM_ONE_PAGE, sizeof(BaseContent));
+
     if (!g_elements_map)
     {
         static ElemMap elements;
         g_elements_map = &elements;
+        BaseMessage::g_store = &store;
+        ::g_content = (BaseContent*)store.getContents();
     }
 
     auto ret = g_elements_map->find(str);
     if (ret == g_elements_map->end())
     {
-        BaseElement* base = new BaseElement;
+        BaseContent content;
+        elemIDSize id = store.storeOneElem(&content);
+        BaseElement* base = new BaseElement(&store, id);
         base->linkMsg(msg_type, msg_act);
         g_elements_map->insert({ str, base });
     }
