@@ -32,7 +32,8 @@ class BaseMessage
 {
 public:
     static HWND g_hwnd;
-    static ElemStorage* g_store;
+    static ElemStorage* g_store_shapes;
+    static ElemStorage* g_store_instance;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
     void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
@@ -72,10 +73,13 @@ private:
     friend class BaseElement;
 };
 
-class BaseContent : public ElemContent
+struct BaseShape
 {
-public:
     baseRect rect;
+};
+
+struct ElemInstance
+{
     BaseElement* elem = nullptr;
 };
 
@@ -86,26 +90,27 @@ public:
 
     const baseRect* getRect()
     {
-        BaseContent* content = (BaseContent*)elem_stores->readOneElem(self_id);
+        BaseShape* content = (BaseShape*)base_shapes->readOneElem(self_id);
         return &(content->rect);
     }
     void setRect(const baseRect* rect)
     {
-        BaseContent* content = (BaseContent*)elem_stores->getContents();
-        content[self_id].rect = *rect;
+        BaseShape* content = (BaseShape*)base_shapes->readOneElem(self_id);
+        content->rect = *rect;
     }
 
-    elemIDSize getIncreaseID() { return elem_stores->getTotalUsed(); }
+    elemIDSize getIncreaseID() { return elem_instance->getTotalUsed(); }
     BaseElement* getElementByID(elemIDSize id)
     {
-        BaseContent* content = (BaseContent*)elem_stores->readOneElem(id);
+        ElemInstance* content = (ElemInstance*)elem_instance->readOneElem(id);
         return content->elem;
     }
     static BaseElement* getNowHitID() { return g_hitTest_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(ElemStorage* const store, const elemIDSize id);
+    BaseElement::BaseElement(const elemIDSize id,
+        ElemStorage* const shapes, ElemStorage* const instance);
 
     BaseElement::~BaseElement();
 
@@ -126,7 +131,9 @@ private:
     } linked_msg;
     msgTypeSize linked_msg_size = 0;
 
-    ElemStorage* const elem_stores;
+    ElemStorage* const base_shapes;
+    ElemStorage* const elem_instance;
+
     friend class BaseMessage;
 };
 

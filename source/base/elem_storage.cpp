@@ -1,6 +1,6 @@
 #include "elem_storage.h"
 
-elemIDSize ElemStorage::storeOneElem(const ElemContent* content)
+elemIDSize ElemStorage::storeOneElem(const void* content)
 {
     if (reused_count)
     {
@@ -16,14 +16,9 @@ elemIDSize ElemStorage::storeOneElem(const ElemContent* content)
     }
 }
 
-const ElemContent* ElemStorage::readOneElem(const elemIDSize id)
+const void* ElemStorage::readOneElem(const elemIDSize id)
 {
     return contents + id * one_content_size;
-}
-
-void ElemStorage::changeOneElem(const elemIDSize id, const ElemContent* content)
-{
-    store(contents + id * one_content_size, content);
 }
 
 void ElemStorage::deleteOneElem(const elemIDSize id)
@@ -32,7 +27,7 @@ void ElemStorage::deleteOneElem(const elemIDSize id)
     ++reused_count;
 }
 
-void ElemStorage::store(const ElemContent* dst, const ElemContent* src)
+void ElemStorage::store(const void* dst, const void* src)
 {
     memcpy((void*)dst, src, one_content_size);
 }

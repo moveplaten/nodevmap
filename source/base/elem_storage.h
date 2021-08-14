@@ -7,25 +7,14 @@
 
 typedef uint64_t elemIDSize;
 
-class ElemContent
-{
-public:
-    ElemContent() {}
-    ~ElemContent() {}
-
-private:
-
-};
-
-
 class ElemStorage
 {
 public:
-    elemIDSize storeOneElem(const ElemContent* content);
-    const ElemContent* readOneElem(const elemIDSize id);
-    void changeOneElem(const elemIDSize id, const ElemContent* content);
+    elemIDSize storeOneElem(const void* content);
+    const void* readOneElem(const elemIDSize id);
+    //void changeOneElem(const elemIDSize id, const void* content);
     void deleteOneElem(const elemIDSize id);
-    ElemContent* getContents() { return contents; }
+    
     elemIDSize getTotalUsed() { return current_max_used - reused_count; }
 
     ElemStorage(elemIDSize capacity, elemIDSize content_size)
@@ -33,7 +22,10 @@ public:
     ~ElemStorage() {}
 
 private:
-    void store(const ElemContent* dst, const ElemContent* src);
+    struct ElemContent {};
+    void store(const void* dst, const void* src);
+    void* getContents() { return contents; }
+
     const elemIDSize max_capacity;
     const elemIDSize one_content_size;
 
@@ -44,4 +36,6 @@ private:
     elemIDSize* const reused_elems
         = (elemIDSize* const)malloc(max_capacity * sizeof(elemIDSize));
     elemIDSize reused_count = 0;
+
+    friend class BaseMessage;
 };

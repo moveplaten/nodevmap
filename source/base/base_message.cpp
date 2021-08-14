@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
-ElemStorage* BaseMessage::g_store = nullptr;
+ElemStorage* BaseMessage::g_store_shapes = nullptr;
+ElemStorage* BaseMessage::g_store_instance = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -39,9 +40,9 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    for (elemIDSize i = 0; i < g_store->getTotalUsed(); ++i)
+    for (elemIDSize i = 0; i < g_store_instance->getTotalUsed(); ++i)
     {
-        BaseContent* content = (BaseContent*)g_store->readOneElem(i);
+        ElemInstance* content = (ElemInstance*)g_store_instance->readOneElem(i);
         content->elem->msgRoute(MsgInit, pt);
     }
 }
@@ -68,17 +69,18 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
-    BaseContent* content = (BaseContent*)g_store->getContents();
-    elemIDSize total = g_store->getTotalUsed();
+    BaseShape* shapes = (BaseShape*)g_store_shapes->getContents();
+    ElemInstance* instance = (ElemInstance*)g_store_instance->getContents();
+    elemIDSize total = g_store_instance->getTotalUsed();
 
     for (elemIDSize i = 0; i < total; ++i)
     {
-        baseRect* rect = &content[i].rect;
+        baseRect* rect = &shapes[i].rect;
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {
-            BaseElement::g_hitTest_id = content[i].elem;
-            return content[i].elem;
+            BaseElement::g_hitTest_id = instance[i].elem;
+            return instance[i].elem;
         }
     }
 
