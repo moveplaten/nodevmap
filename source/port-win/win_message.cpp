@@ -19,11 +19,13 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
     {
-        baseMsg->hitTest(MouseMove, &pt);
-
         if ((DWORD)wParam && MK_LBUTTON)
         {
             baseMsg->hitTest(MouseMove_MouseLButtonDown, &pt);
+        }
+        else
+        {
+            baseMsg->hitTest(MouseMove, &pt);
         }
     }
     break;

@@ -2,6 +2,7 @@
 
 BaseElement* BaseElement::g_before_leave_id = nullptr;
 BaseElement* BaseElement::g_hitTest_id = nullptr;
+BaseElement* BaseElement::g_mouse_snap_id = nullptr;
 
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {

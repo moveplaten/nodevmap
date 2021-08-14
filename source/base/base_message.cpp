@@ -15,6 +15,16 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     {
         BaseElement::g_before_leave_id->msgRoute(MouseLeave, pt);
     }
+    else if (msg_type == MouseMove_MouseLButtonDown && BaseElement::g_hitTest_id)
+    {
+        if (BaseElement::g_mouse_snap_id)
+        BaseElement::g_mouse_snap_id->msgRoute(MouseMove_MouseLButtonDown, pt);
+    }
+    else if (msg_type == MouseLButtonDown && BaseElement::g_hitTest_id)
+    {
+        BaseElement::g_mouse_snap_id = BaseElement::g_hitTest_id;
+        BaseElement::g_hitTest_id->msgRoute(MouseLButtonDown, pt);
+    }
     else
     {
         BaseElement* fetch = inRange(pt);

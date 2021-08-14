@@ -119,6 +119,7 @@ private:
 
     static BaseElement* g_hitTest_id;
     static BaseElement* g_before_leave_id;
+    static BaseElement* g_mouse_snap_id;
 
     const elemIDSize self_id;
     bool self_visible = true;
