@@ -33,7 +33,6 @@ class BaseMessage
 public:
     static HWND g_hwnd;
     static ElemStorage* g_store_shapes;
-    static ElemStorage* g_store_instance;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
     void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
@@ -76,10 +75,7 @@ private:
 struct BaseShape
 {
     baseRect rect;
-};
 
-struct ElemInstance
-{
     BaseElement* elem = nullptr;
 };
 
@@ -99,24 +95,23 @@ public:
         content->rect = *rect;
     }
 
-    elemIDSize getIncreaseID() { return elem_instance->getTotalUsed(); }
+    elemIDSize getIncreaseID() { return base_shapes->getTotalUsed(); }
     BaseElement* getElementByID(elemIDSize id)
     {
-        ElemInstance* content = (ElemInstance*)elem_instance->readOneElem(id);
+        BaseShape* content = (BaseShape*)base_shapes->readOneElem(id);
         return content->elem;
     }
     static BaseElement* getNowHitID() { return g_hitTest_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(const elemIDSize id,
-        ElemStorage* const shapes, ElemStorage* const instance);
+    BaseElement::BaseElement(const elemIDSize id, ElemStorage* const shapes);
 
     BaseElement::~BaseElement();
 
-private:
-    void msgRoute(MsgBaseType msg_type, mousePt* pt);
+    void msgRoute(MsgBaseType msg_type, mousePt* pt); //private may better;
 
+private:
     static BaseElement* g_hitTest_id;
     static BaseElement* g_before_leave_id;
     static BaseElement* g_mouse_snap_id;
@@ -133,7 +128,6 @@ private:
     msgTypeSize linked_msg_size = 0;
 
     ElemStorage* const base_shapes;
-    ElemStorage* const elem_instance;
 
     friend class BaseMessage;
 };
@@ -151,11 +145,15 @@ public:
 
     ElementGenerator::~ElementGenerator() {}
 
-private:
+//private:
     static ElemMap* g_elements_map;
 };
 
-static void elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act)
+static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act)
 {
     ElementGenerator(str, msg_type, msg_act);
+    auto ret = ElementGenerator::g_elements_map->find(str);
+    auto elem = *ret;
+    BaseElement* base = elem.second;
+    return base;
 }

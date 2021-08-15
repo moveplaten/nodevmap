@@ -209,6 +209,152 @@ class Act2MouseDrag : public BaseAction
     }
 }Act2MouseDrag;
 
+////////////////////////////////////////////////////////////////////////
+class Act3Init : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        baseRect rect;
+        rect.left = 110;
+        rect.right = 150;
+        rect.top = 10;
+        rect.bottom = 50;
+        base->setRect(&rect);
+        HDC hdc = GetDC(g_hwnd);
+        HBRUSH hColor = CreateSolidBrush(RGB(0, 200, 200));
+        HBRUSH hColor2 = CreateSolidBrush(RGB(200, 200, 200));
+        FillRect(hdc, &rect, hColor);
+        int width = 8;
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        DeleteObject(hColor);
+        DeleteObject(hColor2);
+        ReleaseDC(g_hwnd, hdc);
+    }
+}Act3Init;
+
+class Act3MouseMove : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        baseRect rect;
+        rect.left = 110;
+        rect.right = 150;
+        rect.top = 10;
+        rect.bottom = 50;
+        base->setRect(&rect);
+        HDC hdc = GetDC(g_hwnd);
+        HBRUSH hColor = CreateSolidBrush(RGB(0, 200, 200));
+        HBRUSH hColor2 = CreateSolidBrush(RGB(200, 200, 200));
+        FillRect(hdc, &rect, hColor);
+        int width = 12;
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        DeleteObject(hColor);
+        DeleteObject(hColor2);
+        ReleaseDC(g_hwnd, hdc);
+    }
+}Act3MouseMove;
+
+class Act3MouseLeave : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        baseRect rect;
+        rect.left = 110;
+        rect.right = 150;
+        rect.top = 10;
+        rect.bottom = 50;
+        base->setRect(&rect);
+        HDC hdc = GetDC(g_hwnd);
+        HBRUSH hColor = CreateSolidBrush(RGB(0, 200, 200));
+        HBRUSH hColor2 = CreateSolidBrush(RGB(200, 200, 200));
+        FillRect(hdc, &rect, hColor);
+        int width = 8;
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 10; rect.bottom = 30 - width / 2;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 110; rect.right = 130 - width / 2;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        rect.left = 130 + width / 2; rect.right = 150;
+        rect.top = 30 + width / 2; rect.bottom = 50;
+        FillRect(hdc, &rect, hColor2);
+        DeleteObject(hColor);
+        DeleteObject(hColor2);
+        ReleaseDC(g_hwnd, hdc);
+    }
+}Act3MouseLeave;
+
+class ActRandomInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        elemGen("v0", MsgNone, nullptr);
+        baseRect rect;
+        rect.left = rect.top = 10;
+        rect.right = rect.bottom = 50;
+        srand(BaseMessage::g_store_shapes->getTotalUsed());
+        int temp = rand();
+        int move_x = rand() / 100;
+        int move_y = rand() / 100;
+        rect.left += move_x;
+        rect.right += move_x;
+        rect.top += move_y;
+        rect.bottom += move_y;
+        base->setRect(&rect);
+        HDC hdc = GetDC(g_hwnd);
+        HBRUSH hColor = CreateSolidBrush(RGB(255, 0, 0));
+        FillRect(hdc, &rect, hColor);
+        DeleteObject(hColor);
+        ReleaseDC(g_hwnd, hdc);
+    }
+}ActRandomInit;
+
+class Act3MouseLButtonDown : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        static elemIDSize add_number = 0; ++add_number;
+        std::string number_str("add_");
+        std::string add_str = std::to_string(add_number);
+        number_str = number_str + add_str;
+
+        BaseElement* elem = elemGen(number_str, MsgInit, &ActRandomInit);
+        mousePt pt;
+        elem->msgRoute(MsgInit, &pt);
+        // same act as v1 except init position;
+        elemGen(number_str, MouseMove, &ActMouseMove);
+        elemGen(number_str, MouseLeave, &ActMouseLeave);
+        elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown);
+        elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
+        elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
+    }
+}Act3MouseLButtonDown;
+
 
 ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseMove, ActMouseMove)
@@ -224,5 +370,9 @@ ELEM_GEN(v2, MouseLButtonDown, Act2MouseLButtonDown)
 ELEM_GEN(v2, MouseLButtonUp, Act2MouseLButtonUp);
 ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
 
-ELEM_GEN(v3, MsgNone, ActInit)
+ELEM_GEN(v3, MsgInit, Act3Init) //v3 is Add Button;
+ELEM_GEN(v3, MouseMove, Act3MouseMove)
+ELEM_GEN(v3, MouseLeave, Act3MouseLeave)
+ELEM_GEN(v3, MouseLButtonDown, Act3MouseLButtonDown)
+
 ELEM_GEN(v4, MsgNone, ActInit)

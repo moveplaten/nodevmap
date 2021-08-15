@@ -3,7 +3,6 @@
 
 HWND BaseMessage::g_hwnd = nullptr;
 ElemStorage* BaseMessage::g_store_shapes = nullptr;
-ElemStorage* BaseMessage::g_store_instance = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -50,9 +49,9 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    for (elemIDSize i = 0; i < g_store_instance->getTotalUsed(); ++i)
+    for (elemIDSize i = 0; i < g_store_shapes->getTotalUsed(); ++i)
     {
-        ElemInstance* content = (ElemInstance*)g_store_instance->readOneElem(i);
+        BaseShape* content = (BaseShape*)g_store_shapes->readOneElem(i);
         content->elem->msgRoute(MsgInit, pt);
     }
 }
@@ -79,18 +78,17 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
-    BaseShape* shapes = (BaseShape*)g_store_shapes->getContents();
-    ElemInstance* instance = (ElemInstance*)g_store_instance->getContents();
-    elemIDSize total = g_store_instance->getTotalUsed();
+    BaseShape* base_shapes = (BaseShape*)g_store_shapes->getContents();
+    elemIDSize total = g_store_shapes->getTotalUsed();
 
     for (elemIDSize i = 0; i < total; ++i)
     {
-        baseRect* rect = &shapes[i].rect;
+        baseRect* rect = &base_shapes[i].rect;
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {
-            BaseElement::g_hitTest_id = instance[i].elem;
-            return instance[i].elem;
+            BaseElement::g_hitTest_id = base_shapes[i].elem;
+            return base_shapes[i].elem;
         }
     }
 

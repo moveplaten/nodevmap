@@ -70,16 +70,14 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-BaseElement::BaseElement(const elemIDSize id,
-    ElemStorage* const shapes, ElemStorage* const instance)
-    :self_id(id), base_shapes(shapes), elem_instance(instance)
+BaseElement::BaseElement(const elemIDSize id, ElemStorage* const shapes)
+    :self_id(id), base_shapes(shapes)
 {
-    if (shapes && instance)
+    if (shapes)
     {
         BaseShape* content_shapes = (BaseShape*)base_shapes->readOneElem(self_id);
-        ElemInstance* content_inst = (ElemInstance*)elem_instance->readOneElem(self_id);
         content_shapes->rect = { 0 };
-        content_inst->elem = this;
+        content_shapes->elem = this;
     }
 }
 
@@ -94,23 +92,20 @@ ElementGenerator::ElementGenerator(const std::string& str,
     MsgBaseType msg_type, BaseAction* msg_act)
 {
     static ElemStorage store_shapes(MAX_ELEM_ONE_PAGE, sizeof(BaseShape));
-    static ElemStorage elem_inst(MAX_ELEM_ONE_PAGE, sizeof(ElemInstance));
 
     if (!g_elements_map)
     {
         static ElemMap elements;
         g_elements_map = &elements;
         BaseMessage::g_store_shapes = &store_shapes;
-        BaseMessage::g_store_instance = &elem_inst;
     }
 
     auto ret = g_elements_map->find(str);
     if (ret == g_elements_map->end())
     {
-        ElemInstance content;
-        elemIDSize id = elem_inst.storeOneElem(&content);
-        store_shapes.storeOneElem(&content);
-        BaseElement* base = new BaseElement(id, &store_shapes, &elem_inst);
+        BaseShape content;
+        elemIDSize id = store_shapes.storeOneElem(&content);
+        BaseElement* base = new BaseElement(id, &store_shapes);
         base->linkMsg(msg_type, msg_act);
         g_elements_map->insert({ str, base });
     }

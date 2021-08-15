@@ -12,7 +12,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 
-    BaseElement b(0, 0, 0);
+    BaseElement b(0, 0);
     elemGen("test0", MsgNone, nullptr);
     ElemStorage e(1000, 80);
 
