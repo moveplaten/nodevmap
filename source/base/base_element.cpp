@@ -4,6 +4,7 @@ BaseElement* BaseElement::g_before_leave_id = nullptr;
 BaseElement* BaseElement::g_hitTest_id = nullptr;
 BaseElement* BaseElement::g_mouse_snap_id = nullptr;
 
+#ifdef TEMP_TEST_0
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
     if (linked_msg_size == 0)
@@ -28,13 +29,6 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
         *next_linked_msg = last_linked_msg;
         ++linked_msg_size;
     }
-}
-
-void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
-{
-    world_pt = *pt;
-    local_pt.x = pt->x - base->getRect()->left;
-    local_pt.y = pt->y - base->getRect()->top;
 }
 
 void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
@@ -73,6 +67,51 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
             fetch_msg_act->realAction(this);
         }
     }
+}
+#endif // TEMP_TEST_0
+
+
+#ifndef TEMP_TEST_0
+void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
+{
+    auto ret = msg_act_map.find(msg_type);
+    if (ret == msg_act_map.end())
+    {
+        msg_act_map.insert({ msg_type, msg_act });
+    }
+    else
+    {
+        return;
+    }
+}
+
+void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
+{
+    if (self_id > BaseMessage::g_store_shapes->getTotalMax())
+    {
+        return;
+    }
+
+    auto ret = msg_act_map.find(msg_type);
+    if (ret == msg_act_map.end())
+    {
+        return;
+    }
+    else
+    {
+        auto temp = *ret;
+        BaseAction* act = temp.second;
+        act->mousePtToLocal(this, pt);
+        act->realAction(this);
+    }
+}
+#endif // !TEMP_TEST_0
+
+void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
+{
+    world_pt = *pt;
+    local_pt.x = pt->x - base->getRect()->left;
+    local_pt.y = pt->y - base->getRect()->top;
 }
 
 BaseElement::BaseElement(const elemIDSize id,

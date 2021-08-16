@@ -13,6 +13,7 @@ typedef POINT mousePt;
 typedef LONG ptSize;
 
 #define MAX_ELEM_ONE_PAGE 100000
+//#define TEMP_TEST_0
 
 enum MsgBaseType
 {
@@ -89,6 +90,8 @@ public:
 
     void deleteSelf()
     {
+        baseRect rect = { 0 };
+        setRect(&rect);
         base_shapes->deleteOneElem(self_id);
         delete this;
     }
@@ -122,6 +125,8 @@ public:
     void msgRoute(MsgBaseType msg_type, mousePt* pt); //private may better;
 
 private:
+    typedef std::map<MsgBaseType, BaseAction*> MsgActMap;
+
     static BaseElement* g_hitTest_id;
     static BaseElement* g_before_leave_id;
     static BaseElement* g_mouse_snap_id;
@@ -129,7 +134,12 @@ private:
     const elemIDSize self_id;
     const std::string self_name;
     bool self_visible = true;
-    
+
+#ifndef TEMP_TEST_0
+    MsgActMap msg_act_map;
+#endif // !TEMP_TEST_0
+
+#ifdef TEMP_TEST_0
     struct LinkedMsg
     {
         MsgBaseType linked_msg_type = MsgNone;
@@ -137,6 +147,7 @@ private:
         LinkedMsg* next_linked_msg = nullptr;
     } linked_msg;
     msgTypeSize linked_msg_size = 0;
+#endif // TEMP_TEST_0
 
     ElemStorage* const base_shapes;
 

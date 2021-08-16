@@ -313,11 +313,12 @@ class ActRandomInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
+        static long seed = 0; ++seed;
         elemGen("v0", MsgNone, nullptr);
         baseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
-        srand(BaseMessage::g_store_shapes->getTotalUsed());
+        srand(seed);
         int temp = rand();
         int move_x = rand() / 100;
         int move_y = rand() / 100;
@@ -347,25 +348,50 @@ class ActMouseRButtonDown : public BaseAction
     }
 }ActMouseRButtonDown;
 
+#define MAX_TEST_ELEM 1000
+
+class Act3MouseRButtonDown : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        for (elemIDSize add_number = 0; add_number < MAX_TEST_ELEM; ++add_number)
+        {
+            std::string number_str("add_");
+            std::string add_str = std::to_string(add_number);
+            number_str = number_str + add_str;
+
+            auto ret = ElementGenerator::g_elements_map->find(number_str);
+            auto temp = *ret;
+            auto shape = temp.second;
+            HDC hdc = GetDC(g_hwnd);
+            FillRect(hdc, shape->getRect(), (HBRUSH)COLOR_WINDOW);
+            ReleaseDC(g_hwnd, hdc);
+            elemDel(number_str);
+        }
+    }
+}Act3MouseRButtonDown;
+
 class Act3MouseLButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        static elemIDSize add_number = 0; ++add_number;
-        std::string number_str("add_");
-        std::string add_str = std::to_string(add_number);
-        number_str = number_str + add_str;
+        for (elemIDSize add_number = 0; add_number < MAX_TEST_ELEM; ++add_number)
+        {
+            std::string number_str("add_");
+            std::string add_str = std::to_string(add_number);
+            number_str = number_str + add_str;
 
-        BaseElement* elem = elemGen(number_str, MsgInit, &ActRandomInit);
-        mousePt pt;
-        elem->msgRoute(MsgInit, &pt);
-        // same act as v1 except init position;
-        elemGen(number_str, MouseMove, &ActMouseMove);
-        elemGen(number_str, MouseLeave, &ActMouseLeave);
-        elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown);
-        elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
-        elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
-        elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
+            BaseElement* elem = elemGen(number_str, MsgInit, &ActRandomInit);
+            mousePt pt;
+            elem->msgRoute(MsgInit, &pt);
+            // same act as v1 except init position;
+            elemGen(number_str, MouseMove, &ActMouseMove);
+            elemGen(number_str, MouseLeave, &ActMouseLeave);
+            elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown);
+            elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
+            elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
+            elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
+        }
     }
 }Act3MouseLButtonDown;
 
@@ -387,6 +413,7 @@ ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
 ELEM_GEN(v3, MsgInit, Act3Init) //v3 is Add Button;
 ELEM_GEN(v3, MouseMove, Act3MouseMove)
 ELEM_GEN(v3, MouseLeave, Act3MouseLeave)
-ELEM_GEN(v3, MouseLButtonDown, Act3MouseLButtonDown)
+ELEM_GEN(v3, MouseLButtonDown, Act3MouseLButtonDown) //generate
+ELEM_GEN(v3, MouseRButtonDown, Act3MouseRButtonDown) //delete
 
 ELEM_GEN(v4, MsgNone, ActInit)
