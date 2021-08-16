@@ -22,6 +22,8 @@ enum MsgBaseType
     MouseLeave,
     MouseLButtonDown,
     MouseLButtonUp,
+    MouseRButtonDown,
+    MouseRButtonUp,
     MouseMove_MouseLButtonDown,
 
 };
@@ -83,6 +85,13 @@ class BaseElement
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
+    const std::string& getSelfName() { return self_name; }
+
+    void deleteSelf()
+    {
+        base_shapes->deleteOneElem(self_id);
+        delete this;
+    }
 
     const baseRect* getRect()
     {
@@ -105,7 +114,8 @@ public:
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(const elemIDSize id, ElemStorage* const shapes);
+    BaseElement::BaseElement(const elemIDSize id,
+        const char* name, ElemStorage* const shapes);
 
     BaseElement::~BaseElement();
 
@@ -117,6 +127,7 @@ private:
     static BaseElement* g_mouse_snap_id;
 
     const elemIDSize self_id;
+    const std::string self_name;
     bool self_visible = true;
     
     struct LinkedMsg
@@ -156,4 +167,21 @@ static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAc
     auto elem = *ret;
     BaseElement* base = elem.second;
     return base;
+}
+
+static bool elemDel(const std::string& str)
+{
+    auto ret = ElementGenerator::g_elements_map->find(str);
+    if (ret == ElementGenerator::g_elements_map->end())
+    {
+        return false;
+    }
+    else
+    {
+        auto elem = *ret;
+        BaseElement* base = elem.second;
+        ElementGenerator::g_elements_map->erase(str);
+        base->deleteSelf();
+        return true;
+    }
 }

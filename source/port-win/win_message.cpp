@@ -42,6 +42,18 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
 
+    case WM_RBUTTONDOWN:
+    {
+        baseMsg->hitTest(MouseRButtonDown, &pt);
+    }
+    break;
+
+    case WM_RBUTTONUP:
+    {
+        baseMsg->hitTest(MouseRButtonUp, &pt);
+    }
+    break;
+
     case WM_CLOSE:
     {
         PostQuitMessage(0);

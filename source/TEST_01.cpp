@@ -334,6 +334,19 @@ class ActRandomInit : public BaseAction
     }
 }ActRandomInit;
 
+class ActMouseRButtonDown : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        baseRect rect = *(base->getRect());
+        HDC hdc = GetDC(g_hwnd);
+        FillRect(hdc, &rect, (HBRUSH)COLOR_WINDOW);
+        ReleaseDC(g_hwnd, hdc);
+        elemDel(base->getSelfName());
+        
+    }
+}ActMouseRButtonDown;
+
 class Act3MouseLButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
@@ -351,6 +364,7 @@ class Act3MouseLButtonDown : public BaseAction
         elemGen(number_str, MouseLeave, &ActMouseLeave);
         elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown);
         elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
+        elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
         elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
     }
 }Act3MouseLButtonDown;

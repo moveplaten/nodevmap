@@ -39,6 +39,11 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 
 void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
+    if (self_id > BaseMessage::g_store_shapes->getTotalMax())
+    {
+        return;
+    }
+
     if (linked_msg.linked_msg_type == msg_type)
     {
         linked_msg.linked_msg_act->mousePtToLocal(this, pt);
@@ -70,8 +75,9 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-BaseElement::BaseElement(const elemIDSize id, ElemStorage* const shapes)
-    :self_id(id), base_shapes(shapes)
+BaseElement::BaseElement(const elemIDSize id,
+    const char* name, ElemStorage* const shapes)
+    :self_id(id), self_name(name), base_shapes(shapes)
 {
     if (shapes)
     {
@@ -105,7 +111,7 @@ ElementGenerator::ElementGenerator(const std::string& str,
     {
         BaseShape content;
         elemIDSize id = store_shapes.storeOneElem(&content);
-        BaseElement* base = new BaseElement(id, &store_shapes);
+        BaseElement* base = new BaseElement(id, str.c_str(), &store_shapes);
         base->linkMsg(msg_type, msg_act);
         g_elements_map->insert({ str, base });
     }

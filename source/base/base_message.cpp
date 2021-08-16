@@ -38,8 +38,8 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     {
         if (checkLeave() && BaseElement::g_before_leave_id != nullptr)
         {
-            char temp[20];
-            sprintf(temp, "%d", BaseElement::g_before_leave_id->getSelfID());
+            char temp[100];
+            sprintf(temp, "%lld", BaseElement::g_before_leave_id->getSelfID());
             OutputDebugStringA(temp);
             OutputDebugStringA("LEAVE\n");
             hitTest(MouseLeave, pt);
@@ -79,7 +79,10 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
     BaseShape* base_shapes = (BaseShape*)g_store_shapes->getContents();
-    elemIDSize total = g_store_shapes->getTotalUsed();
+    elemIDSize* reused = g_store_shapes->getReused();
+    elemIDSize reused_count = g_store_shapes->getReusedCount();
+    elemIDSize total = g_store_shapes->getTotalMax();
+    elemIDSize hit = -1;
 
     for (elemIDSize i = 0; i < total; ++i)
     {
@@ -87,12 +90,27 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {
-            BaseElement::g_hitTest_id = base_shapes[i].elem;
-            return base_shapes[i].elem;
+            hit = i;
+            break;
         }
     }
 
-    BaseElement::g_hitTest_id = nullptr;
-
-    return nullptr;
+    if (hit == -1)
+    {
+        BaseElement::g_hitTest_id = nullptr;
+        return nullptr;
+    }
+    else
+    {
+        for (elemIDSize i = 0; i < reused_count; ++i)
+        {
+            if (hit == reused[i])
+            {
+                BaseElement::g_hitTest_id = nullptr;
+                return nullptr;
+            }
+        }
+        BaseElement::g_hitTest_id = base_shapes[hit].elem;
+        return base_shapes[hit].elem;
+    }
 }
