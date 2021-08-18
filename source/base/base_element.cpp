@@ -87,7 +87,7 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 
 void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
-    if (self_id > BaseMessage::g_store_shapes->getTotalMax())
+    if (valid_tag != 'v')
     {
         return;
     }

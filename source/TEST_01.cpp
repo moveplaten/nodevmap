@@ -361,12 +361,19 @@ class Act3MouseRButtonDown : public BaseAction
             number_str = number_str + add_str;
 
             auto ret = ElementGenerator::g_elements_map->find(number_str);
-            auto temp = *ret;
-            auto shape = temp.second;
-            HDC hdc = GetDC(g_hwnd);
-            FillRect(hdc, shape->getRect(), (HBRUSH)COLOR_WINDOW);
-            ReleaseDC(g_hwnd, hdc);
-            elemDel(number_str);
+            if (ret == ElementGenerator::g_elements_map->end())
+            {
+                continue;
+            }
+            else
+            {
+                auto temp = *ret;
+                auto shape = temp.second;
+                HDC hdc = GetDC(g_hwnd);
+                FillRect(hdc, shape->getRect(), (HBRUSH)COLOR_WINDOW);
+                ReleaseDC(g_hwnd, hdc);
+                elemDel(number_str);
+            }
         }
     }
 }Act3MouseRButtonDown;

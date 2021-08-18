@@ -134,6 +134,7 @@ private:
     const elemIDSize self_id;
     const std::string self_name;
     bool self_visible = true;
+    const char valid_tag = 'v'; //check valid after delete one;
 
 #ifndef TEMP_TEST_0
     MsgActMap msg_act_map;
