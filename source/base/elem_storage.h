@@ -7,49 +7,64 @@
 
 typedef uint64_t elemIDSize;
 
-class ElemStorage
+template<elemIDSize N, typename T> class ElemStorage
 {
 public:
-    elemIDSize storeOneElem(const void* content);
-    const void* readOneElem(const elemIDSize id);
-    //void changeOneElem(const elemIDSize id, const void* content);
-    void deleteOneElem(const elemIDSize id);
+    elemIDSize storeOneElem(const T* content)
+    {
+        if (reused_count)
+        {
+            const elemIDSize id = reused_elems[--reused_count];
+            contents[id] = *content;
+            return id;
+        }
+        else
+        {
+            const elemIDSize id = current_max_used++;
+            contents[id] = *content;
+            return id;
+        }
+    }
+
+    T* readOneElem(const elemIDSize id)
+    {
+        return contents + id;
+    }
+
+    void deleteOneElem(const elemIDSize id)
+    {
+        reused_elems[reused_count] = id;
+        ++reused_count;
+    }
     
     elemIDSize getTotalUsed() { return current_max_used - reused_count; }
     elemIDSize getTotalMax() { return current_max_used; }
 
-    ElemStorage(elemIDSize capacity, elemIDSize content_size)
-        :max_capacity(capacity), one_content_size(content_size) {}
+    //ElemStorage(elemIDSize capacity, elemIDSize content_size)
+    //    :max_capacity(capacity), one_content_size(content_size) {}
     ~ElemStorage() {}
 
 private:
-    struct ElemContent {};
-    void store(const void* dst, const void* src);
-    void* getContents() { return contents; }
-    elemIDSize* getReused() { return reused_elems; }
+    const T* getContents() { return contents; }
+    const elemIDSize* getReused() { return reused_elems; }
     elemIDSize getReusedCount() { return reused_count; }
 
-    const elemIDSize max_capacity;
-    const elemIDSize one_content_size;
+    const elemIDSize max_capacity = N;
+    const elemIDSize one_content_size = sizeof(T);
 
-    ElemContent* const contents //like BaseElemContent contents[max_capacity];
-        = (ElemContent* const)malloc(max_capacity * one_content_size);
+    T* const contents //like BaseElemContent contents[max_capacity];
+        = (T* const)malloc(max_capacity * one_content_size);
     elemIDSize current_max_used = 0;
 
     elemIDSize* const reused_elems
         = (elemIDSize* const)malloc(max_capacity * sizeof(elemIDSize));
     elemIDSize reused_count = 0;
 
-    struct BaseShape
-    {
-        long l;
-        long t;
-        long r;
-        long b;
-        void* unknown;
-    };
+    /// <summary>
+    /// Debug Help
+    /// </summary>
     elemIDSize(*p_reused_elems)[1000] = (elemIDSize(*)[1000])reused_elems;
-    BaseShape(*p_contents)[1000] = (BaseShape(*)[1000])contents; //only debug use;
+    T(*p_contents)[1000] = (T(*)[1000])contents; //only debug use;
 
     friend class BaseMessage;
 };

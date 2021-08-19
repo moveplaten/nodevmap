@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
-ElemStorage* BaseMessage::g_store_shapes = nullptr;
+StoreBaseShape* BaseMessage::g_store_shapes = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -51,7 +51,7 @@ void BaseMessage::initAll(mousePt* pt)
 {
     for (elemIDSize i = 0; i < g_store_shapes->getTotalUsed(); ++i)
     {
-        BaseShape* content = (BaseShape*)g_store_shapes->readOneElem(i);
+        BaseShape* content = g_store_shapes->readOneElem(i);
         content->elem->msgRoute(MsgInit, pt);
     }
 }
@@ -78,15 +78,15 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
-    BaseShape* base_shapes = (BaseShape*)g_store_shapes->getContents();
-    elemIDSize* reused = g_store_shapes->getReused();
+    const BaseShape* base_shapes = g_store_shapes->getContents();
+    const elemIDSize* reused = g_store_shapes->getReused();
     elemIDSize reused_count = g_store_shapes->getReusedCount();
     elemIDSize total = g_store_shapes->getTotalMax();
     elemIDSize hit = -1;
 
     for (elemIDSize i = 0; i < total; ++i)
     {
-        baseRect* rect = &base_shapes[i].rect;
+        const baseRect* rect = &base_shapes[i].rect;
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {

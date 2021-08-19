@@ -13,6 +13,8 @@ typedef POINT mousePt;
 typedef LONG ptSize;
 
 #define MAX_ELEM_ONE_PAGE 100000
+struct BaseShape;
+typedef ElemStorage<MAX_ELEM_ONE_PAGE, BaseShape> StoreBaseShape;
 //#define TEMP_TEST_0
 
 enum MsgBaseType
@@ -35,7 +37,7 @@ class BaseMessage
 {
 public:
     static HWND g_hwnd;
-    static ElemStorage* g_store_shapes;
+    static StoreBaseShape* g_store_shapes;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
     void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
@@ -98,19 +100,19 @@ public:
 
     const baseRect* getRect()
     {
-        BaseShape* content = (BaseShape*)base_shapes->readOneElem(self_id);
+        BaseShape* content = base_shapes->readOneElem(self_id);
         return &(content->rect);
     }
     void setRect(const baseRect* rect)
     {
-        BaseShape* content = (BaseShape*)base_shapes->readOneElem(self_id);
+        BaseShape* content = base_shapes->readOneElem(self_id);
         content->rect = *rect;
     }
 
     elemIDSize getIncreaseID() { return base_shapes->getTotalUsed(); }
     BaseElement* getElementByID(elemIDSize id)
     {
-        BaseShape* content = (BaseShape*)base_shapes->readOneElem(id);
+        BaseShape* content = base_shapes->readOneElem(id);
         return content->elem;
     }
     static BaseElement* getNowHitID() { return g_hitTest_id; }
@@ -118,7 +120,7 @@ public:
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
     BaseElement::BaseElement(const elemIDSize id,
-        const char* name, ElemStorage* const shapes);
+        const char* name, StoreBaseShape* const shapes);
 
     BaseElement::~BaseElement();
 
@@ -150,7 +152,7 @@ private:
     msgTypeSize linked_msg_size = 0;
 #endif // TEMP_TEST_0
 
-    ElemStorage* const base_shapes;
+    StoreBaseShape* const base_shapes;
 
     friend class BaseMessage;
 };

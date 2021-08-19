@@ -14,7 +14,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     BaseElement b(0, "0", 0);
     elemGen("test0", MsgNone, nullptr);
-    ElemStorage e(1000, 80);
+    ElemStorage<100, int> e;
 
     WNDCLASS wc;
     ZeroMemory(&wc, sizeof(wc));

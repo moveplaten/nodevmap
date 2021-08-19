@@ -115,12 +115,12 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 }
 
 BaseElement::BaseElement(const elemIDSize id,
-    const char* name, ElemStorage* const shapes)
+    const char* name, StoreBaseShape* const shapes)
     :self_id(id), self_name(name), base_shapes(shapes)
 {
-    if (shapes)
+    if (base_shapes)
     {
-        BaseShape* content_shapes = (BaseShape*)base_shapes->readOneElem(self_id);
+        BaseShape* content_shapes = base_shapes->readOneElem(self_id);
         content_shapes->rect = { 0 };
         content_shapes->elem = this;
     }
@@ -136,7 +136,7 @@ ElemMap* ElementGenerator::g_elements_map = nullptr;
 ElementGenerator::ElementGenerator(const std::string& str,
     MsgBaseType msg_type, BaseAction* msg_act)
 {
-    static ElemStorage store_shapes(MAX_ELEM_ONE_PAGE, sizeof(BaseShape));
+    static StoreBaseShape store_shapes;
 
     if (!g_elements_map)
     {
