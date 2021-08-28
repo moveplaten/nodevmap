@@ -147,7 +147,7 @@ class Act1MouseDrag : public BaseAction
             ptSize sub_y = local_pt.y - last_pt.y;
             const baseRect* old_rect = base->getRect();
 
-            draw->fillRect(*old_rect, RGB(0, 0, 0));
+            draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
             baseRect new_rect;
             new_rect.left = old_rect->left + sub_x;
@@ -156,7 +156,7 @@ class Act1MouseDrag : public BaseAction
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
-            draw->fillRect(new_rect, RGB(200, 200, 200));
+            draw->fillRect(new_rect, RGB(200, 200, 200), End);
         }
     }
 }Act1MouseDrag;
@@ -172,7 +172,7 @@ class Act2MouseDrag : public BaseAction
             ptSize sub_y = local_pt.y - last_pt.y;
             const baseRect* old_rect = base->getRect();
 
-            draw->fillRect(*old_rect, RGB(0, 0, 0));
+            draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
             baseRect new_rect;
             new_rect.left = old_rect->left + sub_x;
@@ -181,7 +181,7 @@ class Act2MouseDrag : public BaseAction
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
-            draw->fillRect(new_rect, RGB(0, 200, 200));
+            draw->fillRect(new_rect, RGB(0, 200, 200), End);
         }
     }
 }Act2MouseDrag;
@@ -201,24 +201,24 @@ class Act3Init : public BaseAction
         COLORREF hColor = RGB(0, 200, 200);
         COLORREF hColor2 = RGB(200, 200, 200);
  
-        draw->fillRect(rect, hColor);
+        draw->fillRect(rect, hColor, Begin);
 
         int width = 8;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, End);
     }
 }Act3Init;
 
@@ -236,24 +236,24 @@ class Act3MouseMove : public BaseAction
         COLORREF hColor = RGB(0, 200, 200);
         COLORREF hColor2 = RGB(200, 200, 200);
 
-        draw->fillRect(rect, hColor);
+        draw->fillRect(rect, hColor, Begin);
 
         int width = 12;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, End);
     }
 }Act3MouseMove;
 
@@ -271,24 +271,24 @@ class Act3MouseLeave : public BaseAction
         COLORREF hColor = RGB(0, 200, 200);
         COLORREF hColor2 = RGB(200, 200, 200);
 
-        draw->fillRect(rect, hColor);
+        draw->fillRect(rect, hColor, Begin);
 
         int width = 8;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2);
+        draw->fillRect(rect, hColor2, End);
     }
 }Act3MouseLeave;
 
@@ -311,7 +311,15 @@ class ActRandomInit : public BaseAction
         rect.bottom += move_y;
         base->setRect(&rect);
 
-        draw->fillRect(rect, RGB(255, 0, 0));
+        DrawOption opt[] = { Begin, None, None, None, None, None, 
+            None, None, None, None, None, None, None, None, End };
+        static int offset = -1; ++offset;
+
+        draw->fillRect(rect, RGB(255, 0, 0), opt[offset]);
+        if (offset >= ARRAYSIZE(opt) - 1)
+        {
+            offset = -1;
+        }
     }
 }ActRandomInit;
 
@@ -349,7 +357,15 @@ class Act3MouseRButtonDown : public BaseAction
                 auto temp = *ret;
                 auto shape = temp.second;
 
-                draw->fillRect(*(shape->getRect()), RGB(0, 0, 0));
+                DrawOption opt[] = { Begin, None, None, None, None, None,
+                    None, None, None, None, None, None, None, None, End };
+                static int offset = -1; ++offset;
+
+                draw->fillRect(*(shape->getRect()), RGB(0, 0, 0), opt[offset]);
+                if (offset >= ARRAYSIZE(opt) - 1)
+                {
+                    offset = -1;
+                }
 
                 elemDel(number_str);
             }

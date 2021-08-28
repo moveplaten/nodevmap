@@ -1,4 +1,5 @@
 #include "d2d_common.h"
+#include <stdio.h>
 
 D2dUtil* D2dUtil::g_d2dutil = nullptr;
 
@@ -44,7 +45,33 @@ HRESULT D2dUtil::createDeviceTarget()
     return hr;
 }
 
-void D2dUtil::fillRect(const RECT& rect, COLORREF col)
+#define MAX_QPC_CHANNEL 100
+
+LONGLONG getQPCInterval(int channel)
+{
+    if (channel >= MAX_QPC_CHANNEL || channel < 0)
+    {
+        return -1;
+    }
+    LARGE_INTEGER QPC;
+    QueryPerformanceCounter(&QPC);
+    LONGLONG now = QPC.QuadPart;
+    static LONGLONG prev[MAX_QPC_CHANNEL] = { 0 };
+    LONGLONG QPCInterval = now - prev[channel];
+    prev[channel] = now;
+    return QPCInterval;
+}
+
+double getFPS(int channel)
+{
+    LARGE_INTEGER Frequency;
+    QueryPerformanceFrequency(&Frequency);
+    double timeInterval = (double)getQPCInterval(channel) / (double)Frequency.QuadPart;
+    double fps = (double)1.0 / timeInterval;
+    return fps;
+}
+
+void D2dUtil::fillRect(const RECT& rect, COLORREF col, DrawOption opt)
 {
     if (!g_d2dutil)
     {
@@ -63,8 +90,29 @@ void D2dUtil::fillRect(const RECT& rect, COLORREF col)
         return;
     }
 
-    m_pRT->BeginDraw();
+    static bool can_fps_1, can_fps_2 = false;
+    if ((opt == Begin || opt == BeginEnd) && opt != None)
+    {
+        m_pRT->BeginDraw();
+        can_fps_1 = true;
+    }
+
     m_pRT->FillRectangle(recf, brush);
-    hr = m_pRT->EndDraw();
+
+    if ((opt == End || opt == BeginEnd) && opt != None)
+    {
+        hr = m_pRT->EndDraw();
+        can_fps_2 = true;
+    }
+
     brush->Release();
+
+    if (can_fps_1 && can_fps_2)
+    {
+        draw_fps = getFPS(0);
+        char tempc[30] = { 0 };
+        sprintf(tempc, "draw fps : %f", draw_fps);
+        SetWindowText(m_hwnd, tempc);
+        can_fps_1 = can_fps_2 = false;
+    }
 }
