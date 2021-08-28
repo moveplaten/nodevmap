@@ -1,4 +1,5 @@
 #include "base/base.h"
+#include "direct2d/d2d_common.h"
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -32,6 +33,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HWND hwndMain = CreateWindowEx(WS_EX_CONTROLPARENT | WS_EX_WINDOWEDGE | WS_EX_LEFT, MAINWNDCLASS, TEXT("nodevmap"),
         WS_OVERLAPPED | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN,
         x, y, width, height, NULL, NULL, hInstance, NULL);
+
+    if (!initD2dDevice(hwndMain)) //give control to access to d2d;
+    {
+        return false;
+    }
 
     ShowWindow(hwndMain, SW_SHOW);
     UpdateWindow(hwndMain);
