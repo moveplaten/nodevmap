@@ -2,6 +2,8 @@
 #include <stdio.h>
 
 D2dUtil* D2dUtil::g_d2dutil = nullptr;
+float D2dUtil::g_dpi_scale_X = 0.0f;
+float D2dUtil::g_dpi_scale_Y = 0.0f;
 
 bool initD2dDevice(HWND hwnd)
 {
@@ -42,6 +44,11 @@ HRESULT D2dUtil::createDeviceTarget()
         D2D1::HwndRenderTargetProperties(m_hwnd, size),
         &m_pRT);
 
+    FLOAT dpiX, dpiY;
+    m_pD2DFactory->GetDesktopDpi(&dpiX, &dpiY);
+    g_dpi_scale_X = dpiX / 96.0f;
+    g_dpi_scale_Y = dpiY / 96.0f;
+
     return hr;
 }
 
@@ -77,6 +84,10 @@ void D2dUtil::fillRect(const RECT& rect, COLORREF col, DrawOption opt)
     {
         return;
     }
+
+    auto mode = m_pRT->GetAntialiasMode();
+    m_pRT->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED); //only render rect now;
+
     D2D1_RECT_F recf = D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
     HRESULT hr;
     ID2D1SolidColorBrush* brush;

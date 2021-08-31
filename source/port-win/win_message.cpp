@@ -1,4 +1,5 @@
 #include "base/base.h"
+#include "direct2d/d2d_common.h"
 #include <Windows.h>
 #include <stdio.h>
 
@@ -7,6 +8,8 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     mousePt pt;
     pt.x = LOWORD(lParam);
     pt.y = HIWORD(lParam);
+    pt.x = round(pt.x / D2dUtil::g_dpi_scale_X);
+    pt.y = round(pt.y / D2dUtil::g_dpi_scale_Y);
 
     switch (message)
     {

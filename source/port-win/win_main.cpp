@@ -27,6 +27,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
     RegisterClass(&wc);
 
+    ///////////////////////////////////////////////
+    //check and set dpi aware;
+    bool dpi_aware = IsProcessDPIAware();
+    bool result = SetProcessDPIAware();
+    dpi_aware = IsProcessDPIAware();
+    if (!result && !dpi_aware)
+    {
+        MessageBox(nullptr, "Set DPI Aware Failed", NULL, MB_OK);
+        return false;
+    }
+    ///////////////////////////////////////////////
+
     int x, y, width, height;
     x = y = 100;
     width = height = 600;

@@ -25,6 +25,9 @@ public:
 
     static D2dUtil* g_d2dutil;
 
+    static float g_dpi_scale_X; //need test
+    static float g_dpi_scale_Y; //need test
+
     HRESULT createDeviceTarget();
     double getDrawFPS() { return draw_fps; }
 
