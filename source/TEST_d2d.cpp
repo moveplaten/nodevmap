@@ -1,19 +1,33 @@
 #include "base/base.h"
 #include "port-win/direct2d/d2d_common.h"
 
-#define draw D2dUtil::g_d2dutil
+static NvpDraw* getDraw(BaseElement* base)
+{
+    auto shapes = base->getBaseShapes();
+    BaseShape* content = shapes->readOneElem(base->getSelfID());
+    return content->draw;
+}
+
+static void initDraw(BaseElement* base)
+{
+    auto d2d_draw = new D2dDraw();
+    auto shapes = base->getBaseShapes();
+    BaseShape* content = shapes->readOneElem(base->getSelfID());
+    content->draw = d2d_draw;
+}
 
 class ActInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
         elemGen("v0", MsgNone, nullptr);
-        baseRect rect;
+        BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
         base->setRect(&rect);
 
-        draw->fillRect(rect, RGB(255, 0, 0));
+        initDraw(base);
+        getDraw(base)->Record(rect, { 255, 0, 0 });
     }
 }ActInit;
 
@@ -21,9 +35,9 @@ class ActMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect = *(base->getRect());
+        BaseRect rect = *(base->getRect());
 
-        draw->fillRect(rect, RGB(200, 200, 200));
+        getDraw(base)->Record(rect, { 200, 200, 200 });
     }
 }ActMouseMove;
 
@@ -31,9 +45,9 @@ class ActMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect = *(base->getRect());
+        BaseRect rect = *(base->getRect());
 
-        draw->fillRect(rect, RGB(150, 150, 150));
+        getDraw(base)->Record(rect, { 150, 150, 150 });
     }
 }ActMouseLeave;
 
@@ -58,14 +72,15 @@ class Act2Init : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect;
+        BaseRect rect;
         rect.left = 50;
         rect.right = 90;
         rect.top = 10;
         rect.bottom = 50;
         base->setRect(&rect);
 
-        draw->fillRect(rect, RGB(0, 255, 0));
+        initDraw(base);
+        getDraw(base)->Record(rect, { 0, 255, 0 });
     }
 }Act2Init;
 
@@ -73,9 +88,9 @@ class Act2MouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect = *(base->getRect());
+        BaseRect rect = *(base->getRect());
 
-        draw->fillRect(rect, RGB(0, 200, 200));
+        getDraw(base)->Record(rect, { 0, 200, 200 });
     }
 }Act2MouseMove;
 
@@ -83,9 +98,9 @@ class Act2MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect = *(base->getRect());
+        BaseRect rect = *(base->getRect());
 
-        draw->fillRect(rect, RGB(0, 150, 150));
+        getDraw(base)->Record(rect, { 0, 150, 150 });
     }
 }Act2MouseLeave;
 /////////////////////////////////////////////////////////////////////////
@@ -145,18 +160,18 @@ class Act1MouseDrag : public BaseAction
             mousePt last_pt = Act1MouseLButtonDown.last_pt;
             ptSize sub_x = local_pt.x - last_pt.x;
             ptSize sub_y = local_pt.y - last_pt.y;
-            const baseRect* old_rect = base->getRect();
+            const BaseRect* old_rect = base->getRect();
 
-            draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+            //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
-            baseRect new_rect;
+            BaseRect new_rect;
             new_rect.left = old_rect->left + sub_x;
             new_rect.right = old_rect->right + sub_x;
             new_rect.top = old_rect->top + sub_y;
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
-            draw->fillRect(new_rect, RGB(200, 200, 200), End);
+            getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
         }
     }
 }Act1MouseDrag;
@@ -170,18 +185,18 @@ class Act2MouseDrag : public BaseAction
             mousePt last_pt = Act2MouseLButtonDown.last_pt;
             ptSize sub_x = local_pt.x - last_pt.x;
             ptSize sub_y = local_pt.y - last_pt.y;
-            const baseRect* old_rect = base->getRect();
+            const BaseRect* old_rect = base->getRect();
 
-            draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+            //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
-            baseRect new_rect;
+            BaseRect new_rect;
             new_rect.left = old_rect->left + sub_x;
             new_rect.right = old_rect->right + sub_x;
             new_rect.top = old_rect->top + sub_y;
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
-            draw->fillRect(new_rect, RGB(0, 200, 200), End);
+            getDraw(base)->Record(new_rect, { 0, 200, 200 }, End);
         }
     }
 }Act2MouseDrag;
@@ -191,34 +206,36 @@ class Act3Init : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect;
+        BaseRect rect;
         rect.left = 110;
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
         base->setRect(&rect);
     
-        COLORREF hColor = RGB(0, 200, 200);
-        COLORREF hColor2 = RGB(200, 200, 200);
+        NvpColor hColor = { 0, 200, 200 };
+        NvpColor hColor2 = { 200, 200, 200 };
+
+        initDraw(base);
  
-        draw->fillRect(rect, hColor, Begin);
+        getDraw(base)->Record(rect, hColor, Begin);
 
         int width = 8;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, End);
+        getDraw(base)->Record(rect, hColor2, End);
     }
 }Act3Init;
 
@@ -226,34 +243,34 @@ class Act3MouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect;
+        BaseRect rect;
         rect.left = 110;
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
         base->setRect(&rect);
 
-        COLORREF hColor = RGB(0, 200, 200);
-        COLORREF hColor2 = RGB(200, 200, 200);
+        NvpColor hColor = { 0, 200, 200 };
+        NvpColor hColor2 = { 200, 200, 200 };
 
-        draw->fillRect(rect, hColor, Begin);
+        getDraw(base)->Record(rect, hColor, Begin);
 
         int width = 12;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, End);
+        getDraw(base)->Record(rect, hColor2, End);
     }
 }Act3MouseMove;
 
@@ -261,34 +278,34 @@ class Act3MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect;
+        BaseRect rect;
         rect.left = 110;
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
         base->setRect(&rect);
 
-        COLORREF hColor = RGB(0, 200, 200);
-        COLORREF hColor2 = RGB(200, 200, 200);
+        NvpColor hColor = { 0, 200, 200 };
+        NvpColor hColor2 = { 200, 200, 200 };
 
-        draw->fillRect(rect, hColor, Begin);
+        getDraw(base)->Record(rect, hColor, Begin);
 
         int width = 8;
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 10; rect.bottom = 30 - width / 2;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 110; rect.right = 130 - width / 2;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, None);
+        getDraw(base)->Record(rect, hColor2, None);
 
         rect.left = 130 + width / 2; rect.right = 150;
         rect.top = 30 + width / 2; rect.bottom = 50;
-        draw->fillRect(rect, hColor2, End);
+        getDraw(base)->Record(rect, hColor2, End);
     }
 }Act3MouseLeave;
 
@@ -298,7 +315,7 @@ class ActRandomInit : public BaseAction
     {
         static long seed = 0; ++seed;
         elemGen("v0", MsgNone, nullptr);
-        baseRect rect;
+        BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
         srand(seed);
@@ -311,11 +328,11 @@ class ActRandomInit : public BaseAction
         rect.bottom += move_y;
         base->setRect(&rect);
 
-        DrawOption opt[] = { Begin, None, None, None, None, None, 
+        RecordOption opt[] = { Begin, None, None, None, None, None, 
             None, None, None, None, None, None, None, None, End };
         static int offset = -1; ++offset;
-
-        draw->fillRect(rect, RGB(255, 0, 0), opt[offset]);
+        initDraw(base);
+        getDraw(base)->Record(rect, { 255, 0, 0 }, opt[offset]);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -327,9 +344,9 @@ class ActMouseRButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        baseRect rect = *(base->getRect());
+        BaseRect rect = *(base->getRect());
 
-        draw->fillRect(rect, RGB(0, 0, 0));
+        //draw->fillRect(rect, RGB(0, 0, 0));
 
         elemDel(base->getSelfName());
     }
@@ -357,11 +374,11 @@ class Act3MouseRButtonDown : public BaseAction
                 auto temp = *ret;
                 auto shape = temp.second;
 
-                DrawOption opt[] = { Begin, None, None, None, None, None,
+                RecordOption opt[] = { Begin, None, None, None, None, None,
                     None, None, None, None, None, None, None, None, End };
                 static int offset = -1; ++offset;
 
-                draw->fillRect(*(shape->getRect()), RGB(0, 0, 0), opt[offset]);
+                //draw->fillRect(*(shape->getRect()), RGB(0, 0, 0), opt[offset]);
                 if (offset >= ARRAYSIZE(opt) - 1)
                 {
                     offset = -1;

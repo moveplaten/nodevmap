@@ -4,11 +4,12 @@
 #include <string>
 #include <map>
 #include "elem_storage.h"
+#include "draw/draw.h"
 
 #include <Windows.h>
 
 typedef uint32_t msgTypeSize;
-typedef RECT baseRect;
+
 typedef POINT mousePt;
 typedef LONG ptSize;
 
@@ -79,8 +80,8 @@ private:
 
 struct BaseShape
 {
-    baseRect rect;
-
+    BaseRect rect;
+    NvpDraw* draw = nullptr;
     BaseElement* elem = nullptr;
 };
 
@@ -89,21 +90,29 @@ class BaseElement
 public:
     elemIDSize getSelfID() const { return self_id; }
     const std::string& getSelfName() { return self_name; }
+    auto getBaseShapes()
+    {
+        return base_shapes;
+    }
 
     void deleteSelf()
     {
-        baseRect rect = { 0 };
+        BaseRect rect = { 0 };
         setRect(&rect);
         base_shapes->deleteOneElem(self_id);
+        auto content = base_shapes->readOneElem(self_id);
+        delete content->draw;
+        content->draw = nullptr;
+        content->elem = nullptr;
         delete this;
     }
 
-    const baseRect* getRect()
+    const BaseRect* getRect()
     {
         BaseShape* content = base_shapes->readOneElem(self_id);
         return &(content->rect);
     }
-    void setRect(const baseRect* rect)
+    void setRect(const BaseRect* rect)
     {
         BaseShape* content = base_shapes->readOneElem(self_id);
         content->rect = *rect;

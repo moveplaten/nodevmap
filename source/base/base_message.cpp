@@ -86,7 +86,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 
     for (elemIDSize i = 0; i < total; ++i)
     {
-        const baseRect* rect = &base_shapes[i].rect;
+        const BaseRect* rect = &base_shapes[i].rect;
         if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
         {

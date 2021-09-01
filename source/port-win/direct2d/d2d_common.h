@@ -4,13 +4,7 @@
 #include <d2d1.h>
 #include <d2d1helper.h>
 
-enum DrawOption
-{
-    Begin,
-    End,
-    BeginEnd,
-    None,
-};
+#include "draw/draw.h"
 
 bool initD2dDevice(HWND hwnd);
 
@@ -31,7 +25,7 @@ public:
     HRESULT createDeviceTarget();
     double getDrawFPS() { return draw_fps; }
 
-    void fillRect(const RECT& rect, COLORREF col, DrawOption opt = BeginEnd);
+    void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
 
     D2dUtil::D2dUtil(HWND hwnd):m_hwnd(hwnd),
                                 m_pD2DFactory(nullptr),
@@ -50,4 +44,24 @@ private:
     ID2D1HwndRenderTarget* m_pRT;
 
     double draw_fps;
+    friend class D2dDraw;
+};
+
+class D2dDraw : public NvpDraw
+{
+public:
+    virtual void doBegin() override;
+    virtual void doDraw() override;
+    virtual void doEnd() override;
+
+    D2dDraw::D2dDraw()
+    {
+    }
+
+    D2dDraw::~D2dDraw()
+    {
+    }
+
+private:
+
 };

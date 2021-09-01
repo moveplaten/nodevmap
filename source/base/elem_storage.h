@@ -67,4 +67,5 @@ private:
     T(*p_contents)[1000] = (T(*)[1000])contents; //only debug use;
 
     friend class BaseMessage;
+    friend class NvpDraw;
 };

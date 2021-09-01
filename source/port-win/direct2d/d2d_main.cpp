@@ -78,7 +78,7 @@ double getFPS(int channel)
     return fps;
 }
 
-void D2dUtil::fillRect(const RECT& rect, COLORREF col, DrawOption opt)
+void D2dUtil::fillRect(const BaseRect& rect, COLORREF col, RecordOption opt)
 {
     if (!g_d2dutil)
     {
@@ -126,4 +126,48 @@ void D2dUtil::fillRect(const RECT& rect, COLORREF col, DrawOption opt)
         SetWindowText(m_hwnd, tempc);
         can_fps_1 = can_fps_2 = false;
     }
+}
+
+void D2dDraw::doBegin()
+{
+    auto target = D2dUtil::g_d2dutil->m_pRT;
+    target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+    target->BeginDraw();
+    target->Clear();
+}
+
+void D2dDraw::doDraw()
+{
+    auto target = D2dUtil::g_d2dutil->m_pRT;
+    for (int i = 0; i < recs.size(); ++i)
+    {
+        auto rec = recs[i];
+        auto col = cols[i];
+        D2D1_RECT_F recf = D2D1::RectF(rec.left, rec.top, rec.right, rec.bottom);
+        auto color = RGB(col.Red, col.Green, col.Blue);
+        auto colf = D2D1::ColorF(color);
+        auto temp = colf.r;
+        colf.r = colf.b;
+        colf.b = temp;
+        ID2D1SolidColorBrush* brush;
+        HRESULT hr;
+        hr = target->CreateSolidColorBrush(colf, &brush);
+        if (FAILED(hr))
+        {
+            return;
+        }
+        target->FillRectangle(recf, brush);
+        brush->Release();
+    }
+}
+
+void D2dDraw::doEnd()
+{
+    auto target = D2dUtil::g_d2dutil->m_pRT;
+    target->EndDraw();
+
+    D2dUtil::g_d2dutil->draw_fps = getFPS(0);
+    char tempc[30] = { 0 };
+    sprintf(tempc, "draw fps : %f", D2dUtil::g_d2dutil->draw_fps);
+    SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
 }
