@@ -10,8 +10,13 @@
 
 typedef uint32_t msgTypeSize;
 
-typedef POINT mousePt;
-typedef LONG ptSize;
+typedef struct
+{
+    float x;
+    float y;
+}mousePt;
+
+typedef float ptSize;
 
 #define MAX_ELEM_ONE_PAGE 100000
 struct BaseShape;

@@ -131,7 +131,7 @@ void D2dUtil::fillRect(const BaseRect& rect, COLORREF col, RecordOption opt)
 void D2dDraw::doBegin()
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
-    target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+    target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
     target->BeginDraw();
     target->Clear();
 }
@@ -144,6 +144,7 @@ void D2dDraw::doDraw()
         auto rec = recs[i];
         auto col = cols[i];
         D2D1_RECT_F recf = D2D1::RectF(rec.left, rec.top, rec.right, rec.bottom);
+        D2D1_ROUNDED_RECT round = { recf, 5.0f, 5.0f };
         auto color = RGB(col.Red, col.Green, col.Blue);
         auto colf = D2D1::ColorF(color);
         auto temp = colf.r;
@@ -156,7 +157,8 @@ void D2dDraw::doDraw()
         {
             return;
         }
-        target->FillRectangle(recf, brush);
+        //target->FillRectangle(recf, brush);
+        target->DrawRoundedRectangle(round, brush);
         brush->Release();
     }
 }

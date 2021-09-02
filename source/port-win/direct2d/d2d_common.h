@@ -5,6 +5,7 @@
 #include <d2d1helper.h>
 
 #include "draw/draw.h"
+#include "base/base.h"
 
 bool initD2dDevice(HWND hwnd);
 
@@ -24,6 +25,24 @@ public:
 
     HRESULT createDeviceTarget();
     double getDrawFPS() { return draw_fps; }
+
+    void onResize(UINT width, UINT height)
+    {
+        D2D1_SIZE_U size;
+        size.width = width;
+        size.height = height;
+        m_pRT->Resize(size);
+    }
+
+    void onRender()
+    {
+        auto content = BaseMessage::g_store_shapes->readOneElem(0);
+        if (content->draw)
+        {
+            BaseRect rect;
+            content->draw->Record(rect, { 0 });
+        }
+    }
 
     void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
 

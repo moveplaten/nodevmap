@@ -8,8 +8,8 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     mousePt pt;
     pt.x = LOWORD(lParam);
     pt.y = HIWORD(lParam);
-    pt.x = round(pt.x / D2dUtil::g_dpi_scale_X);
-    pt.y = round(pt.y / D2dUtil::g_dpi_scale_Y);
+    pt.x = pt.x / D2dUtil::g_dpi_scale_X;
+    pt.y = pt.y / D2dUtil::g_dpi_scale_Y;
 
     switch (message)
     {
@@ -54,6 +54,29 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
     {
         baseMsg->hitTest(MouseRButtonUp, &pt);
+    }
+    break;
+
+    case WM_SIZE:
+    {
+        if (D2dUtil::g_d2dutil)
+        {
+            UINT width = LOWORD(lParam);
+            UINT height = HIWORD(lParam);
+            D2dUtil::g_d2dutil->onResize(width, height);
+        }
+    }
+    break;
+
+    case WM_PAINT:
+    {
+        if (D2dUtil::g_d2dutil)
+        {
+            PAINTSTRUCT ps;
+            BeginPaint(hwnd, &ps);
+            D2dUtil::g_d2dutil->onRender();
+            EndPaint(hwnd, &ps);
+        }
     }
     break;
 

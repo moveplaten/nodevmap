@@ -332,7 +332,7 @@ class ActRandomInit : public BaseAction
             None, None, None, None, None, None, None, None, End };
         static int offset = -1; ++offset;
         initDraw(base);
-        getDraw(base)->Record(rect, { 255, 0, 0 }, opt[offset]);
+        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -346,7 +346,7 @@ class ActMouseRButtonDown : public BaseAction
     {
         BaseRect rect = *(base->getRect());
 
-        //draw->fillRect(rect, RGB(0, 0, 0));
+        getDraw(base)->Record(rect, { 0, 0, 0 });
 
         elemDel(base->getSelfName());
     }
@@ -378,7 +378,7 @@ class Act3MouseRButtonDown : public BaseAction
                     None, None, None, None, None, None, None, None, End };
                 static int offset = -1; ++offset;
 
-                //draw->fillRect(*(shape->getRect()), RGB(0, 0, 0), opt[offset]);
+                getDraw(base)->Record(*(shape->getRect()), { 0, 0, 0 }, opt[offset]);
                 if (offset >= ARRAYSIZE(opt) - 1)
                 {
                     offset = -1;

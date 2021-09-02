@@ -4,10 +4,10 @@
 
 struct BaseRect
 {
-    long left;
-    long top;
-    long right;
-    long bottom;
+    float left;
+    float top;
+    float right;
+    float bottom;
 };
 
 struct NvpColor
