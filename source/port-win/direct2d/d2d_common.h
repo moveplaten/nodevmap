@@ -25,6 +25,7 @@ public:
 
     HRESULT createDeviceTarget();
     double getDrawFPS() { return draw_fps; }
+    auto getRenderTarget() { return m_pRT; }
 
     void onResize(UINT width, UINT height)
     {

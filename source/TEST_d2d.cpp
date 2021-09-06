@@ -456,16 +456,12 @@ class MenuMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        RECT rect;
-        GetClientRect(g_hwnd, &rect);
-        rect.right /= D2dUtil::g_dpi_scale_X;
-        rect.right -= 20;
-        rect.bottom = 20;
+        D2D1_SIZE_F client = D2dUtil::g_d2dutil->getRenderTarget()->GetSize();
         BaseRect frec;
-        frec.left = rect.left;
-        frec.top = rect.top;
-        frec.right = rect.right;
-        frec.bottom = rect.bottom;
+        frec.left = 0;
+        frec.top = 0;
+        frec.right = client.width - 20;
+        frec.bottom = 20;
         D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
     }
 }MenuMouseLeave;
@@ -495,17 +491,12 @@ class StatMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        RECT rect;
-        GetClientRect(g_hwnd, &rect);
-        rect.right /= D2dUtil::g_dpi_scale_X;
-        rect.bottom /= D2dUtil::g_dpi_scale_Y;
-        rect.right -= 20;
-        rect.top = rect.bottom - 20;
+        D2D1_SIZE_F client = D2dUtil::g_d2dutil->getRenderTarget()->GetSize();
         BaseRect frec;
-        frec.left = rect.left;
-        frec.top = rect.top;
-        frec.right = rect.right;
-        frec.bottom = rect.bottom;
+        frec.left = 0;
+        frec.top = client.height - 20;
+        frec.right = client.width - 20;
+        frec.bottom = client.height;
         D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
     }
 }StatMouseLeave;
