@@ -24,7 +24,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     wc.lpszClassName = MAINWNDCLASS;
     wc.lpfnWndProc = (WNDPROC)MainProc;
     wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+    wc.hbrBackground = NULL;
+    wc.style = CS_HREDRAW | CS_VREDRAW; //send paint message whatever window size change;
     RegisterClass(&wc);
 
     ///////////////////////////////////////////////

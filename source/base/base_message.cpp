@@ -3,6 +3,8 @@
 
 HWND BaseMessage::g_hwnd = nullptr;
 StoreBaseShape* BaseMessage::g_store_shapes = nullptr;
+MenuBar* g_menu_bar = nullptr;
+StatusBar* g_status_bar = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {

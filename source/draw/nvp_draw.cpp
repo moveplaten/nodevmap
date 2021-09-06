@@ -45,6 +45,11 @@ void NvpDraw::realDraw()
             dra->doDraw();
         }
     }
+    BaseShape* menu = g_menu_bar->readOneElem(0);
+    BaseShape* stat = g_status_bar->readOneElem(0);
+    mousePt pt;
+    menu->elem->msgRoute(MouseLeave, &pt);
+    stat->elem->msgRoute(MouseLeave, &pt);
     doEnd();
     /////////////////////////////////////////////////////////
 }

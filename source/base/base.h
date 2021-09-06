@@ -21,6 +21,8 @@ typedef float ptSize;
 #define MAX_ELEM_ONE_PAGE 100000
 struct BaseShape;
 typedef ElemStorage<MAX_ELEM_ONE_PAGE, BaseShape> StoreBaseShape;
+typedef ElemStorage<100, BaseShape> MenuBar;
+typedef ElemStorage<100, BaseShape> StatusBar;
 //#define TEMP_TEST_0
 
 enum MsgBaseType
@@ -59,6 +61,8 @@ private:
 
 /// GLOBAL baseMsg;
 static BaseMessage* const baseMsg = nullptr;
+extern MenuBar* g_menu_bar;
+extern StatusBar* g_status_bar;
 
 
 class BaseAction : public BaseMessage

@@ -435,4 +435,84 @@ ELEM_GEN(v3, MouseLeave, Act3MouseLeave)
 ELEM_GEN(v3, MouseLButtonDown, Act3MouseLButtonDown) //generate
 ELEM_GEN(v3, MouseRButtonDown, Act3MouseRButtonDown) //delete
 
+/////////////////////////////////////////////////////////////////////
+class MenuInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+
+    }
+}MenuInit;
+
+class MenuMouseMove : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+
+    }
+}MenuMouseMove;
+
+class MenuMouseLeave : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        RECT rect;
+        GetClientRect(g_hwnd, &rect);
+        rect.right /= D2dUtil::g_dpi_scale_X;
+        rect.right -= 20;
+        rect.bottom = 20;
+        BaseRect frec;
+        frec.left = rect.left;
+        frec.top = rect.top;
+        frec.right = rect.right;
+        frec.bottom = rect.bottom;
+        D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
+    }
+}MenuMouseLeave;
+
+ELEM_GEN(menu_bar, MsgInit, MenuInit)
+ELEM_GEN(menu_bar, MouseMove, MenuMouseMove)
+ELEM_GEN(menu_bar, MouseLeave, MenuMouseLeave)
+/////////////////////////////////////////////////////////////////////
+
+class StatInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+
+    }
+}StatInit;
+
+class StatMouseMove : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+
+    }
+}StatMouseMove;
+
+class StatMouseLeave : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        RECT rect;
+        GetClientRect(g_hwnd, &rect);
+        rect.right /= D2dUtil::g_dpi_scale_X;
+        rect.bottom /= D2dUtil::g_dpi_scale_Y;
+        rect.right -= 20;
+        rect.top = rect.bottom - 20;
+        BaseRect frec;
+        frec.left = rect.left;
+        frec.top = rect.top;
+        frec.right = rect.right;
+        frec.bottom = rect.bottom;
+        D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
+    }
+}StatMouseLeave;
+
+ELEM_GEN(status_bar, MsgInit, StatInit)
+ELEM_GEN(status_bar, MouseMove, StatMouseMove)
+ELEM_GEN(status_bar, MouseLeave, StatMouseLeave)
+/////////////////////////////////////////////////////////////////////
+
 ELEM_GEN(v4, MsgNone, ActInit)
