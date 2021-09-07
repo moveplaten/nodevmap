@@ -1,4 +1,5 @@
 #include "base/base.h"
+#include "base/layout.h"
 #include "direct2d/d2d_common.h"
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

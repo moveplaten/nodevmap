@@ -5,7 +5,7 @@
 #include <d2d1helper.h>
 
 #include "draw/draw.h"
-#include "base/base.h"
+#include "base/layout.h"
 
 bool initD2dDevice(HWND hwnd);
 
@@ -37,7 +37,7 @@ public:
 
     void onRender()
     {
-        auto content = BaseMessage::g_store_shapes->readOneElem(0);
+        auto content = g_node_view->readOneElem(0);
         if (content->draw)
         {
             BaseRect rect;

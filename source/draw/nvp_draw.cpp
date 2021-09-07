@@ -1,5 +1,6 @@
 #include "draw.h"
 #include "base/base.h"
+#include "base/layout.h"
 
 void NvpDraw::Record(const BaseRect& rec, NvpColor col, RecordOption opt)
 {
@@ -32,8 +33,8 @@ void NvpDraw::Record(const BaseRect& rec, NvpColor col, RecordOption opt)
 
 void NvpDraw::realDraw()
 {
-    auto contents = BaseMessage::g_store_shapes->getContents();
-    auto total = BaseMessage::g_store_shapes->getTotalMax();
+    auto contents = g_node_view->getContents();
+    auto total = g_node_view->getTotalMax();
 
     /////////////////////////////////////////////////////////
     doBegin();

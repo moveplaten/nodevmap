@@ -1,4 +1,5 @@
 #include "base/base.h"
+#include "base/layout.h"
 #include "port-win/direct2d/d2d_common.h"
 
 static NvpDraw* getDraw(BaseElement* base)
@@ -364,8 +365,8 @@ class Act3MouseRButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            auto ret = ElementGenerator::g_elements_map->find(number_str);
-            if (ret == ElementGenerator::g_elements_map->end())
+            auto ret = ElemGenerator::g_node_view_map->find(number_str);
+            if (ret == ElemGenerator::g_node_view_map->end())
             {
                 continue;
             }
@@ -460,9 +461,9 @@ class MenuMouseLeave : public BaseAction
         BaseRect frec;
         frec.left = 0;
         frec.top = 0;
-        frec.right = client.width - 20;
+        frec.right = client.width;
         frec.bottom = 20;
-        D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
+        D2dUtil::g_d2dutil->fillRect(frec, RGB(100, 190, 255), None);
     }
 }MenuMouseLeave;
 
@@ -495,9 +496,9 @@ class StatMouseLeave : public BaseAction
         BaseRect frec;
         frec.left = 0;
         frec.top = client.height - 20;
-        frec.right = client.width - 20;
+        frec.right = client.width;
         frec.bottom = client.height;
-        D2dUtil::g_d2dutil->fillRect(frec, RGB(0, 200, 100), None);
+        D2dUtil::g_d2dutil->fillRect(frec, RGB(100, 190, 255), None);
     }
 }StatMouseLeave;
 

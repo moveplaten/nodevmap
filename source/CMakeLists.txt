@@ -6,6 +6,7 @@ set(nodevmap_SOURCES
     base/base_message.cpp
     base/base_element.cpp
     base/elem_storage.cpp
+    base/nvp_layout.cpp
     draw/nvp_draw.cpp
     port-win/win_main.cpp
     port-win/win_message.cpp

@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include "elem_storage.h"
-#include "draw/draw.h"
 
 #include <Windows.h>
 
@@ -18,11 +17,9 @@ typedef struct
 
 typedef float ptSize;
 
-#define MAX_ELEM_ONE_PAGE 100000
 struct BaseShape;
-typedef ElemStorage<MAX_ELEM_ONE_PAGE, BaseShape> StoreBaseShape;
-typedef ElemStorage<100, BaseShape> MenuBar;
-typedef ElemStorage<100, BaseShape> StatusBar;
+typedef ElemStorage<NULL, BaseShape> StoreBaseShape;
+
 //#define TEMP_TEST_0
 
 enum MsgBaseType
@@ -45,7 +42,6 @@ class BaseMessage
 {
 public:
     static HWND g_hwnd;
-    static StoreBaseShape* g_store_shapes;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
     void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
@@ -60,9 +56,7 @@ private:
 
 
 /// GLOBAL baseMsg;
-static BaseMessage* const baseMsg = nullptr;
-extern MenuBar* g_menu_bar;
-extern StatusBar* g_status_bar;
+extern BaseMessage* const baseMsg;
 
 
 class BaseAction : public BaseMessage
@@ -85,6 +79,14 @@ private:
     void mousePtToLocal(BaseElement* base, mousePt* pt);
 
     friend class BaseElement;
+};
+
+struct BaseRect
+{
+    float left;
+    float top;
+    float right;
+    float bottom;
 };
 
 struct BaseShape
@@ -174,46 +176,3 @@ private:
 
     friend class BaseMessage;
 };
-
-typedef std::map<std::string, BaseElement*> ElemMap;
-
-#define ELEM_GEN(x, y, z)\
-ElementGenerator x##y##z(#x, y, &z);
-
-class ElementGenerator
-{
-public:
-    ElementGenerator::ElementGenerator(const std::string& str,
-        MsgBaseType msg_type, BaseAction* msg_act);
-
-    ElementGenerator::~ElementGenerator() {}
-
-//private:
-    static ElemMap* g_elements_map;
-};
-
-static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act)
-{
-    ElementGenerator(str, msg_type, msg_act);
-    auto ret = ElementGenerator::g_elements_map->find(str);
-    auto elem = *ret;
-    BaseElement* base = elem.second;
-    return base;
-}
-
-static bool elemDel(const std::string& str)
-{
-    auto ret = ElementGenerator::g_elements_map->find(str);
-    if (ret == ElementGenerator::g_elements_map->end())
-    {
-        return false;
-    }
-    else
-    {
-        auto elem = *ret;
-        BaseElement* base = elem.second;
-        ElementGenerator::g_elements_map->erase(str);
-        base->deleteSelf();
-        return true;
-    }
-}

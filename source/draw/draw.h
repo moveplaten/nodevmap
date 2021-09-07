@@ -2,13 +2,7 @@
 
 #include <vector>
 
-struct BaseRect
-{
-    float left;
-    float top;
-    float right;
-    float bottom;
-};
+struct BaseRect;
 
 struct NvpColor
 {

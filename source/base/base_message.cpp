@@ -1,10 +1,9 @@
 #include "base.h"
+#include "layout.h"
 #include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
-StoreBaseShape* BaseMessage::g_store_shapes = nullptr;
-MenuBar* g_menu_bar = nullptr;
-StatusBar* g_status_bar = nullptr;
+BaseMessage* const baseMsg = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -51,9 +50,9 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    for (elemIDSize i = 0; i < g_store_shapes->getTotalUsed(); ++i)
+    for (elemIDSize i = 0; i < g_node_view->getTotalUsed(); ++i)
     {
-        BaseShape* content = g_store_shapes->readOneElem(i);
+        BaseShape* content = g_node_view->readOneElem(i);
         content->elem->msgRoute(MsgInit, pt);
     }
 }
@@ -80,10 +79,10 @@ BaseElement* BaseMessage::inRange(mousePt* pt)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
-    const BaseShape* base_shapes = g_store_shapes->getContents();
-    const elemIDSize* reused = g_store_shapes->getReused();
-    elemIDSize reused_count = g_store_shapes->getReusedCount();
-    elemIDSize total = g_store_shapes->getTotalMax();
+    const BaseShape* base_shapes = g_node_view->getContents();
+    const elemIDSize* reused = g_node_view->getReused();
+    elemIDSize reused_count = g_node_view->getReusedCount();
+    elemIDSize total = g_node_view->getTotalMax();
     elemIDSize hit = -1;
 
     for (elemIDSize i = 0; i < total; ++i)
