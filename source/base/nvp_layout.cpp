@@ -1,13 +1,21 @@
-#include "layout.h"
+#include "base.h"
 
-NodeView* g_node_view = nullptr;
-MenuBar* g_menu_bar = nullptr;
-StatusBar* g_status_bar = nullptr;
+NvpLevel* g_top_layout = nullptr;
+NvpLevel* g_top_node_view = nullptr;
+NvpLevel* g_top_menu_bar = nullptr;
+NvpLevel* g_top_status_bar = nullptr;
+AllElem* g_all_elem_store = nullptr;
+ElemMap* g_all_elem_map = nullptr;
 
-BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act)
+BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
+    NvpLevel* level)
 {
-    ElemGenerator(str, msg_type, msg_act);
-    auto ret = ElemGenerator::g_node_view_map->find(str);
+    ElemGenerator(str, msg_type, msg_act, level);
+    auto ret = g_all_elem_map->find(str);
+    if (ret == g_all_elem_map->end())
+    {
+        return nullptr;
+    }
     auto elem = *ret;
     BaseElement* base = elem.second;
     return base;
@@ -15,8 +23,8 @@ BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* m
 
 bool elemDel(const std::string& str)
 {
-    auto ret = ElemGenerator::g_node_view_map->find(str);
-    if (ret == ElemGenerator::g_node_view_map->end())
+    auto ret = g_all_elem_map->find(str);
+    if (ret == g_all_elem_map->end())
     {
         return false;
     }
@@ -24,57 +32,80 @@ bool elemDel(const std::string& str)
     {
         auto elem = *ret;
         BaseElement* base = elem.second;
-        ElemGenerator::g_node_view_map->erase(str);
+        g_all_elem_map->erase(str);
         base->deleteSelf();
         return true;
     }
 }
 
-ElemMap* ElemGenerator::g_node_view_map = nullptr;
-
 ElemGenerator::ElemGenerator(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act)
+    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level)
 {
-    static NodeView node_view;
-    static MenuBar menu_bar;
-    static StatusBar status_bar;
-
-    if (!g_node_view_map)
+    if (!g_all_elem_map)
     {
         static ElemMap elements;
-        g_node_view_map = &elements;
-        g_node_view = &node_view;
-        g_menu_bar = &menu_bar;
-        g_status_bar = &status_bar;
+        static AllElem all_elem;
+        g_all_elem_map = &elements;
+        g_all_elem_store = &all_elem;
+        initDefaultLayout();
     }
 
-    auto ret = g_node_view_map->find(str);
-    if (ret == g_node_view_map->end())
+    if (level)
     {
-        BaseShape content;
-        BaseElement* base;
-        if (str == "menu_bar")
+        auto ret = g_all_elem_map->find(str);
+        if (ret == g_all_elem_map->end())
         {
-            elemIDSize id = g_menu_bar->storeOneElem(&content);
-            base = new BaseElement(id, str.c_str(), (StoreBaseShape*)g_menu_bar);
-        }
-        else if (str == "status_bar")
-        {
-            elemIDSize id = g_status_bar->storeOneElem(&content);
-            base = new BaseElement(id, str.c_str(), (StoreBaseShape*)g_status_bar);
+            NvpLayout null_layout;
+            auto id = g_all_elem_store->storeOneElem(&null_layout);
+            auto layout = g_all_elem_store->readOneElem(id);
+            level->push_back(layout);
+            auto end = level->end();
+            auto iter = --end;
+            BaseElement* base = new BaseElement(id, str.c_str(), layout, level, iter);
+            base->linkMsg(msg_type, msg_act);
+            g_all_elem_map->insert({ str, base });
         }
         else
         {
-            elemIDSize id = node_view.storeOneElem(&content);
-            base = new BaseElement(id, str.c_str(), (StoreBaseShape*)g_node_view);
-        }
-        base->linkMsg(msg_type, msg_act);
-        g_node_view_map->insert({ str, base });
+            auto elem = *ret;
+            BaseElement* base = elem.second;
+            base->linkMsg(msg_type, msg_act);
+        }  
     }
-    else
+}
+
+NvpLevel* subLevelGen(NvpLayout* current)
+{
+    if (!current)
     {
-        auto elem = *ret;
-        BaseElement* base = elem.second;
-        base->linkMsg(msg_type, msg_act);
+        return nullptr;
     }
+    if (current->sub)
+    {
+        return nullptr;
+    }
+    auto sub_level = new NvpLevel;
+    current->sub = sub_level;
+    return sub_level;
+}
+
+void ElemGenerator::initDefaultLayout()
+{
+    if (g_top_layout)
+    {
+        return;
+    }
+    
+    g_top_layout = new NvpLevel;
+    auto top_elem = elemGen("top_layout", MsgNone, nullptr, g_top_layout);
+
+    auto sub_level = subLevelGen(top_elem->getSelfLayout());
+
+    auto node_view = elemGen("node_view_layout", MsgNone, nullptr, sub_level);
+    auto menu_bar = elemGen("menu_bar_layout", MsgNone, nullptr, sub_level);
+    auto status_bar = elemGen("status_bar_layout", MsgNone, nullptr, sub_level);
+
+    g_top_node_view = subLevelGen(node_view->getSelfLayout());
+    g_top_menu_bar = subLevelGen(menu_bar->getSelfLayout());
+    g_top_status_bar = subLevelGen(status_bar->getSelfLayout());
 }

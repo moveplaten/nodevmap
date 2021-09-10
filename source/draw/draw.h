@@ -3,6 +3,7 @@
 #include <vector>
 
 struct BaseRect;
+class BaseElement;
 
 struct NvpColor
 {
@@ -35,9 +36,15 @@ public:
 
     void realDraw();
 
+    void deleteSelf()
+    {
+        delete this;
+    }
+
     int record_offset = 0;
     std::vector<BaseRect> recs;
     std::vector<NvpColor> cols;
+    BaseElement* elem = nullptr;
 
 protected:
     virtual void doBegin() = 0;

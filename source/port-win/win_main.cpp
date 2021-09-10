@@ -14,7 +14,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 
-    BaseElement b(0, "0", 0);
+    NvpLevel::iterator iter;
+    BaseElement b(0, "0", 0, 0, iter);
     elemGen("test0", MsgNone, nullptr);
     ElemStorage<100, int> e;
 

@@ -157,8 +157,14 @@ void D2dDraw::doDraw()
         {
             return;
         }
-        //target->FillRectangle(recf, brush);
-        target->DrawRoundedRectangle(round, brush);
+        if (elem->getSelfName() == "menu_bar" || elem->getSelfName() == "status_bar")
+        {
+            target->FillRectangle(recf, brush);
+        }
+        else
+        {
+            target->DrawRoundedRectangle(round, brush);
+        }
         brush->Release();
     }
 }

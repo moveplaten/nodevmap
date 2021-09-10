@@ -114,15 +114,15 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
     local_pt.y = pt->y - base->getRect()->top;
 }
 
-BaseElement::BaseElement(const elemIDSize id,
-    const char* name, StoreBaseShape* const shapes)
-    :self_id(id), self_name(name), base_shapes(shapes)
+BaseElement::BaseElement(const elemIDSize id, const char* name,
+    NvpLayout* const layout, NvpLevel* const level,
+    NvpLevel::iterator const iter)
+    :self_id(id), self_name(name), self_layout(layout), self_level(level),
+    self_iter(iter)
 {
-    if (base_shapes)
+    if (self_layout && self_level)
     {
-        BaseShape* content_shapes = base_shapes->readOneElem(self_id);
-        content_shapes->rect = { 0 };
-        content_shapes->elem = this;
+        self_layout->elem = this;
     }
 }
 

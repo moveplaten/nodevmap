@@ -1,6 +1,5 @@
 #include "draw.h"
 #include "base/base.h"
-#include "base/layout.h"
 
 void NvpDraw::Record(const BaseRect& rec, NvpColor col, RecordOption opt)
 {
@@ -33,24 +32,22 @@ void NvpDraw::Record(const BaseRect& rec, NvpColor col, RecordOption opt)
 
 void NvpDraw::realDraw()
 {
-    auto contents = g_node_view->getContents();
-    auto total = g_node_view->getTotalMax();
+    auto size = g_all_elem_map->size();
+    auto content = *g_all_elem_map;
+    auto it = content.begin();
 
     /////////////////////////////////////////////////////////
     doBegin();
-    for (int i = 0; i < total; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
-        auto dra = contents[i].draw;
+        auto elem = (*it).second;
+        auto dra = elem->getSelfLayout()->draw;
         if (dra)
         {
             dra->doDraw();
         }
+        ++it;
     }
-    BaseShape* menu = g_menu_bar->readOneElem(0);
-    BaseShape* stat = g_status_bar->readOneElem(0);
-    mousePt pt;
-    menu->elem->msgRoute(MouseLeave, &pt);
-    stat->elem->msgRoute(MouseLeave, &pt);
     doEnd();
     /////////////////////////////////////////////////////////
 }

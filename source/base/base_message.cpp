@@ -1,5 +1,4 @@
 #include "base.h"
-#include "layout.h"
 #include <stdio.h>
 
 HWND BaseMessage::g_hwnd = nullptr;
@@ -27,7 +26,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else
     {
-        BaseElement* fetch = inRange(pt);
+        BaseElement* fetch = inRange(pt, g_top_layout);
 
         if (fetch)
         {
@@ -50,10 +49,14 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
 void BaseMessage::initAll(mousePt* pt)
 {
-    for (elemIDSize i = 0; i < g_node_view->getTotalUsed(); ++i)
+    auto size = g_all_elem_map->size();
+    auto content = *g_all_elem_map;
+    auto it = content.begin();
+    for (size_t i = 0; i < size; ++i)
     {
-        BaseShape* content = g_node_view->readOneElem(i);
-        content->elem->msgRoute(MsgInit, pt);
+        auto elem = (*it).second;
+        elem->msgRoute(MsgInit, pt);
+        ++it;
     }
 }
 
@@ -75,43 +78,47 @@ bool BaseMessage::checkLeave()
     }
 }
 
-BaseElement* BaseMessage::inRange(mousePt* pt)
+BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
 {
     ptSize pt_x = pt->x;
     ptSize pt_y = pt->y;
-    const BaseShape* base_shapes = g_node_view->getContents();
-    const elemIDSize* reused = g_node_view->getReused();
-    elemIDSize reused_count = g_node_view->getReusedCount();
-    elemIDSize total = g_node_view->getTotalMax();
-    elemIDSize hit = -1;
+    size_t hit = -1;
+    static BaseElement* hit_elem = nullptr;
 
-    for (elemIDSize i = 0; i < total; ++i)
+    if (level)
     {
-        const BaseRect* rect = &base_shapes[i].rect;
-        if (rect->left <= pt_x && rect->right > pt_x &&
+        auto size = level->size();
+        auto content = *level;
+        auto iter = content.begin();
+        for (size_t i = 0; i < size; ++i)
+        {
+            auto rect = &(*iter)->rect;
+            if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
-        {
-            hit = i;
-            break;
-        }
-    }
-
-    if (hit == -1)
-    {
-        BaseElement::g_hitTest_id = nullptr;
-        return nullptr;
-    }
-    else
-    {
-        for (elemIDSize i = 0; i < reused_count; ++i)
-        {
-            if (hit == reused[i])
             {
-                BaseElement::g_hitTest_id = nullptr;
-                return nullptr;
+                hit = i;
+                hit_elem = (*iter)->elem;
+            }
+            else
+            {
+                ++iter;
             }
         }
-        BaseElement::g_hitTest_id = base_shapes[hit].elem;
-        return base_shapes[hit].elem;
+        if (hit == -1)
+        {
+            BaseElement::g_hitTest_id = hit_elem;
+            return hit_elem;
+        }
+        else if ((*iter)->sub)
+        {
+            inRange(pt, (*iter)->sub);
+        }
+        else
+        {
+            BaseElement::g_hitTest_id = (*iter)->elem;
+            hit_elem = (*iter)->elem;
+            return hit_elem;
+        }
     }
+    return hit_elem;
 }

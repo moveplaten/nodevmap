@@ -5,7 +5,7 @@
 #include <d2d1helper.h>
 
 #include "draw/draw.h"
-#include "base/layout.h"
+#include "base/base.h"
 
 bool initD2dDevice(HWND hwnd);
 
@@ -33,15 +33,78 @@ public:
         size.width = width;
         size.height = height;
         m_pRT->Resize(size);
+        D2D1_SIZE_F client = m_pRT->GetSize();
+        auto ret = g_all_elem_map->find("top_layout");
+        if (ret != g_all_elem_map->end())
+        {
+            auto elem = *ret;
+            BaseRect rect;
+            rect.left = 0.0f;
+            rect.top = 0.0f;
+            rect.right = client.width;
+            rect.bottom = client.height;
+            elem.second->getSelfLayout()->rect = rect;
+        }
+        
+        ret = g_all_elem_map->find("node_view_layout");
+        if (ret != g_all_elem_map->end())
+        {
+            auto elem = *ret;
+            BaseRect rect;
+            rect.left = 0.0f;
+            rect.top = 20.0f;
+            rect.right = client.width;
+            rect.bottom = client.height - 20.0f;
+            elem.second->getSelfLayout()->rect = rect;
+        }
+        
+        ret = g_all_elem_map->find("menu_bar_layout");
+        if (ret != g_all_elem_map->end())
+        {
+            auto elem = *ret;
+            BaseRect rect;
+            rect.left = 0.0f;
+            rect.top = 0.0f;
+            rect.right = client.width;
+            rect.bottom = 20.0f;
+            elem.second->getSelfLayout()->rect = rect;
+        }
+        
+        ret = g_all_elem_map->find("status_bar_layout");
+        if (ret != g_all_elem_map->end())
+        {
+            auto elem = *ret;
+            BaseRect rect;
+            rect.left = 0.0f;
+            rect.top = client.height - 20.0f;
+            rect.right = client.width;
+            rect.bottom = client.height;
+            elem.second->getSelfLayout()->rect = rect;
+        }
     }
 
     void onRender()
     {
-        auto content = g_node_view->readOneElem(0);
+        auto contents = *g_all_elem_map;
+        auto it = contents.begin();
+        auto content = (*it).second->getSelfLayout();
+        auto ret = g_all_elem_map->find("menu_bar");
+        auto elem = (*ret).second;
+        mousePt pt;
+        if (elem->getSelfLayout()->draw)
+        {
+            elem->msgRoute(MouseLeave, &pt);
+        }
+        ret = g_all_elem_map->find("status_bar");
+        elem = (*ret).second;
+        if (elem->getSelfLayout()->draw)
+        {
+            elem->msgRoute(MouseLeave, &pt);
+        }
+
         if (content->draw)
         {
-            BaseRect rect;
-            content->draw->Record(rect, { 0 });
+            content->draw->realDraw();
         }
     }
 

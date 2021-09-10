@@ -4,24 +4,22 @@
 
 static NvpDraw* getDraw(BaseElement* base)
 {
-    auto shapes = base->getBaseShapes();
-    BaseShape* content = shapes->readOneElem(base->getSelfID());
-    return content->draw;
+    auto shapes = base->getSelfLayout();
+    return shapes->draw;
 }
 
 static void initDraw(BaseElement* base)
 {
     auto d2d_draw = new D2dDraw();
-    auto shapes = base->getBaseShapes();
-    BaseShape* content = shapes->readOneElem(base->getSelfID());
-    content->draw = d2d_draw;
+    auto shapes = base->getSelfLayout();
+    shapes->draw = d2d_draw;
+    shapes->draw->elem = base;
 }
 
 class ActInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        elemGen("v0", MsgNone, nullptr);
         BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
@@ -315,7 +313,6 @@ class ActRandomInit : public BaseAction
     virtual void realAction(BaseElement* base) override
     {
         static long seed = 0; ++seed;
-        elemGen("v0", MsgNone, nullptr);
         BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
@@ -365,8 +362,8 @@ class Act3MouseRButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            auto ret = ElemGenerator::g_node_view_map->find(number_str);
-            if (ret == ElemGenerator::g_node_view_map->end())
+            auto ret = g_all_elem_map->find(number_str);
+            if (ret == g_all_elem_map->end())
             {
                 continue;
             }
@@ -379,7 +376,7 @@ class Act3MouseRButtonDown : public BaseAction
                     None, None, None, None, None, None, None, None, End };
                 static int offset = -1; ++offset;
 
-                getDraw(base)->Record(*(shape->getRect()), { 0, 0, 0 }, opt[offset]);
+                getDraw(shape)->Record(*(shape->getRect()), { 0, 0, 0 }, opt[offset]);
                 if (offset >= ARRAYSIZE(opt) - 1)
                 {
                     offset = -1;
@@ -415,6 +412,7 @@ class Act3MouseLButtonDown : public BaseAction
     }
 }Act3MouseLButtonDown;
 
+ELEM_GEN(init, MsgNone, ActInit) //init first;
 
 ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseMove, ActMouseMove)
@@ -441,7 +439,12 @@ class MenuInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-
+        auto ret = g_all_elem_map->find("menu_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        initDraw(base);
+        getDraw(base)->Record(rect, { 100, 200, 255 });
     }
 }MenuInit;
 
@@ -449,7 +452,11 @@ class MenuMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-
+        auto ret = g_all_elem_map->find("menu_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        getDraw(base)->Record(rect, { 200, 200, 255 });
     }
 }MenuMouseMove;
 
@@ -457,26 +464,29 @@ class MenuMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        D2D1_SIZE_F client = D2dUtil::g_d2dutil->getRenderTarget()->GetSize();
-        BaseRect frec;
-        frec.left = 0;
-        frec.top = 0;
-        frec.right = client.width;
-        frec.bottom = 20;
-        D2dUtil::g_d2dutil->fillRect(frec, RGB(100, 190, 255), None);
+        auto ret = g_all_elem_map->find("menu_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        getDraw(base)->Record(rect, { 100, 200, 255 });
     }
 }MenuMouseLeave;
 
-ELEM_GEN(menu_bar, MsgInit, MenuInit)
-ELEM_GEN(menu_bar, MouseMove, MenuMouseMove)
-ELEM_GEN(menu_bar, MouseLeave, MenuMouseLeave)
+ELEM_GEN_FULL(menu_bar, MsgInit, MenuInit, g_top_menu_bar)
+ELEM_GEN_FULL(menu_bar, MouseMove, MenuMouseMove, g_top_menu_bar)
+ELEM_GEN_FULL(menu_bar, MouseLeave, MenuMouseLeave, g_top_menu_bar)
 /////////////////////////////////////////////////////////////////////
 
 class StatInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-
+        auto ret = g_all_elem_map->find("status_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        initDraw(base);
+        getDraw(base)->Record(rect, { 100, 200, 255 });
     }
 }StatInit;
 
@@ -484,7 +494,11 @@ class StatMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-
+        auto ret = g_all_elem_map->find("status_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        getDraw(base)->Record(rect, { 200, 200, 255 });
     }
 }StatMouseMove;
 
@@ -492,19 +506,15 @@ class StatMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        D2D1_SIZE_F client = D2dUtil::g_d2dutil->getRenderTarget()->GetSize();
-        BaseRect frec;
-        frec.left = 0;
-        frec.top = client.height - 20;
-        frec.right = client.width;
-        frec.bottom = client.height;
-        D2dUtil::g_d2dutil->fillRect(frec, RGB(100, 190, 255), None);
+        auto ret = g_all_elem_map->find("status_bar_layout");
+        auto elem = (*ret).second;
+        auto rect = elem->getSelfLayout()->rect;
+        base->setRect(&rect);
+        getDraw(base)->Record(rect, { 100, 200, 255 });
     }
 }StatMouseLeave;
 
-ELEM_GEN(status_bar, MsgInit, StatInit)
-ELEM_GEN(status_bar, MouseMove, StatMouseMove)
-ELEM_GEN(status_bar, MouseLeave, StatMouseLeave)
+ELEM_GEN_FULL(status_bar, MsgInit, StatInit, g_top_status_bar)
+ELEM_GEN_FULL(status_bar, MouseMove, StatMouseMove, g_top_status_bar)
+ELEM_GEN_FULL(status_bar, MouseLeave, StatMouseLeave, g_top_status_bar)
 /////////////////////////////////////////////////////////////////////
-
-ELEM_GEN(v4, MsgNone, ActInit)

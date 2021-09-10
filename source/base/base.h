@@ -1,9 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-#include <string>
-#include <map>
-#include "elem_storage.h"
+#include "layout.h"
 
 #include <Windows.h>
 
@@ -17,24 +14,7 @@ typedef struct
 
 typedef float ptSize;
 
-struct BaseShape;
-typedef ElemStorage<NULL, BaseShape> StoreBaseShape;
-
 //#define TEMP_TEST_0
-
-enum MsgBaseType
-{
-    MsgNone,
-    MsgInit,
-    MouseMove,
-    MouseLeave,
-    MouseLButtonDown,
-    MouseLButtonUp,
-    MouseRButtonDown,
-    MouseRButtonUp,
-    MouseMove_MouseLButtonDown,
-
-};
 
 class BaseElement;
 
@@ -51,7 +31,7 @@ protected:
 private:
     void initAll(mousePt* pt);
     bool checkLeave();
-    BaseElement* inRange(mousePt* pt);
+    BaseElement* inRange(mousePt* pt, NvpLevel* level);
 };
 
 
@@ -81,66 +61,51 @@ private:
     friend class BaseElement;
 };
 
-struct BaseRect
-{
-    float left;
-    float top;
-    float right;
-    float bottom;
-};
-
-struct BaseShape
-{
-    BaseRect rect;
-    NvpDraw* draw = nullptr;
-    BaseElement* elem = nullptr;
-};
-
 class BaseElement
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
     const std::string& getSelfName() { return self_name; }
-    auto getBaseShapes()
+    auto getSelfLayout()
     {
-        return base_shapes;
+        return self_layout;
     }
 
     void deleteSelf()
     {
-        BaseRect rect = { 0 };
-        setRect(&rect);
-        base_shapes->deleteOneElem(self_id);
-        auto content = base_shapes->readOneElem(self_id);
-        delete content->draw;
-        content->draw = nullptr;
-        content->elem = nullptr;
+        g_all_elem_store->deleteOneElem(self_id);
+        self_layout->draw->deleteSelf();
+        self_level->erase(self_iter);
+        auto content = g_all_elem_store->readOneElem(self_id);
+        content->rect = { 0 };
+        content->elem = 0;
+        content->draw = 0;
+        content->sub = 0;
         delete this;
     }
 
     const BaseRect* getRect()
     {
-        BaseShape* content = base_shapes->readOneElem(self_id);
-        return &(content->rect);
+        return &(self_layout->rect);
     }
     void setRect(const BaseRect* rect)
     {
-        BaseShape* content = base_shapes->readOneElem(self_id);
-        content->rect = *rect;
+        self_layout->rect = *rect;
     }
 
-    elemIDSize getIncreaseID() { return base_shapes->getTotalUsed(); }
-    BaseElement* getElementByID(elemIDSize id)
-    {
-        BaseShape* content = base_shapes->readOneElem(id);
-        return content->elem;
-    }
+    elemIDSize getIncreaseID() { return g_all_elem_store->getTotalUsed(); }
+    //BaseElement* getElementByID(elemIDSize id)
+    //{
+    //    BaseShape* content = base_shapes->readOneElem(id);
+    //    return content->elem;
+    //}
     static BaseElement* getNowHitID() { return g_hitTest_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(const elemIDSize id,
-        const char* name, StoreBaseShape* const shapes);
+    BaseElement::BaseElement(const elemIDSize id, const char* name,
+        NvpLayout* const layout, NvpLevel* const level,
+        NvpLevel::iterator const iter);
 
     BaseElement::~BaseElement();
 
@@ -172,7 +137,9 @@ private:
     msgTypeSize linked_msg_size = 0;
 #endif // TEMP_TEST_0
 
-    StoreBaseShape* const base_shapes;
+    NvpLayout* const self_layout;
+    NvpLevel* const self_level;
+    NvpLevel::iterator const self_iter;
 
     friend class BaseMessage;
 };
