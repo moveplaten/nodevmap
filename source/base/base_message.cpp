@@ -90,14 +90,15 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         auto size = level->size();
         auto content = *level;
         auto iter = content.begin();
-        for (size_t i = 0; i < size; ++i)
+        ++iter;
+        for (size_t i = 0; i < size - 1; ++i)
         {
-            auto rect = &(*iter)->rect;
+            auto rect = &(*iter)->body.rect;
             if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
             {
                 hit = i;
-                hit_elem = (*iter)->elem;
+                hit_elem = (*iter)->body.elem;
             }
             else
             {
@@ -109,14 +110,14 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
             BaseElement::g_hitTest_id = hit_elem;
             return hit_elem;
         }
-        else if ((*iter)->sub)
+        else if ((*iter)->body.sub)
         {
-            inRange(pt, (*iter)->sub);
+            inRange(pt, (*iter)->body.sub);
         }
         else
         {
-            BaseElement::g_hitTest_id = (*iter)->elem;
-            hit_elem = (*iter)->elem;
+            BaseElement::g_hitTest_id = (*iter)->body.elem;
+            hit_elem = (*iter)->body.elem;
             return hit_elem;
         }
     }

@@ -37,7 +37,9 @@ ElemGenerator x##y##z(#x, y, &z);
 #define ELEM_GEN_FULL(x, y, z, l)\
 ElemGenerator x##y##z##l(#x, y, &z, l);
 
-struct NvpLayout;
+union NvpLayout;
+struct NvpLayoutHead;
+struct NvpLayoutBody;
 typedef std::list<NvpLayout*> NvpLevel;
 
 extern NvpLevel* g_top_layout; //the whole client area, should init global;
@@ -63,18 +65,34 @@ BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* m
 
 bool elemDel(const std::string& str);
 
-NvpLevel* subLevelGen(NvpLayout* current);
+NvpLevel* subLevelGen(NvpLayoutBody* current);
 
-typedef ElemStorage<100000, NvpLayout> AllElem;
+NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
+
+typedef ElemStorage<100000, NvpLayoutBody> AllElem;
 typedef std::map<std::string, BaseElement*> ElemMap;
 
 extern AllElem* g_all_elem_store;
 extern ElemMap* g_all_elem_map;
 
-struct NvpLayout
+struct NvpLayoutBody
 {
-    BaseRect rect = { 0 }; //local space, ref to up level;
-    BaseElement* elem = nullptr;
-    NvpDraw* draw = nullptr;
-    NvpLevel* sub = nullptr; //sub level;
+    BaseRect rect; //local space, ref to up level;
+    BaseElement* elem;
+    NvpDraw* draw;
+    NvpLevel* sub; //sub level;
+};
+
+struct NvpLayoutHead
+{
+    void* null_head; //should be first?
+    BaseElement* up_elem;
+    NvpLevel* up_level;
+    uint32_t cur_depth;
+};
+
+union NvpLayout
+{
+    NvpLayoutHead* head; //head is always first, only first one is valid;
+    NvpLayoutBody body;
 };

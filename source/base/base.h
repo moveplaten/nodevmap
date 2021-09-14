@@ -71,6 +71,11 @@ public:
         return self_layout;
     }
 
+    auto getSelfLevel()
+    {
+        return self_level;
+    }
+
     void deleteSelf()
     {
         g_all_elem_store->deleteOneElem(self_id);
@@ -104,7 +109,7 @@ public:
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
     BaseElement::BaseElement(const elemIDSize id, const char* name,
-        NvpLayout* const layout, NvpLevel* const level,
+        NvpLayoutBody* const layout, NvpLevel* const level,
         NvpLevel::iterator const iter);
 
     BaseElement::~BaseElement();
@@ -137,7 +142,7 @@ private:
     msgTypeSize linked_msg_size = 0;
 #endif // TEMP_TEST_0
 
-    NvpLayout* const self_layout;
+    NvpLayoutBody* const self_layout;
     NvpLevel* const self_level;
     NvpLevel::iterator const self_iter;
 

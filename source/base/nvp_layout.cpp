@@ -55,10 +55,11 @@ ElemGenerator::ElemGenerator(const std::string& str,
         auto ret = g_all_elem_map->find(str);
         if (ret == g_all_elem_map->end())
         {
-            NvpLayout null_layout;
+            NvpLayoutBody null_layout;
+            memset(&null_layout, 0, sizeof(NvpLayoutBody));
             auto id = g_all_elem_store->storeOneElem(&null_layout);
             auto layout = g_all_elem_store->readOneElem(id);
-            level->push_back(layout);
+            level->push_back((NvpLayout*)layout);
             auto end = level->end();
             auto iter = --end;
             BaseElement* base = new BaseElement(id, str.c_str(), layout, level, iter);
@@ -74,7 +75,7 @@ ElemGenerator::ElemGenerator(const std::string& str,
     }
 }
 
-NvpLevel* subLevelGen(NvpLayout* current)
+NvpLevel* subLevelGen(NvpLayoutBody* current)
 {
     if (!current)
     {
@@ -84,9 +85,38 @@ NvpLevel* subLevelGen(NvpLayout* current)
     {
         return nullptr;
     }
+    
     auto sub_level = new NvpLevel;
     current->sub = sub_level;
+    
+    auto head_info = new NvpLayoutHead;
+    memset(head_info, 0, sizeof(NvpLayoutHead));
+    head_info->null_head = head_info;
+    head_info->up_elem = current->elem;
+    head_info->up_level = current->elem->getSelfLevel();
+    auto depth = getLayoutHead(current)->cur_depth;
+    head_info->cur_depth = ++depth;
+    
+    sub_level->push_back((NvpLayout*)head_info);
+    
     return sub_level;
+}
+
+NvpLayoutHead* getLayoutHead(NvpLayoutBody* current)
+{
+    if (!current)
+    {
+        return nullptr;
+    }
+    if (!current->elem)
+    {
+        return nullptr;
+    }
+    
+    auto cur_level = current->elem->getSelfLevel();
+    auto head_layout = *(cur_level->begin());
+    
+    return head_layout->head;
 }
 
 void ElemGenerator::initDefaultLayout()
@@ -97,6 +127,12 @@ void ElemGenerator::initDefaultLayout()
     }
     
     g_top_layout = new NvpLevel;
+    
+    auto head_info = new NvpLayoutHead;
+    memset(head_info, 0, sizeof(NvpLayoutHead));
+    head_info->null_head = head_info;
+    g_top_layout->push_back((NvpLayout*)head_info);
+    
     auto top_elem = elemGen("top_layout", MsgNone, nullptr, g_top_layout);
 
     auto sub_level = subLevelGen(top_elem->getSelfLayout());

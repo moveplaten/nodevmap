@@ -115,7 +115,7 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 }
 
 BaseElement::BaseElement(const elemIDSize id, const char* name,
-    NvpLayout* const layout, NvpLevel* const level,
+    NvpLayoutBody* const layout, NvpLevel* const level,
     NvpLevel::iterator const iter)
     :self_id(id), self_name(name), self_layout(layout), self_level(level),
     self_iter(iter)
