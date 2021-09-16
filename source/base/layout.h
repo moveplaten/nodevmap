@@ -65,7 +65,9 @@ BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* m
 
 bool elemDel(const std::string& str);
 
-NvpLevel* subLevelGen(NvpLayoutBody* current);
+NvpLevel* subLevelGen(BaseElement* elem);
+
+void subLevelDel(BaseElement* elem);
 
 NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
 

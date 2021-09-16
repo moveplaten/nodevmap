@@ -170,6 +170,24 @@ class Act1MouseDrag : public BaseAction
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
+            //getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
+            auto sub = base->getSelfLayout()->sub;
+            if (sub)
+            {
+                auto size = sub->size();
+                if (size > 1)
+                {
+                    auto iter = sub->begin();
+                    for (size_t i = 0; i < size - 1; ++i)
+                    {
+                        ++iter;
+                        auto sub_elem = (*iter)->body.elem;
+    
+                        BaseRect rect = *(sub_elem->getRect());
+                        getDraw(sub_elem)->Record(rect, { 150, 150, 150 }, Clear);
+                    }
+                }
+            }
             getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
         }
     }
@@ -308,6 +326,10 @@ class Act3MouseLeave : public BaseAction
     }
 }Act3MouseLeave;
 
+//global opt speed control;
+static RecordOption opt[] = { Clear, Clear, Clear, Clear, Clear, Clear,
+    Clear, Clear, Clear, Clear, Clear, Clear, Clear, Clear, End };
+
 class ActRandomInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
@@ -315,7 +337,7 @@ class ActRandomInit : public BaseAction
         static long seed = 0; ++seed;
         BaseRect rect;
         rect.left = rect.top = 10;
-        rect.right = rect.bottom = 50;
+        rect.right = rect.bottom = 60;
         srand(seed);
         int temp = rand();
         int move_x = rand() / 100;
@@ -326,8 +348,6 @@ class ActRandomInit : public BaseAction
         rect.bottom += move_y;
         base->setRect(&rect);
 
-        RecordOption opt[] = { Begin, None, None, None, None, None, 
-            None, None, None, None, None, None, None, None, End };
         static int offset = -1; ++offset;
         initDraw(base);
         getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
@@ -338,6 +358,35 @@ class ActRandomInit : public BaseAction
     }
 }ActRandomInit;
 
+class ActSubInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        static long seed = 0; ++seed;
+        BaseRect rect;
+        rect.left = rect.top = 5;
+        rect.right = rect.bottom = 25;
+        srand(seed);
+        int temp = rand();
+        int move_x = rand() / 2000;
+        int move_y = rand() / 2000;
+        rect.left += move_x;
+        rect.right += move_x;
+        rect.top += move_y;
+        rect.bottom += move_y;
+
+        base->setRect(&rect);
+
+        static int offset = -1; ++offset;
+        initDraw(base);
+        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+        if (offset >= ARRAYSIZE(opt) - 1)
+        {
+            offset = -1;
+        }
+    }
+}ActSubInit;
+
 class ActMouseRButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
@@ -346,11 +395,35 @@ class ActMouseRButtonDown : public BaseAction
 
         getDraw(base)->Record(rect, { 0, 0, 0 });
 
+        auto sub_level = base->getSelfLayout()->sub;
+        
+        if (sub_level)
+        {
+            auto size = sub_level->size();
+            if (size == 3)
+            {
+                auto iter = sub_level->begin();
+                auto layout = *(++iter);
+                auto sub_elem = layout->body.elem;
+                sub_elem->msgRoute(MouseRButtonDown);
+                iter = sub_level->begin();
+                layout = *(++iter);
+                sub_elem = layout->body.elem;
+                sub_elem->msgRoute(MouseRButtonDown);
+            }
+            else if (size == 2)
+            {
+                auto iter = sub_level->begin();
+                auto layout = *(++iter);
+                auto sub_elem = layout->body.elem;
+                sub_elem->msgRoute(MouseRButtonDown);
+            }
+        }
         elemDel(base->getSelfName());
     }
 }ActMouseRButtonDown;
 
-#define MAX_TEST_ELEM 1000
+#define MAX_TEST_ELEM 20
 
 class Act3MouseRButtonDown : public BaseAction
 {
@@ -372,8 +445,6 @@ class Act3MouseRButtonDown : public BaseAction
                 auto temp = *ret;
                 auto shape = temp.second;
 
-                RecordOption opt[] = { Begin, None, None, None, None, None,
-                    None, None, None, None, None, None, None, None, End };
                 static int offset = -1; ++offset;
 
                 getDraw(shape)->Record(*(shape->getRect()), { 0, 0, 0 }, opt[offset]);
@@ -408,6 +479,38 @@ class Act3MouseLButtonDown : public BaseAction
             elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
             elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
             elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
+
+
+            /////////////////////////////////////////////////////////////////
+            auto sub_level = subLevelGen(elem);
+            std::string sub_string1("_sub_1");
+            auto number_str_copy = number_str;
+            number_str_copy = number_str_copy + sub_string1;
+            
+            elem = elemGen(number_str_copy, MsgInit, &ActSubInit, sub_level);
+            elem->msgRoute(MsgInit);
+            // same act as v1 except init position;
+            elemGen(number_str_copy, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str_copy, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str_copy, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str_copy, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str_copy, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str_copy, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+
+            /////////////////////////////////////////////////////////////////
+            std::string sub_string2("_sub_2");
+            number_str = number_str + sub_string2;
+            
+            elem = elemGen(number_str, MsgInit, &ActSubInit, sub_level);
+            elem->msgRoute(MsgInit);
+            // same act as v1 except init position;
+            elemGen(number_str, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+
         }
     }
 }Act3MouseLButtonDown;
@@ -484,6 +587,11 @@ class StatInit : public BaseAction
         auto ret = g_all_elem_map->find("status_bar_layout");
         auto elem = (*ret).second;
         auto rect = elem->getSelfLayout()->rect;
+        auto width = rect.right - rect.left;
+        auto height = rect.bottom - rect.top;
+        rect.left = rect.top = 0;
+        rect.right = width;
+        rect.bottom = height;
         base->setRect(&rect);
         initDraw(base);
         getDraw(base)->Record(rect, { 100, 200, 255 });
@@ -497,6 +605,11 @@ class StatMouseMove : public BaseAction
         auto ret = g_all_elem_map->find("status_bar_layout");
         auto elem = (*ret).second;
         auto rect = elem->getSelfLayout()->rect;
+        auto width = rect.right - rect.left;
+        auto height = rect.bottom - rect.top;
+        rect.left = rect.top = 0;
+        rect.right = width;
+        rect.bottom = height;
         base->setRect(&rect);
         getDraw(base)->Record(rect, { 200, 200, 255 });
     }
@@ -509,6 +622,11 @@ class StatMouseLeave : public BaseAction
         auto ret = g_all_elem_map->find("status_bar_layout");
         auto elem = (*ret).second;
         auto rect = elem->getSelfLayout()->rect;
+        auto width = rect.right - rect.left;
+        auto height = rect.bottom - rect.top;
+        rect.left = rect.top = 0;
+        rect.right = width;
+        rect.bottom = height;
         base->setRect(&rect);
         getDraw(base)->Record(rect, { 100, 200, 255 });
     }

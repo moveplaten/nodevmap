@@ -76,19 +76,6 @@ public:
         return self_level;
     }
 
-    void deleteSelf()
-    {
-        g_all_elem_store->deleteOneElem(self_id);
-        self_layout->draw->deleteSelf();
-        self_level->erase(self_iter);
-        auto content = g_all_elem_store->readOneElem(self_id);
-        content->rect = { 0 };
-        content->elem = 0;
-        content->draw = 0;
-        content->sub = 0;
-        delete this;
-    }
-
     const BaseRect* getRect()
     {
         return &(self_layout->rect);
@@ -114,7 +101,7 @@ public:
 
     BaseElement::~BaseElement();
 
-    void msgRoute(MsgBaseType msg_type, mousePt* pt); //private may better;
+    void msgRoute(MsgBaseType msg_type, mousePt* pt = nullptr);
 
 private:
     typedef std::map<MsgBaseType, BaseAction*> MsgActMap;

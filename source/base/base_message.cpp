@@ -87,6 +87,15 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
 
     if (level)
     {
+        auto head = *(level->begin());
+        auto up_elem = head->head->up_elem;
+        if (up_elem)
+        {
+            auto up_rect = up_elem->getRect();
+            pt_x -= up_rect->left;
+            pt_y -= up_rect->top;
+        }
+        
         auto size = level->size();
         auto content = *level;
         auto iter = content.begin();
@@ -112,7 +121,10 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         }
         else if ((*iter)->body.sub)
         {
-            inRange(pt, (*iter)->body.sub);
+            mousePt pt_new;
+            pt_new.x = pt_x;
+            pt_new.y = pt_y;
+            inRange(&pt_new, (*iter)->body.sub);
         }
         else
         {

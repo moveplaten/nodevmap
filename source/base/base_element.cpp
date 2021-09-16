@@ -101,7 +101,10 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
     {
         auto temp = *ret;
         BaseAction* act = temp.second;
-        act->mousePtToLocal(this, pt);
+        if (pt)
+        {
+            act->mousePtToLocal(this, pt);
+        }
         act->realAction(this);
     }
 }
@@ -128,5 +131,17 @@ BaseElement::BaseElement(const elemIDSize id, const char* name,
 
 BaseElement::~BaseElement()
 {
+    g_all_elem_map->erase(self_name);
+    
+    if (self_layout)
+    {
+        delete(self_layout->draw);
+    }
+    
+    if (self_level)
+    {
+        self_level->erase(self_iter);
+    }
 
+    g_all_elem_store->deleteOneElem(self_id);
 }

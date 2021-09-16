@@ -35,6 +35,7 @@ public:
     {
         reused_elems[reused_count] = id;
         ++reused_count;
+        memset(contents + id, 0, one_content_size); //set all to zero;
     }
     
     elemIDSize getTotalUsed() { return current_max_used - reused_count; }

@@ -19,6 +19,7 @@ enum RecordOption
     End,
     BeginEnd,
     None,
+    Clear,
 };
 
 class NvpDraw
@@ -36,17 +37,12 @@ public:
 
     void realDraw();
 
-    void deleteSelf()
-    {
-        delete this;
-    }
-
     int record_offset = 0;
     std::vector<BaseRect> recs;
     std::vector<NvpColor> cols;
     BaseElement* elem = nullptr;
 
-protected:
+//protected:
     virtual void doBegin() = 0;
     virtual void doDraw() = 0;
     virtual void doEnd() = 0;
@@ -54,3 +50,5 @@ protected:
 private:
 
 };
+
+void subLevelDraw(BaseElement* elem);
