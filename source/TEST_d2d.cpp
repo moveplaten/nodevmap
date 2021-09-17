@@ -150,6 +150,31 @@ public:
     }
 }Act2MouseLButtonUp;
 
+static void subLevelRecord(BaseElement* elem)
+{
+    if (!elem)
+    {
+        return;
+    }
+
+    auto sub_level = elem->getSelfLayout()->sub;
+    if (!sub_level)
+    {
+        return;
+    }
+
+    size_t size = sub_level->size();
+    auto iter = sub_level->begin();
+    
+    for (size_t i = 0; i < size - 1; ++i)
+    {
+        auto next = *(++iter);
+        auto rect = next->body.elem->getRect();
+        getDraw(next->body.elem)->Record(*rect, { 150, 150, 150 }, Clear);
+        subLevelRecord(next->body.elem);
+    }
+}
+
 class Act1MouseDrag : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
@@ -170,24 +195,7 @@ class Act1MouseDrag : public BaseAction
             new_rect.bottom = old_rect->bottom + sub_y;
             base->setRect(&new_rect);
 
-            //getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
-            auto sub = base->getSelfLayout()->sub;
-            if (sub)
-            {
-                auto size = sub->size();
-                if (size > 1)
-                {
-                    auto iter = sub->begin();
-                    for (size_t i = 0; i < size - 1; ++i)
-                    {
-                        ++iter;
-                        auto sub_elem = (*iter)->body.elem;
-    
-                        BaseRect rect = *(sub_elem->getRect());
-                        getDraw(sub_elem)->Record(rect, { 150, 150, 150 }, Clear);
-                    }
-                }
-            }
+            subLevelRecord(base);
             getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
         }
     }
@@ -336,8 +344,8 @@ class ActRandomInit : public BaseAction
     {
         static long seed = 0; ++seed;
         BaseRect rect;
-        rect.left = rect.top = 10;
-        rect.right = rect.bottom = 60;
+        rect.left = rect.top = 0;
+        rect.right = rect.bottom = 100;
         srand(seed);
         int temp = rand();
         int move_x = rand() / 100;
@@ -364,8 +372,37 @@ class ActSubInit : public BaseAction
     {
         static long seed = 0; ++seed;
         BaseRect rect;
-        rect.left = rect.top = 5;
-        rect.right = rect.bottom = 25;
+        rect.left = rect.top = 0;
+        rect.right = rect.bottom = 40;
+        srand(seed);
+        int temp = rand();
+        int move_x = rand() / 500;
+        int move_y = rand() / 500;
+        rect.left += move_x;
+        rect.right += move_x;
+        rect.top += move_y;
+        rect.bottom += move_y;
+
+        base->setRect(&rect);
+
+        static int offset = -1; ++offset;
+        initDraw(base);
+        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+        if (offset >= ARRAYSIZE(opt) - 1)
+        {
+            offset = -1;
+        }
+    }
+}ActSubInit;
+
+class Act2SubInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        static long seed = 0; ++seed;
+        BaseRect rect;
+        rect.left = rect.top = 0;
+        rect.right = rect.bottom = 20;
         srand(seed);
         int temp = rand();
         int move_x = rand() / 2000;
@@ -385,7 +422,63 @@ class ActSubInit : public BaseAction
             offset = -1;
         }
     }
-}ActSubInit;
+}Act2SubInit;
+
+class Act3SubInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        static long seed = 0; ++seed;
+        BaseRect rect;
+        rect.left = rect.top = 0;
+        rect.right = rect.bottom = 10;
+        srand(seed);
+        int temp = rand();
+        int move_x = rand() / 5000;
+        int move_y = rand() / 5000;
+        rect.left += move_x;
+        rect.right += move_x;
+        rect.top += move_y;
+        rect.bottom += move_y;
+
+        base->setRect(&rect);
+
+        static int offset = -1; ++offset;
+        initDraw(base);
+        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+        if (offset >= ARRAYSIZE(opt) - 1)
+        {
+            offset = -1;
+        }
+    }
+}Act3SubInit;
+
+static void subLevelRemove(BaseElement* elem)
+{
+    if (!elem)
+    {
+        return;
+    }
+
+    auto sub_level = elem->getSelfLayout()->sub;
+    if (!sub_level)
+    {
+        return;
+    }
+
+    size_t size = sub_level->size();
+    auto iter = sub_level->begin();
+    
+    for (size_t i = 0; i < size - 1; ++i)
+    {
+        auto iter = sub_level->begin(); //something was delete;
+        auto next = *(++iter);
+        auto rect = next->body.elem->getRect();
+        getDraw(next->body.elem)->Record(*rect, { 0, 0, 0 });
+        subLevelRemove(next->body.elem);
+        elemDel(next->body.elem->getSelfName());
+    }
+}
 
 class ActMouseRButtonDown : public BaseAction
 {
@@ -395,35 +488,13 @@ class ActMouseRButtonDown : public BaseAction
 
         getDraw(base)->Record(rect, { 0, 0, 0 });
 
-        auto sub_level = base->getSelfLayout()->sub;
+        subLevelRemove(base);
         
-        if (sub_level)
-        {
-            auto size = sub_level->size();
-            if (size == 3)
-            {
-                auto iter = sub_level->begin();
-                auto layout = *(++iter);
-                auto sub_elem = layout->body.elem;
-                sub_elem->msgRoute(MouseRButtonDown);
-                iter = sub_level->begin();
-                layout = *(++iter);
-                sub_elem = layout->body.elem;
-                sub_elem->msgRoute(MouseRButtonDown);
-            }
-            else if (size == 2)
-            {
-                auto iter = sub_level->begin();
-                auto layout = *(++iter);
-                auto sub_elem = layout->body.elem;
-                sub_elem->msgRoute(MouseRButtonDown);
-            }
-        }
         elemDel(base->getSelfName());
     }
 }ActMouseRButtonDown;
 
-#define MAX_TEST_ELEM 20
+#define MAX_TEST_ELEM 5
 
 class Act3MouseRButtonDown : public BaseAction
 {
@@ -499,18 +570,63 @@ class Act3MouseLButtonDown : public BaseAction
 
             /////////////////////////////////////////////////////////////////
             std::string sub_string2("_sub_2");
-            number_str = number_str + sub_string2;
+            auto number_str_copy2 = number_str;
+            number_str_copy2 = number_str_copy2 + sub_string2;
             
-            elem = elemGen(number_str, MsgInit, &ActSubInit, sub_level);
+            elem = elemGen(number_str_copy2, MsgInit, &ActSubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(number_str_copy2, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str_copy2, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str_copy2, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str_copy2, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str_copy2, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str_copy2, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
+            /////////////////////////////////////////////////////////////////
+            std::string sub_string3("_sub_3");
+            auto number_str_copy3 = number_str;
+            number_str_copy3 = number_str_copy3 + sub_string3;
+            
+            elem = elemGen(number_str_copy3, MsgInit, &ActSubInit, sub_level);
+            elem->msgRoute(MsgInit);
+            // same act as v1 except init position;
+            elemGen(number_str_copy3, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str_copy3, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str_copy3, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str_copy3, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str_copy3, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str_copy3, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+
+            /////////////////////////////////////////////////////////////////
+            sub_level = subLevelGen(elem);
+            auto number_str_copy4 = number_str_copy3;
+            number_str_copy4 = number_str_copy4 + sub_string1;
+
+            elem = elemGen(number_str_copy4, MsgInit, &Act2SubInit, sub_level);
+            elem->msgRoute(MsgInit);
+            // same act as v1 except init position;
+            elemGen(number_str_copy4, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str_copy4, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str_copy4, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str_copy4, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str_copy4, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str_copy4, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+
+            /////////////////////////////////////////////////////////////////
+            sub_level = subLevelGen(elem);
+            auto number_str_copy5 = number_str_copy4;
+            number_str_copy5 = number_str_copy5 + sub_string1;
+
+            elem = elemGen(number_str_copy5, MsgInit, &Act3SubInit, sub_level);
+            elem->msgRoute(MsgInit);
+            // same act as v1 except init position;
+            elemGen(number_str_copy5, MouseMove, &ActMouseMove, sub_level);
+            elemGen(number_str_copy5, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(number_str_copy5, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(number_str_copy5, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(number_str_copy5, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(number_str_copy5, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
         }
     }
 }Act3MouseLButtonDown;
