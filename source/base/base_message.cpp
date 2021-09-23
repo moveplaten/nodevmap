@@ -8,20 +8,28 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
     if (msg_type == MsgInit)
     {
-        initAll(pt);
+        initAll();
+    }
+    else if (msg_type == MouseEnter)
+    {
+        BaseElement::g_hitTest_id->msgRoute(MouseEnter, pt);
+        char temp[100];
+        sprintf(temp, "%lld", BaseElement::g_hitTest_id->getSelfID());
+        OutputDebugStringA(temp);
+        OutputDebugStringA("Enter\n");
     }
     else if (msg_type == MouseLeave)
     {
         BaseElement::g_before_leave_id->msgRoute(MouseLeave, pt);
+        hitTest(MouseEnter, pt);
     }
-    else if (msg_type == MouseMove_MouseLButtonDown && BaseElement::g_hitTest_id)
+    else if (msg_type == MouseMove_MouseLButtonDown)
     {
-        if (BaseElement::g_mouse_snap_id)
-        BaseElement::g_mouse_snap_id->msgRoute(MouseMove_MouseLButtonDown, pt);
+        BaseElement::g_mouse_drag_id->msgRoute(MouseMove_MouseLButtonDown, pt);
     }
-    else if (msg_type == MouseLButtonDown && BaseElement::g_hitTest_id)
+    else if (msg_type == MouseLButtonDown)
     {
-        BaseElement::g_mouse_snap_id = BaseElement::g_hitTest_id;
+        BaseElement::g_mouse_drag_id = BaseElement::g_hitTest_id;
         BaseElement::g_hitTest_id->msgRoute(MouseLButtonDown, pt);
     }
     else
@@ -39,15 +47,15 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
         if (checkLeave() && BaseElement::g_before_leave_id != nullptr)
         {
             char temp[100];
-            sprintf(temp, "%lld", BaseElement::g_before_leave_id->getSelfID());
-            OutputDebugStringA(temp);
-            OutputDebugStringA("LEAVE\n");
+            //sprintf(temp, "%lld", BaseElement::g_before_leave_id->getSelfID());
+            //OutputDebugStringA(temp);
+            //OutputDebugStringA("LEAVE\n");
             hitTest(MouseLeave, pt);
         }
     }
 }
 
-void BaseMessage::initAll(mousePt* pt)
+void BaseMessage::initAll()
 {
     auto size = g_all_elem_map->size();
     auto content = *g_all_elem_map;
@@ -55,7 +63,7 @@ void BaseMessage::initAll(mousePt* pt)
     for (size_t i = 0; i < size; ++i)
     {
         auto elem = (*it).second;
-        elem->msgRoute(MsgInit, pt);
+        elem->msgRoute(MsgInit);
         ++it;
     }
 }

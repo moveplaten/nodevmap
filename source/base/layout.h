@@ -11,6 +11,7 @@ enum MsgBaseType
     MsgNone,
     MsgInit,
     MouseMove,
+    MouseEnter,
     MouseLeave,
     MouseLButtonDown,
     MouseLButtonUp,

@@ -29,7 +29,7 @@ protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
 
 private:
-    void initAll(mousePt* pt);
+    void initAll();
     bool checkLeave();
     BaseElement* inRange(mousePt* pt, NvpLevel* level);
 };
@@ -108,7 +108,7 @@ private:
 
     static BaseElement* g_hitTest_id;
     static BaseElement* g_before_leave_id;
-    static BaseElement* g_mouse_snap_id;
+    static BaseElement* g_mouse_drag_id;
 
     const elemIDSize self_id;
     const std::string self_name;

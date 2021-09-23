@@ -2,7 +2,7 @@
 
 BaseElement* BaseElement::g_before_leave_id = nullptr;
 BaseElement* BaseElement::g_hitTest_id = nullptr;
-BaseElement* BaseElement::g_mouse_snap_id = nullptr;
+BaseElement* BaseElement::g_mouse_drag_id = nullptr;
 
 #ifdef TEMP_TEST_0
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
@@ -134,9 +134,9 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
     subPtToLocal(base, &pt_new);
     local_pt.x = pt_new.x - base->getRect()->left;
     local_pt.y = pt_new.y - base->getRect()->top;
-    char temp[100];
-    sprintf(temp, "\nworld_x = %f, world_y = %f\nlocal_x = %f, local_y = %f\n\n", world_pt.x, world_pt.y, local_pt.x, local_pt.y);
-    OutputDebugStringA(temp);
+    //char temp[100];
+    //sprintf(temp, "\nworld_x = %f, world_y = %f\nlocal_x = %f, local_y = %f\n\n", world_pt.x, world_pt.y, local_pt.x, local_pt.y);
+    //OutputDebugStringA(temp);
 }
 
 BaseElement::BaseElement(const elemIDSize id, const char* name,
