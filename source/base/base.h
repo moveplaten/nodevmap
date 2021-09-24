@@ -29,7 +29,7 @@ protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
 
 private:
-    void initAll();
+    void initAll(NvpLevel* level);
     bool checkLeave();
     BaseElement* inRange(mousePt* pt, NvpLevel* level);
 };
@@ -65,7 +65,7 @@ class BaseElement
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
-    const std::string& getSelfName() { return self_name; }
+    const std::string& getSelfName() { return *self_name; }
     auto getSelfLayout()
     {
         return self_layout;
@@ -95,7 +95,7 @@ public:
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(const elemIDSize id, const char* name,
+    BaseElement::BaseElement(const elemIDSize id, const std::string* name,
         NvpLayoutBody* const layout, NvpLevel* const level,
         NvpLevel::iterator const iter);
 
@@ -111,7 +111,7 @@ private:
     static BaseElement* g_mouse_drag_id;
 
     const elemIDSize self_id;
-    const std::string self_name;
+    const std::string* const self_name;
     bool self_visible = true;
     const char valid_tag = 'v'; //check valid after delete one;
 

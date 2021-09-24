@@ -34,77 +34,73 @@ public:
         size.height = height;
         m_pRT->Resize(size);
         D2D1_SIZE_F client = m_pRT->GetSize();
-        auto ret = g_all_elem_map->find("top_layout");
-        if (ret != g_all_elem_map->end())
+        
+        if (g_top_layout)
         {
-            auto elem = *ret;
+            auto iter = g_top_layout->begin();
+            auto layout = *(++iter);
+            auto elem = layout->body.elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            elem.second->getSelfLayout()->rect = rect;
+            elem->getSelfLayout()->rect = rect;
         }
         
-        ret = g_all_elem_map->find("node_view_layout");
-        if (ret != g_all_elem_map->end())
+        if (g_top_node_view)
         {
-            auto elem = *ret;
+            auto iter = g_top_node_view->begin();;
+            auto elem = (*iter)->head->up_elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 20.0f;
             rect.right = client.width;
             rect.bottom = client.height - 20.0f;
-            elem.second->getSelfLayout()->rect = rect;
+            elem->getSelfLayout()->rect = rect;
         }
         
-        ret = g_all_elem_map->find("menu_bar_layout");
-        if (ret != g_all_elem_map->end())
+        if (g_top_menu_bar)
         {
-            auto elem = *ret;
+            auto iter = g_top_menu_bar->begin();
+            auto elem = (*iter)->head->up_elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = 20.0f;
-            elem.second->getSelfLayout()->rect = rect;
+            elem->getSelfLayout()->rect = rect;
         }
         
-        ret = g_all_elem_map->find("status_bar_layout");
-        if (ret != g_all_elem_map->end())
+        if (g_top_status_bar)
         {
-            auto elem = *ret;
+            auto iter = g_top_status_bar->begin();
+            auto elem = (*iter)->head->up_elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            elem.second->getSelfLayout()->rect = rect;
+            elem->getSelfLayout()->rect = rect;
         }
     }
 
     void onRender()
     {
-        auto contents = *g_all_elem_map;
-        auto it = contents.begin();
-        auto content = (*it).second->getSelfLayout();
-        auto ret = g_all_elem_map->find("menu_bar");
-        auto elem = (*ret).second;
-        mousePt pt;
+        auto iter = g_top_menu_bar->begin();
+        auto layout = *(++iter);
+        auto elem = layout->body.elem;
         if (elem->getSelfLayout()->draw)
         {
-            elem->msgRoute(MouseLeave, &pt);
+            elem->msgRoute(MouseLeave);
         }
-        ret = g_all_elem_map->find("status_bar");
-        elem = (*ret).second;
+        
+        iter = g_top_status_bar->begin();
+        layout = *(++iter);
+        elem = layout->body.elem;
         if (elem->getSelfLayout()->draw)
         {
-            elem->msgRoute(MouseLeave, &pt);
-        }
-
-        if (content->draw)
-        {
-            content->draw->realDraw();
+            elem->msgRoute(MouseLeave);
         }
     }
 

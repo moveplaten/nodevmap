@@ -8,7 +8,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
     if (msg_type == MsgInit)
     {
-        initAll();
+        initAll(g_top_layout);
     }
     else if (msg_type == MouseEnter)
     {
@@ -55,16 +55,21 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-void BaseMessage::initAll()
+void BaseMessage::initAll(NvpLevel* level)
 {
-    auto size = g_all_elem_map->size();
-    auto content = *g_all_elem_map;
-    auto it = content.begin();
-    for (size_t i = 0; i < size; ++i)
+    if (!level)
     {
-        auto elem = (*it).second;
-        elem->msgRoute(MsgInit);
-        ++it;
+        return;
+    }
+
+    size_t size = level->size();
+    auto iter = level->begin();
+
+    for (size_t i = 0; i < size - 1; ++i)
+    {
+        auto next = *(++iter);
+        next->body.elem->msgRoute(MsgInit);
+        initAll(next->body.sub);
     }
 }
 

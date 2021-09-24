@@ -59,12 +59,14 @@ public:
     ElemGenerator::~ElemGenerator() {}
 
     void initDefaultLayout();
+
+    BaseElement* gen_elem = nullptr;
 };
 
 BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
     NvpLevel* level = g_top_node_view);
 
-bool elemDel(const std::string& str);
+bool elemDel(const std::string& str, NvpLevel* level);
 
 NvpLevel* subLevelGen(BaseElement* elem);
 
@@ -76,7 +78,7 @@ typedef ElemStorage<100000, NvpLayoutBody> AllElem;
 typedef std::map<std::string, BaseElement*> ElemMap;
 
 extern AllElem* g_all_elem_store;
-extern ElemMap* g_all_elem_map;
+//extern ElemMap* g_all_elem_map;
 
 struct NvpLayoutBody
 {
@@ -91,6 +93,7 @@ struct NvpLayoutHead
     void* null_head; //should be first?
     BaseElement* up_elem;
     NvpLevel* up_level;
+    ElemMap* cur_map; //all elem name in this level;
     uint32_t cur_depth;
 };
 

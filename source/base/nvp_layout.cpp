@@ -5,26 +5,21 @@ NvpLevel* g_top_node_view = nullptr;
 NvpLevel* g_top_menu_bar = nullptr;
 NvpLevel* g_top_status_bar = nullptr;
 AllElem* g_all_elem_store = nullptr;
-ElemMap* g_all_elem_map = nullptr;
+//ElemMap* g_all_elem_map = nullptr;
 
 BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
     NvpLevel* level)
 {
-    ElemGenerator(str, msg_type, msg_act, level);
-    auto ret = g_all_elem_map->find(str);
-    if (ret == g_all_elem_map->end())
-    {
-        return nullptr;
-    }
-    auto elem = *ret;
-    BaseElement* base = elem.second;
-    return base;
+    auto result = ElemGenerator(str, msg_type, msg_act, level);
+    return result.gen_elem;
 }
 
-bool elemDel(const std::string& str)
+bool elemDel(const std::string& str, NvpLevel* level)
 {
-    auto ret = g_all_elem_map->find(str);
-    if (ret == g_all_elem_map->end())
+    auto head = *(level->begin());
+    auto elem_map = head->head->cur_map;
+    auto ret = elem_map->find(str);
+    if (ret == elem_map->end())
     {
         return false;
     }
@@ -32,6 +27,7 @@ bool elemDel(const std::string& str)
     {
         auto elem = *ret;
         BaseElement* base = elem.second;
+        elem_map->erase(str);
         subLevelDel(base);
         return true;
     }
@@ -40,19 +36,19 @@ bool elemDel(const std::string& str)
 ElemGenerator::ElemGenerator(const std::string& str,
     MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level)
 {
-    if (!g_all_elem_map)
+    if (!g_all_elem_store)
     {
-        static ElemMap elements;
         static AllElem all_elem;
-        g_all_elem_map = &elements;
         g_all_elem_store = &all_elem;
         initDefaultLayout();
     }
 
     if (level)
     {
-        auto ret = g_all_elem_map->find(str);
-        if (ret == g_all_elem_map->end())
+        auto head = *(level->begin());
+        auto elem_map = head->head->cur_map;
+        auto ret = elem_map->find(str);
+        if (ret == elem_map->end())
         {
             NvpLayoutBody null_layout;
             memset(&null_layout, 0, sizeof(NvpLayoutBody));
@@ -61,14 +57,21 @@ ElemGenerator::ElemGenerator(const std::string& str,
             level->push_back((NvpLayout*)layout);
             auto end = level->end();
             auto iter = --end;
-            BaseElement* base = new BaseElement(id, str.c_str(), layout, level, iter);
+
+            auto result = elem_map->insert({ str, nullptr });
+            auto content = &(*(result.first));
+            auto str_ref = &(content->first);
+            
+            BaseElement* base = new BaseElement(id, str_ref, layout, level, iter);
+            gen_elem = base;
             base->linkMsg(msg_type, msg_act);
-            g_all_elem_map->insert({ str, base });
+            content->second = base;
         }
         else
         {
             auto elem = *ret;
             BaseElement* base = elem.second;
+            gen_elem = base;
             base->linkMsg(msg_type, msg_act);
         }  
     }
@@ -84,7 +87,7 @@ NvpLevel* subLevelGen(BaseElement* elem)
     auto layout = elem->getSelfLayout();
     if (layout->sub)
     {
-        return nullptr;
+        return layout->sub;
     }
     
     auto sub_level = new NvpLevel;
@@ -95,6 +98,8 @@ NvpLevel* subLevelGen(BaseElement* elem)
     head_info->null_head = head_info;
     head_info->up_elem = elem;
     head_info->up_level = elem->getSelfLevel();
+    auto elem_map = new ElemMap;
+    head_info->cur_map = elem_map;
     auto depth = getLayoutHead(layout)->cur_depth;
     head_info->cur_depth = ++depth;
     
@@ -120,6 +125,7 @@ void subLevelDel(BaseElement* elem)
     size_t size = sub_level->size();
     auto iter = sub_level->begin();
     auto header = *iter;
+    auto elem_map = header->head->cur_map;
     delete header->head;
     
     for (size_t i = 0; i < size - 1; ++i)
@@ -129,6 +135,8 @@ void subLevelDel(BaseElement* elem)
         subLevelDel(next->body.elem);
     }
 
+    elem_map->clear();
+    delete elem_map;
     sub_level->clear();
     delete sub_level;
 }
@@ -162,6 +170,8 @@ void ElemGenerator::initDefaultLayout()
     auto head_info = new NvpLayoutHead;
     memset(head_info, 0, sizeof(NvpLayoutHead));
     head_info->null_head = head_info;
+    auto elem_map = new ElemMap;
+    head_info->cur_map = elem_map;
     g_top_layout->push_back((NvpLayout*)head_info);
     
     auto top_elem = elemGen("top_layout", MsgNone, nullptr, g_top_layout);

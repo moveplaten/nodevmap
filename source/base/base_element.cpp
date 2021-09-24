@@ -139,7 +139,7 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
     //OutputDebugStringA(temp);
 }
 
-BaseElement::BaseElement(const elemIDSize id, const char* name,
+BaseElement::BaseElement(const elemIDSize id, const std::string* name,
     NvpLayoutBody* const layout, NvpLevel* const level,
     NvpLevel::iterator const iter)
     :self_id(id), self_name(name), self_layout(layout), self_level(level),
@@ -153,8 +153,6 @@ BaseElement::BaseElement(const elemIDSize id, const char* name,
 
 BaseElement::~BaseElement()
 {
-    g_all_elem_map->erase(self_name);
-    
     if (self_layout)
     {
         delete(self_layout->draw);

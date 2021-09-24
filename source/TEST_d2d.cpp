@@ -476,7 +476,7 @@ static void subLevelRemove(BaseElement* elem)
         auto rect = next->body.elem->getRect();
         getDraw(next->body.elem)->Record(*rect, { 0, 0, 0 });
         subLevelRemove(next->body.elem);
-        elemDel(next->body.elem->getSelfName());
+        elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
     }
 }
 
@@ -490,7 +490,7 @@ class ActMouseRButtonDown : public BaseAction
 
         subLevelRemove(base);
         
-        elemDel(base->getSelfName());
+        elemDel(base->getSelfName(), base->getSelfLevel());
     }
 }ActMouseRButtonDown;
 
@@ -506,8 +506,10 @@ class Act3MouseRButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            auto ret = g_all_elem_map->find(number_str);
-            if (ret == g_all_elem_map->end())
+            auto iter = g_top_node_view->begin();
+            auto elem_map = (*iter)->head->cur_map;
+            auto ret = elem_map->find(number_str);
+            if (ret == elem_map->end())
             {
                 continue;
             }
@@ -524,7 +526,7 @@ class Act3MouseRButtonDown : public BaseAction
                     offset = -1;
                 }
 
-                elemDel(number_str);
+                elemDel(number_str, g_top_node_view);
             }
         }
     }
@@ -554,79 +556,72 @@ class Act3MouseLButtonDown : public BaseAction
 
             /////////////////////////////////////////////////////////////////
             auto sub_level = subLevelGen(elem);
-            std::string sub_string1("_sub_1");
-            auto number_str_copy = number_str;
-            number_str_copy = number_str_copy + sub_string1;
+            std::string sub_string;
+            sub_string = "_1";
             
-            elem = elemGen(number_str_copy, MsgInit, &ActSubInit, sub_level);
+            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str_copy, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str_copy, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str_copy, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str_copy, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str_copy, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str_copy, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
+            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
             /////////////////////////////////////////////////////////////////
-            std::string sub_string2("_sub_2");
-            auto number_str_copy2 = number_str;
-            number_str_copy2 = number_str_copy2 + sub_string2;
+            sub_string = "_2";
             
-            elem = elemGen(number_str_copy2, MsgInit, &ActSubInit, sub_level);
+            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str_copy2, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str_copy2, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str_copy2, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str_copy2, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str_copy2, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str_copy2, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
+            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
             /////////////////////////////////////////////////////////////////
-            std::string sub_string3("_sub_3");
-            auto number_str_copy3 = number_str;
-            number_str_copy3 = number_str_copy3 + sub_string3;
+            sub_string = "_3";
             
-            elem = elemGen(number_str_copy3, MsgInit, &ActSubInit, sub_level);
+            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str_copy3, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str_copy3, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str_copy3, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str_copy3, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str_copy3, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str_copy3, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
+            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
             /////////////////////////////////////////////////////////////////
             sub_level = subLevelGen(elem);
-            auto number_str_copy4 = number_str_copy3;
-            number_str_copy4 = number_str_copy4 + sub_string1;
+            sub_string = "_1";
 
-            elem = elemGen(number_str_copy4, MsgInit, &Act2SubInit, sub_level);
+            elem = elemGen(sub_string, MsgInit, &Act2SubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str_copy4, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str_copy4, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str_copy4, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str_copy4, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str_copy4, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str_copy4, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
+            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
             /////////////////////////////////////////////////////////////////
             sub_level = subLevelGen(elem);
-            auto number_str_copy5 = number_str_copy4;
-            number_str_copy5 = number_str_copy5 + sub_string1;
+            sub_string = "_1";
 
-            elem = elemGen(number_str_copy5, MsgInit, &Act3SubInit, sub_level);
+            elem = elemGen(sub_string, MsgInit, &Act3SubInit, sub_level);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(number_str_copy5, MouseMove, &ActMouseMove, sub_level);
-            elemGen(number_str_copy5, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(number_str_copy5, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(number_str_copy5, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
-            elemGen(number_str_copy5, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(number_str_copy5, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
+            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
+            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
+            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
+            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
+            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
         }
     }
 }Act3MouseLButtonDown;
@@ -658,8 +653,8 @@ class MenuInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("menu_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_menu_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         base->setRect(&rect);
         initDraw(base);
@@ -671,8 +666,8 @@ class MenuMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("menu_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_menu_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         base->setRect(&rect);
         getDraw(base)->Record(rect, { 200, 200, 255 });
@@ -683,8 +678,8 @@ class MenuMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("menu_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_menu_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         base->setRect(&rect);
         getDraw(base)->Record(rect, { 100, 200, 255 });
@@ -700,8 +695,8 @@ class StatInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("status_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_status_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
@@ -718,8 +713,8 @@ class StatMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("status_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_status_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
@@ -735,8 +730,8 @@ class StatMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto ret = g_all_elem_map->find("status_bar_layout");
-        auto elem = (*ret).second;
+        auto iter = g_top_status_bar->begin();
+        auto elem = (*iter)->head->up_elem;
         auto rect = elem->getSelfLayout()->rect;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
