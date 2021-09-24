@@ -3,6 +3,9 @@
 
 HWND BaseMessage::g_hwnd = nullptr;
 BaseMessage* const baseMsg = nullptr;
+BaseElement* BaseMessage::g_now_hit_id = nullptr;
+BaseElement* BaseMessage::g_mouse_drag_id = nullptr;
+BaseElement* BaseMessage::g_before_leave_id = nullptr;
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -12,25 +15,25 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else if (msg_type == MouseEnter)
     {
-        BaseElement::g_hitTest_id->msgRoute(MouseEnter, pt);
+        g_now_hit_id->msgRoute(MouseEnter, pt);
         char temp[100];
-        sprintf(temp, "%lld", BaseElement::g_hitTest_id->getSelfID());
+        sprintf(temp, "%lld", g_now_hit_id->getSelfID());
         OutputDebugStringA(temp);
         OutputDebugStringA("Enter\n");
     }
     else if (msg_type == MouseLeave)
     {
-        BaseElement::g_before_leave_id->msgRoute(MouseLeave, pt);
+        g_before_leave_id->msgRoute(MouseLeave, pt);
         hitTest(MouseEnter, pt);
     }
     else if (msg_type == MouseMove_MouseLButtonDown)
     {
-        BaseElement::g_mouse_drag_id->msgRoute(MouseMove_MouseLButtonDown, pt);
+        g_mouse_drag_id->msgRoute(MouseMove_MouseLButtonDown, pt);
     }
     else if (msg_type == MouseLButtonDown)
     {
-        BaseElement::g_mouse_drag_id = BaseElement::g_hitTest_id;
-        BaseElement::g_hitTest_id->msgRoute(MouseLButtonDown, pt);
+        g_mouse_drag_id = g_now_hit_id;
+        g_now_hit_id->msgRoute(MouseLButtonDown, pt);
     }
     else
     {
@@ -44,10 +47,10 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
     if (msg_type == MouseMove)
     {
-        if (checkLeave() && BaseElement::g_before_leave_id != nullptr)
+        if (checkLeave() && g_before_leave_id != nullptr)
         {
             char temp[100];
-            //sprintf(temp, "%lld", BaseElement::g_before_leave_id->getSelfID());
+            //sprintf(temp, "%lld", g_before_leave_id->getSelfID());
             //OutputDebugStringA(temp);
             //OutputDebugStringA("LEAVE\n");
             hitTest(MouseLeave, pt);
@@ -76,7 +79,7 @@ void BaseMessage::initAll(NvpLevel* level)
 bool BaseMessage::checkLeave()
 {
     static BaseElement* prev_hit = nullptr;
-    BaseElement* now_hit = BaseElement::g_hitTest_id;
+    BaseElement* now_hit = g_now_hit_id;
     size_t check_sub = prev_hit - now_hit;
 
     if (check_sub == 0)
@@ -85,7 +88,7 @@ bool BaseMessage::checkLeave()
     }
     else
     {
-        BaseElement::g_before_leave_id = prev_hit;
+        g_before_leave_id = prev_hit;
         prev_hit = now_hit;
         return true;
     }
@@ -129,7 +132,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         }
         if (hit == -1)
         {
-            BaseElement::g_hitTest_id = hit_elem;
+            g_now_hit_id = hit_elem;
             return hit_elem;
         }
         else if ((*iter)->body.sub)
@@ -141,7 +144,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         }
         else
         {
-            BaseElement::g_hitTest_id = (*iter)->body.elem;
+            g_now_hit_id = (*iter)->body.elem;
             hit_elem = (*iter)->body.elem;
             return hit_elem;
         }

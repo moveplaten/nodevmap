@@ -29,6 +29,10 @@ protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
 
 private:
+    static BaseElement* g_now_hit_id;
+    static BaseElement* g_mouse_drag_id;
+    static BaseElement* g_before_leave_id;
+    
     void initAll(NvpLevel* level);
     bool checkLeave();
     BaseElement* inRange(mousePt* pt, NvpLevel* level);
@@ -91,7 +95,7 @@ public:
     //    BaseShape* content = base_shapes->readOneElem(id);
     //    return content->elem;
     //}
-    static BaseElement* getNowHitID() { return g_hitTest_id; }
+    //static BaseElement* getNowHitID() { return g_now_hit_id; }
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
@@ -105,10 +109,6 @@ public:
 
 private:
     typedef std::map<MsgBaseType, BaseAction*> MsgActMap;
-
-    static BaseElement* g_hitTest_id;
-    static BaseElement* g_before_leave_id;
-    static BaseElement* g_mouse_drag_id;
 
     const elemIDSize self_id;
     const std::string* const self_name;

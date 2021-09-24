@@ -1,9 +1,5 @@
 #include "base.h"
 
-BaseElement* BaseElement::g_before_leave_id = nullptr;
-BaseElement* BaseElement::g_hitTest_id = nullptr;
-BaseElement* BaseElement::g_mouse_drag_id = nullptr;
-
 #ifdef TEMP_TEST_0
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
