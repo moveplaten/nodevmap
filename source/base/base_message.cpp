@@ -26,11 +26,11 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
         g_before_leave_id->msgRoute(MouseLeave, pt);
         hitTest(MouseEnter, pt);
     }
-    else if (msg_type == MouseMove_MouseLButtonDown)
+    else if (msg_type == MouseMove_MouseLButtonDown && g_mouse_drag_id)
     {
         g_mouse_drag_id->msgRoute(MouseMove_MouseLButtonDown, pt);
     }
-    else if (msg_type == MouseLButtonDown)
+    else if (msg_type == MouseLButtonDown && g_now_hit_id)
     {
         g_mouse_drag_id = g_now_hit_id;
         g_now_hit_id->msgRoute(MouseLButtonDown, pt);
@@ -47,7 +47,8 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
     if (msg_type == MouseMove)
     {
-        if (checkLeave() && g_before_leave_id != nullptr)
+        auto temp_id = g_before_leave_id;
+        if (checkLeave() && temp_id != nullptr)
         {
             char temp[100];
             //sprintf(temp, "%lld", g_before_leave_id->getSelfID());
@@ -84,6 +85,7 @@ bool BaseMessage::checkLeave()
 
     if (check_sub == 0)
     {
+        g_before_leave_id = now_hit;
         return false;
     }
     else

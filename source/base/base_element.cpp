@@ -83,11 +83,6 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 
 void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
-    if (valid_tag != 'v')
-    {
-        return;
-    }
-
     auto ret = msg_act_map.find(msg_type);
     if (ret == msg_act_map.end())
     {
@@ -149,6 +144,10 @@ BaseElement::BaseElement(const elemIDSize id, const std::string* name,
 
 BaseElement::~BaseElement()
 {
+    baseMsg->g_before_leave_id = nullptr;
+    baseMsg->g_mouse_drag_id = nullptr;
+    baseMsg->g_now_hit_id = nullptr;
+
     if (self_layout)
     {
         delete(self_layout->draw);

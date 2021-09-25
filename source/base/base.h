@@ -36,6 +36,8 @@ private:
     void initAll(NvpLevel* level);
     bool checkLeave();
     BaseElement* inRange(mousePt* pt, NvpLevel* level);
+
+    friend class BaseElement;
 };
 
 
@@ -113,7 +115,6 @@ private:
     const elemIDSize self_id;
     const std::string* const self_name;
     bool self_visible = true;
-    const char valid_tag = 'v'; //check valid after delete one;
 
 #ifndef TEMP_TEST_0
     MsgActMap msg_act_map;
