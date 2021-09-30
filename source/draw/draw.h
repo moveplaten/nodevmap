@@ -27,11 +27,11 @@ class NvpDraw
 public:
     void Record(const BaseRect& rec, NvpColor col, RecordOption opt = BeginEnd);
 
-    NvpDraw::NvpDraw()
+    NvpDraw()
     {
     }
 
-    NvpDraw::~NvpDraw()
+    ~NvpDraw()
     {
     }
 

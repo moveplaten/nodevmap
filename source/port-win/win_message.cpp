@@ -15,7 +15,6 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_USER + 100:
     {
-        baseMsg->setHwnd(hwnd);
         baseMsg->hitTest(MsgInit, &pt);
     }
     break;

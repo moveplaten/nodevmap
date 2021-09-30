@@ -53,10 +53,10 @@ extern NvpLevel* g_top_status_bar;
 class ElemGenerator
 {
 public:
-    ElemGenerator::ElemGenerator(const std::string& str,
+    ElemGenerator(const std::string& str,
         MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level = g_top_node_view);
 
-    ElemGenerator::~ElemGenerator() {}
+    ~ElemGenerator() {}
 
     void initDefaultLayout();
 

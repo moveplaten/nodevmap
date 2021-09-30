@@ -35,4 +35,7 @@
 Debug/
 .vscode/
 build/
-osx-test/
+build-xcode/
+
+.DS_Store
+._*

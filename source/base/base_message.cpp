@@ -1,7 +1,6 @@
 #include "base.h"
 #include <stdio.h>
 
-HWND BaseMessage::g_hwnd = nullptr;
 BaseMessage* const baseMsg = nullptr;
 BaseElement* BaseMessage::g_now_hit_id = nullptr;
 BaseElement* BaseMessage::g_mouse_drag_id = nullptr;
@@ -16,10 +15,10 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     else if (msg_type == MouseEnter)
     {
         g_now_hit_id->msgRoute(MouseEnter, pt);
-        char temp[100];
-        sprintf(temp, "%lld", g_now_hit_id->getSelfID());
-        OutputDebugStringA(temp);
-        OutputDebugStringA("Enter\n");
+        //char temp[100];
+        //sprintf(temp, "%lld", g_now_hit_id->getSelfID());
+        //OutputDebugStringA(temp);
+        //OutputDebugStringA("Enter\n");
     }
     else if (msg_type == MouseLeave)
     {

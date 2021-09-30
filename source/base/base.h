@@ -2,8 +2,6 @@
 
 #include "layout.h"
 
-#include <Windows.h>
-
 typedef uint32_t msgTypeSize;
 
 typedef struct
@@ -21,9 +19,7 @@ class BaseElement;
 class BaseMessage
 {
 public:
-    static HWND g_hwnd;
     void hitTest(MsgBaseType msg_type, mousePt* pt);
-    void setHwnd(HWND hwnd) { g_hwnd = hwnd; }
 
 protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
@@ -53,13 +49,13 @@ public:
 
     virtual void realAction(BaseElement* base) = 0;
 
-    BaseAction::BaseAction()
+    BaseAction()
     {
         local_pt.x = 0; local_pt.y = 0;
         world_pt.x = 0; world_pt.y = 0;
     }
 
-    BaseAction::~BaseAction() {}
+    ~BaseAction() {}
 
 private:
     void mousePtToLocal(BaseElement* base, mousePt* pt);
@@ -72,12 +68,12 @@ class BaseElement
 public:
     elemIDSize getSelfID() const { return self_id; }
     const std::string& getSelfName() { return *self_name; }
-    auto getSelfLayout()
+    NvpLayoutBody* const getSelfLayout()
     {
         return self_layout;
     }
 
-    auto getSelfLevel()
+    NvpLevel* const getSelfLevel()
     {
         return self_level;
     }
@@ -101,11 +97,11 @@ public:
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement::BaseElement(const elemIDSize id, const std::string* name,
+    BaseElement(const elemIDSize id, const std::string* name,
         NvpLayoutBody* const layout, NvpLevel* const level,
         NvpLevel::iterator const iter);
 
-    BaseElement::~BaseElement();
+    ~BaseElement();
 
     void msgRoute(MsgBaseType msg_type, mousePt* pt = nullptr);
 
