@@ -101,30 +101,13 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 }
 #endif // !TEMP_TEST_0
 
-static void subPtToLocal(BaseElement* base, mousePt* pt)
-{
-    if (base)
-    {
-        auto level = base->getSelfLevel();
-        auto head = *(level->begin());
-        auto up_elem = head->head->up_elem;
-        if (up_elem)
-        {
-            auto up_rect = up_elem->getRect();
-            pt->x -= up_rect->left;
-            pt->y -= up_rect->top;
-        }
-        subPtToLocal(up_elem, pt);
-    }
-}
 
 void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 {
     world_pt = *pt;
-    auto pt_new = *pt;
-    subPtToLocal(base, &pt_new);
-    local_pt.x = pt_new.x - base->getRect()->left;
-    local_pt.y = pt_new.y - base->getRect()->top;
+
+    local_pt.x = pt->x - base->getRectRefTop()->left;
+    local_pt.y = pt->y - base->getRectRefTop()->top;
     //char temp[100];
     //sprintf(temp, "\nworld_x = %f, world_y = %f\nlocal_x = %f, local_y = %f\n\n", world_pt.x, world_pt.y, local_pt.x, local_pt.y);
     //OutputDebugStringA(temp);
@@ -148,9 +131,9 @@ BaseElement::~BaseElement()
     baseMsg->g_mouse_drag_id = nullptr;
     baseMsg->g_now_hit_id = nullptr;
 
-    if (self_layout)
+    if (self_draw)
     {
-        delete(self_layout->draw);
+        delete self_draw;
     }
     
     if (self_level)

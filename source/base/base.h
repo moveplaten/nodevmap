@@ -41,7 +41,7 @@ private:
 extern BaseMessage* const baseMsg;
 
 
-class BaseAction : public BaseMessage
+class BaseAction
 {
 public:
     mousePt local_pt;
@@ -78,13 +78,22 @@ public:
         return self_level;
     }
 
-    const BaseRect* getRect()
+    const BaseRect* getRectRefUp()
     {
-        return &(self_layout->rect);
+        return &(self_layout->ref_up);
     }
-    void setRect(const BaseRect* rect)
+    const BaseRect* getRectRefTop()
     {
-        self_layout->rect = *rect;
+        return &(self_layout->ref_top);
+    }
+    //void setRect(const BaseRect* rect) //use NvpDraw::Record to set;
+    //{
+    //    self_layout->ref_up = *rect;
+    //}
+
+    NvpDraw* getSelfDraw()
+    {
+        return self_draw;
     }
 
     elemIDSize getIncreaseID() { return g_all_elem_store->getTotalUsed(); }
@@ -111,6 +120,7 @@ private:
     const elemIDSize self_id;
     const std::string* const self_name;
     bool self_visible = true;
+    NvpDraw* self_draw = nullptr;
 
 #ifndef TEMP_TEST_0
     MsgActMap msg_act_map;
@@ -131,4 +141,5 @@ private:
     NvpLevel::iterator const self_iter;
 
     friend class BaseMessage;
+    friend class NvpDraw;
 };

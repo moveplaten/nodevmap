@@ -1,11 +1,9 @@
 #import <Cocoa/Cocoa.h>
+
+#import "quartz/qtz_common.h"
 #include "base/base.h"
 
-@interface WndDelegate : NSObject <NSWindowDelegate, NSApplicationDelegate>
-@end
-@interface MainView : NSView
-@end
-extern NSWindow* g_main_wnd;
+@class WndDelegate, MainView;
 
 int main(int argc, const char * argv[])
 {

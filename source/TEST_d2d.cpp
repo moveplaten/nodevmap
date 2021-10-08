@@ -2,20 +2,6 @@
 #include "base/layout.h"
 #include "port-win/direct2d/d2d_common.h"
 
-static NvpDraw* getDraw(BaseElement* base)
-{
-    auto shapes = base->getSelfLayout();
-    return shapes->draw;
-}
-
-static void initDraw(BaseElement* base)
-{
-    auto d2d_draw = new D2dDraw();
-    auto shapes = base->getSelfLayout();
-    shapes->draw = d2d_draw;
-    shapes->draw->elem = base;
-}
-
 class ActInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
@@ -23,10 +9,10 @@ class ActInit : public BaseAction
         BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
-        base->setRect(&rect);
 
-        initDraw(base);
-        getDraw(base)->Record(rect, { 255, 0, 0 });
+        auto draw = new NvpFrameOneRect;
+        NvpColor col = { 255, 0, 0 };
+        nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }ActInit;
 
@@ -34,9 +20,8 @@ class ActMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect = *(base->getRect());
-
-        getDraw(base)->Record(rect, { 200, 200, 200 });
+        NvpColor col = { 200, 200, 200 };
+        nvpDraw->Record(base, &col, Draw);
     }
 }ActMouseMove;
 
@@ -44,9 +29,8 @@ class ActMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect = *(base->getRect());
-
-        getDraw(base)->Record(rect, { 150, 150, 150 });
+        NvpColor col = { 150, 150, 150 };
+        nvpDraw->Record(base, &col, Draw);
     }
 }ActMouseLeave;
 
@@ -76,10 +60,10 @@ class Act2Init : public BaseAction
         rect.right = 90;
         rect.top = 10;
         rect.bottom = 50;
-        base->setRect(&rect);
 
-        initDraw(base);
-        getDraw(base)->Record(rect, { 0, 255, 0 });
+        auto draw = new NvpFrameOneRect;
+        NvpColor col = { 0, 255, 0 };
+        nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }Act2Init;
 
@@ -87,9 +71,8 @@ class Act2MouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect = *(base->getRect());
-
-        getDraw(base)->Record(rect, { 0, 200, 200 });
+        NvpColor col = { 0, 200, 200 };
+        nvpDraw->Record(base, &col, Draw);
     }
 }Act2MouseMove;
 
@@ -97,9 +80,8 @@ class Act2MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect = *(base->getRect());
-
-        getDraw(base)->Record(rect, { 0, 150, 150 });
+        NvpColor col = { 0, 150, 150 };
+        nvpDraw->Record(base, &col, Draw);
     }
 }Act2MouseLeave;
 /////////////////////////////////////////////////////////////////////////
@@ -169,8 +151,10 @@ static void subLevelRecord(BaseElement* elem)
     for (size_t i = 0; i < size - 1; ++i)
     {
         auto next = *(++iter);
-        auto rect = next->body.elem->getRect();
-        getDraw(next->body.elem)->Record(*rect, { 150, 150, 150 }, Clear);
+        auto rect = next->body.elem->getRectRefUp();
+        
+        NvpColor col = { 150, 150, 150 };
+        nvpDraw->Record(next->body.elem, &col, NoneDraw, rect);
         subLevelRecord(next->body.elem);
     }
 }
@@ -184,7 +168,7 @@ class Act1MouseDrag : public BaseAction
             mousePt last_pt = Act1MouseLButtonDown.last_pt;
             ptSize sub_x = local_pt.x - last_pt.x;
             ptSize sub_y = local_pt.y - last_pt.y;
-            const BaseRect* old_rect = base->getRect();
+            const BaseRect* old_rect = base->getRectRefUp();
 
             //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
@@ -193,10 +177,14 @@ class Act1MouseDrag : public BaseAction
             new_rect.right = old_rect->right + sub_x;
             new_rect.top = old_rect->top + sub_y;
             new_rect.bottom = old_rect->bottom + sub_y;
-            base->setRect(&new_rect);
+            
+            nvpDraw->Record(base, 0, NoneDraw, &new_rect);
 
             subLevelRecord(base);
-            getDraw(base)->Record(new_rect, { 200, 200, 200 }, End);
+            
+            NvpColor col = { 200, 200, 200 };
+            nvpDraw->Record(base, &col, Draw);
+
         }
     }
 }Act1MouseDrag;
@@ -210,7 +198,7 @@ class Act2MouseDrag : public BaseAction
             mousePt last_pt = Act2MouseLButtonDown.last_pt;
             ptSize sub_x = local_pt.x - last_pt.x;
             ptSize sub_y = local_pt.y - last_pt.y;
-            const BaseRect* old_rect = base->getRect();
+            const BaseRect* old_rect = base->getRectRefUp();
 
             //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
@@ -219,9 +207,9 @@ class Act2MouseDrag : public BaseAction
             new_rect.right = old_rect->right + sub_x;
             new_rect.top = old_rect->top + sub_y;
             new_rect.bottom = old_rect->bottom + sub_y;
-            base->setRect(&new_rect);
 
-            getDraw(base)->Record(new_rect, { 0, 200, 200 }, End);
+            NvpColor col = { 0, 200, 200 };
+            nvpDraw->Record(base, &col, Draw, &new_rect);
         }
     }
 }Act2MouseDrag;
@@ -236,31 +224,15 @@ class Act3Init : public BaseAction
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
-        base->setRect(&rect);
     
         NvpColor hColor = { 0, 200, 200 };
         NvpColor hColor2 = { 200, 200, 200 };
+        NvpColor colors[2];
+        colors[0] = hColor;
+        colors[1] = hColor2;
 
-        initDraw(base);
- 
-        getDraw(base)->Record(rect, hColor, Begin);
-
-        int width = 8;
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, End);
+        auto draw = new NvpFrameFiveRect(40);
+        nvpDraw->Record(base, colors, Draw, &rect, draw);
     }
 }Act3Init;
 
@@ -268,34 +240,16 @@ class Act3MouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect;
-        rect.left = 110;
-        rect.right = 150;
-        rect.top = 10;
-        rect.bottom = 50;
-        base->setRect(&rect);
-
         NvpColor hColor = { 0, 200, 200 };
         NvpColor hColor2 = { 200, 200, 200 };
+        NvpColor colors[2];
+        colors[0] = hColor;
+        colors[1] = hColor2;
 
-        getDraw(base)->Record(rect, hColor, Begin);
+        auto draw = (NvpFrameFiveRect*)base->getSelfDraw();
+        draw->setPersent(36);
 
-        int width = 12;
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, End);
+        nvpDraw->Record(base, colors, Draw);
     }
 }Act3MouseMove;
 
@@ -303,40 +257,22 @@ class Act3MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect;
-        rect.left = 110;
-        rect.right = 150;
-        rect.top = 10;
-        rect.bottom = 50;
-        base->setRect(&rect);
-
         NvpColor hColor = { 0, 200, 200 };
         NvpColor hColor2 = { 200, 200, 200 };
+        NvpColor colors[2];
+        colors[0] = hColor;
+        colors[1] = hColor2;
 
-        getDraw(base)->Record(rect, hColor, Begin);
+        auto draw = (NvpFrameFiveRect*)base->getSelfDraw();
+        draw->setPersent(40);
 
-        int width = 8;
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 10; rect.bottom = 30 - width / 2;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 110; rect.right = 130 - width / 2;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, None);
-
-        rect.left = 130 + width / 2; rect.right = 150;
-        rect.top = 30 + width / 2; rect.bottom = 50;
-        getDraw(base)->Record(rect, hColor2, End);
+        nvpDraw->Record(base, colors, Draw);
     }
 }Act3MouseLeave;
 
 //global opt speed control;
-static RecordOption opt[] = { Clear, Clear, Clear, Clear, Clear, Clear,
-    Clear, Clear, Clear, Clear, Clear, Clear, Clear, Clear, End };
+static RecordOption opt[] = { NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw,
+    NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, Draw };
 
 class ActRandomInit : public BaseAction
 {
@@ -354,11 +290,12 @@ class ActRandomInit : public BaseAction
         rect.right += move_x;
         rect.top += move_y;
         rect.bottom += move_y;
-        base->setRect(&rect);
 
         static int offset = -1; ++offset;
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+
+        NvpColor col = { 100, 100, 100 };
+        auto draw = new NvpFrameOneRect;
+        nvpDraw->Record(base, &col, opt[offset], &rect, draw);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -383,11 +320,11 @@ class ActSubInit : public BaseAction
         rect.top += move_y;
         rect.bottom += move_y;
 
-        base->setRect(&rect);
-
         static int offset = -1; ++offset;
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+
+        NvpColor col = { 100, 100, 100 };
+        auto draw = new NvpFrameOneRect;
+        nvpDraw->Record(base, &col, opt[offset], &rect, draw);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -412,11 +349,11 @@ class Act2SubInit : public BaseAction
         rect.top += move_y;
         rect.bottom += move_y;
 
-        base->setRect(&rect);
-
         static int offset = -1; ++offset;
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+        
+        NvpColor col = { 100, 100, 100 };
+        auto draw = new NvpFrameOneRect;
+        nvpDraw->Record(base, &col, opt[offset], &rect, draw);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -441,11 +378,11 @@ class Act3SubInit : public BaseAction
         rect.top += move_y;
         rect.bottom += move_y;
 
-        base->setRect(&rect);
-
         static int offset = -1; ++offset;
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 100, 100 }, opt[offset]);
+
+        NvpColor col = { 100, 100, 100 };
+        auto draw = new NvpFrameOneRect;
+        nvpDraw->Record(base, &col, opt[offset], &rect, draw);
         if (offset >= ARRAYSIZE(opt) - 1)
         {
             offset = -1;
@@ -473,8 +410,8 @@ static void subLevelRemove(BaseElement* elem)
     {
         auto iter = sub_level->begin(); //something was delete;
         auto next = *(++iter);
-        auto rect = next->body.elem->getRect();
-        getDraw(next->body.elem)->Record(*rect, { 0, 0, 0 });
+        NvpColor col = { 0, 0, 0 };
+        nvpDraw->Record(next->body.elem, &col, Draw);
         subLevelRemove(next->body.elem);
         elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
     }
@@ -484,9 +421,8 @@ class ActMouseRButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        BaseRect rect = *(base->getRect());
-
-        getDraw(base)->Record(rect, { 0, 0, 0 });
+        NvpColor col = { 0, 0, 0 };
+        nvpDraw->Record(base, &col);
 
         subLevelRemove(base);
         
@@ -520,7 +456,8 @@ class Act3MouseRButtonDown : public BaseAction
 
                 static int offset = -1; ++offset;
 
-                getDraw(shape)->Record(*(shape->getRect()), { 0, 0, 0 }, opt[offset]);
+                NvpColor col = { 0, 0, 0 };
+                nvpDraw->Record(shape, &col, opt[offset]);
                 if (offset >= ARRAYSIZE(opt) - 1)
                 {
                     offset = -1;
@@ -655,10 +592,11 @@ class MenuInit : public BaseAction
     {
         auto iter = g_top_menu_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
-        base->setRect(&rect);
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 200, 255 });
+        auto rect = elem->getSelfLayout()->ref_up;
+
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }MenuInit;
 
@@ -666,11 +604,17 @@ class MenuMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto iter = g_top_menu_bar->begin();
+        auto iter = g_top_status_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
-        base->setRect(&rect);
-        getDraw(base)->Record(rect, { 200, 200, 255 });
+        auto rect = elem->getSelfLayout()->ref_up;
+        auto width = rect.right - rect.left;
+        auto height = rect.bottom - rect.top;
+        rect.left = rect.top = 0;
+        rect.right = width;
+        rect.bottom = height;
+
+        NvpColor col = { 200, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect);
     }
 }MenuMouseMove;
 
@@ -678,11 +622,17 @@ class MenuMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto iter = g_top_menu_bar->begin();
+        auto iter = g_top_status_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
-        base->setRect(&rect);
-        getDraw(base)->Record(rect, { 100, 200, 255 });
+        auto rect = elem->getSelfLayout()->ref_up;
+        auto width = rect.right - rect.left;
+        auto height = rect.bottom - rect.top;
+        rect.left = rect.top = 0;
+        rect.right = width;
+        rect.bottom = height;
+
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect);
     }
 }MenuMouseLeave;
 
@@ -697,15 +647,16 @@ class StatInit : public BaseAction
     {
         auto iter = g_top_status_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
+        auto rect = elem->getSelfLayout()->ref_up;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
         rect.left = rect.top = 0;
         rect.right = width;
         rect.bottom = height;
-        base->setRect(&rect);
-        initDraw(base);
-        getDraw(base)->Record(rect, { 100, 200, 255 });
+
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }StatInit;
 
@@ -715,14 +666,15 @@ class StatMouseMove : public BaseAction
     {
         auto iter = g_top_status_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
+        auto rect = elem->getSelfLayout()->ref_up;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
         rect.left = rect.top = 0;
         rect.right = width;
         rect.bottom = height;
-        base->setRect(&rect);
-        getDraw(base)->Record(rect, { 200, 200, 255 });
+
+        NvpColor col = { 200, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect);
     }
 }StatMouseMove;
 
@@ -732,14 +684,15 @@ class StatMouseLeave : public BaseAction
     {
         auto iter = g_top_status_bar->begin();
         auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->rect;
+        auto rect = elem->getSelfLayout()->ref_up;
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
         rect.left = rect.top = 0;
         rect.right = width;
         rect.bottom = height;
-        base->setRect(&rect);
-        getDraw(base)->Record(rect, { 100, 200, 255 });
+
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, &rect);
     }
 }StatMouseLeave;
 

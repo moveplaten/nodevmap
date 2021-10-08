@@ -45,19 +45,19 @@ public:
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            elem->getSelfLayout()->rect = rect;
+            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
         }
         
         if (g_top_node_view)
         {
-            auto iter = g_top_node_view->begin();;
+            auto iter = g_top_node_view->begin();
             auto elem = (*iter)->head->up_elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 20.0f;
             rect.right = client.width;
             rect.bottom = client.height - 20.0f;
-            elem->getSelfLayout()->rect = rect;
+            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
         }
         
         if (g_top_menu_bar)
@@ -69,7 +69,7 @@ public:
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = 20.0f;
-            elem->getSelfLayout()->rect = rect;
+            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
         }
         
         if (g_top_status_bar)
@@ -81,7 +81,7 @@ public:
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            elem->getSelfLayout()->rect = rect;
+            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
         }
     }
 
@@ -90,7 +90,7 @@ public:
         auto iter = g_top_menu_bar->begin();
         auto layout = *(++iter);
         auto elem = layout->body.elem;
-        if (elem->getSelfLayout()->draw)
+        if (elem->getSelfDraw())
         {
             elem->msgRoute(MouseLeave);
         }
@@ -98,13 +98,13 @@ public:
         iter = g_top_status_bar->begin();
         layout = *(++iter);
         elem = layout->body.elem;
-        if (elem->getSelfLayout()->draw)
+        if (elem->getSelfDraw())
         {
             elem->msgRoute(MouseLeave);
         }
     }
 
-    void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
+    //void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
 
     D2dUtil::D2dUtil(HWND hwnd):m_hwnd(hwnd),
                                 m_pD2DFactory(nullptr),
@@ -123,24 +123,14 @@ private:
     ID2D1HwndRenderTarget* m_pRT;
 
     double draw_fps;
-    friend class D2dDraw;
+    friend class D2dNvpDrawPort;
 };
 
-class D2dDraw : public NvpDraw
+class D2dNvpDrawPort : public NvpDrawPort
 {
-public:
-    virtual void doBegin() override;
-    virtual void doDraw() override;
-    virtual void doEnd() override;
-
-    D2dDraw::D2dDraw()
-    {
-    }
-
-    D2dDraw::~D2dDraw()
-    {
-    }
-
-private:
-
+    virtual void beginDraw() override;
+    
+    virtual void fillRect(const BaseRect& rect, NvpColor colo) override;
+    virtual void frameRect(const BaseRect& rect, NvpColor colo) override;
+    
 };

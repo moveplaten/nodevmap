@@ -108,7 +108,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         auto up_elem = head->head->up_elem;
         if (up_elem)
         {
-            auto up_rect = up_elem->getRect();
+            auto up_rect = up_elem->getRectRefUp();
             pt_x -= up_rect->left;
             pt_y -= up_rect->top;
         }
@@ -119,7 +119,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
         ++iter;
         for (size_t i = 0; i < size - 1; ++i)
         {
-            auto rect = &(*iter)->body.rect;
+            auto rect = &(*iter)->body.ref_up;
             if (rect->left <= pt_x && rect->right > pt_x &&
             rect->top <= pt_y && rect->bottom > pt_y)
             {

@@ -15,17 +15,38 @@ struct NvpColor
 
 enum RecordOption
 {
-    Begin,
-    End,
-    BeginEnd,
-    None,
-    Clear,
+    NoneDraw,
+    Draw
+};
+
+class NvpDrawPort
+{
+public:
+    virtual void beginDraw() = 0;
+    
+    virtual void fillRect(const BaseRect& rect, NvpColor colo) = 0;
+    virtual void frameRect(const BaseRect& rect, NvpColor colo) = 0; //only border;
+    
 };
 
 class NvpDraw
 {
 public:
-    void Record(const BaseRect& rec, NvpColor col, RecordOption opt = BeginEnd);
+    void Record(BaseElement* base, NvpColor* cols = nullptr,
+        RecordOption opt = NoneDraw,
+        const BaseRect* rect = nullptr, NvpDraw* draw = nullptr);
+
+    void drawAll(BaseElement* base);
+    
+    NvpDrawPort* getDrawPort() { return g_draw_port; }
+
+    void initDrawPort(NvpDrawPort* draw_port)
+    {
+        if (!g_draw_port)
+        {
+            g_draw_port = draw_port;
+        }
+    }
 
     NvpDraw()
     {
@@ -35,20 +56,55 @@ public:
     {
     }
 
-    void realDraw();
+protected:
+    virtual void realDraw(BaseElement* base) = 0;
+    virtual void setColor(NvpColor* cols) = 0;
 
-    int record_offset = 0;
-    std::vector<BaseRect> recs;
-    std::vector<NvpColor> cols;
-    BaseElement* elem = nullptr;
-
-//protected:
-    virtual void doBegin() = 0;
-    virtual void doDraw() = 0;
-    virtual void doEnd() = 0;
-
-private:
-
+    static NvpDrawPort* g_draw_port;
 };
 
-void subLevelDraw(BaseElement* elem);
+
+/// GLOBAL nvpDraw;
+extern NvpDraw* const nvpDraw;
+
+
+class NvpFrameOneRect : public NvpDraw
+{
+    virtual void realDraw(BaseElement* base) override;
+    virtual void setColor(NvpColor* cols) override
+    {
+        color = cols[0];
+    }
+
+    NvpColor color;
+};
+
+class NvpFrameFiveRect : public NvpDraw
+{
+public:
+    NvpFrameFiveRect(int p /*1~50*/)
+    {
+        percent = p / 100.0f;
+    }
+    void setPersent(int p) { percent = p / 100.0f; }
+    virtual void realDraw(BaseElement* base) override;
+    virtual void setColor(NvpColor* cols) override
+    {
+        color[0] = cols[0];
+        color[1] = cols[1];
+    }
+
+    NvpColor color[2];
+    float percent;
+};
+
+class NvpFillOneRect : public NvpDraw
+{
+    virtual void realDraw(BaseElement* base) override;
+    virtual void setColor(NvpColor* cols) override
+    {
+        color = cols[0];
+    }
+
+    NvpColor color;
+};

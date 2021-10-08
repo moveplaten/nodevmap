@@ -1,15 +1,7 @@
 #import <Cocoa/Cocoa.h>
+
+#import "quartz/qtz_common.h"
 #include "base/base.h"
-
-@interface WndDelegate : NSObject <NSWindowDelegate, NSApplicationDelegate>
-
-@end
-
-@interface MainView : NSView
-
-@end
-
-NSWindow* g_main_wnd;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,15 +10,47 @@ NSWindow* g_main_wnd;
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
     NSLog(@"launch finish");
+    auto draw_port = new QtzNvpDrawPort;
+    nvpDraw->initDrawPort(draw_port);
+    
+    [self windowDidResize:notification]; //ensure size top_layout before MsgInit;
+    
     baseMsg->hitTest(MsgInit, nullptr);
-    elemGen("node_1", MsgNone, nullptr);
-    elemDel("top_layout", g_top_layout);
 }
 
-- (BOOL)windowShouldClose:(NSWindow *)sender
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
-    [NSApp terminate:g_main_wnd];
-    return FALSE;
+    return YES;
+}
+
+- (void)windowDidResize:(NSNotification *)notification
+{
+    NSRect wnd_rect = [g_main_wnd.contentView bounds];
+    
+    if (g_top_layout)
+    {
+        auto iter = g_top_layout->begin();
+        auto layout = *(++iter);
+        auto elem = layout->body.elem;
+        BaseRect rect;
+        rect.left = 0.0f;
+        rect.top = 0.0f;
+        rect.right = wnd_rect.size.width;
+        rect.bottom = wnd_rect.size.height;
+        nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
+    }
+    
+    if (g_top_node_view)
+    {
+        auto iter = g_top_node_view->begin();
+        auto elem = (*iter)->head->up_elem;
+        BaseRect rect;
+        rect.left = 0.0f;
+        rect.top = 20.0f;
+        rect.right = wnd_rect.size.width;
+        rect.bottom = wnd_rect.size.height - 20.0f;
+        nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
+    }
 }
 
 @end
@@ -34,19 +58,28 @@ NSWindow* g_main_wnd;
 ////////////////////////////////////////////////////////////////////////////////
 
 @implementation MainView
-{
-    NSTrackingArea* trackArea;
-}
 
 - (instancetype)init
 {
     self = [super init];
     if (self)
     {
-        trackArea = nil;
-        [self updateTrackingAreas];
+        [self addTrackingArea];
     }
     return self;
+}
+
+- (void)addTrackingArea
+{
+    NSTrackingAreaOptions options = (NSTrackingMouseMoved |
+                                     NSTrackingInVisibleRect |
+                                     NSTrackingActiveAlways); //same as Windows;
+    
+    NSTrackingArea* trackArea = [[NSTrackingArea alloc] initWithRect:NSZeroRect
+                                                             options:options
+                                                               owner:self
+                                                            userInfo:nil];
+    [self addTrackingArea:trackArea];
 }
 
 - (BOOL)isFlipped
@@ -64,72 +97,69 @@ NSWindow* g_main_wnd;
     return YES;
 }
 
-- (void)updateTrackingAreas
+- (mousePt)convertPt:(NSEvent *)event
 {
-    if (trackArea != nil)
-    {
-        [self removeTrackingArea:trackArea];
-        [trackArea release];
-    }
-    
-    NSTrackingAreaOptions options = (NSTrackingMouseMoved |
-                                     NSTrackingMouseEnteredAndExited |
-                                     NSTrackingActiveAlways); //same as Windows;
-    
-    trackArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-                                             options:options
-                                               owner:self
-                                            userInfo:nil];
-    [self addTrackingArea:trackArea];
-    [super updateTrackingAreas];
+    NSPoint ns_pt = [event locationInWindow];
+    NSRect wnd_rect = [g_main_wnd.contentView frame];
+    mousePt pt;
+    pt.x = ns_pt.x;
+    pt.y = wnd_rect.size.height - ns_pt.y;
+    return pt;
 }
 
 - (void)mouseMoved:(NSEvent *)event
 {
     //NSLog(@"mouse move");
-    NSPoint pt = [event locationInWindow];
-    NSRect wnd_rect = [g_main_wnd.contentView frame];
-    NSLog(@"x = %f, y = %f", pt.x, wnd_rect.size.height - pt.y);
-    [g_main_wnd.contentView setNeedsDisplay:YES];
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseMove, &pt);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     NSLog(@"mouse drag");
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseMove_MouseLButtonDown, &pt);
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
     NSLog(@"LButton Down");
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseLButtonDown, &pt);
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
     NSLog(@"LButton UP");
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseLButtonUp, &pt);
 }
 
 - (void)rightMouseDown:(NSEvent *)event
 {
     NSLog(@"RButton Down");
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseRButtonDown, &pt);
 }
 
 - (void)rightMouseUp:(NSEvent *)event
 {
     NSLog(@"RButton UP");
+    mousePt pt = [self convertPt:event];
+    baseMsg->hitTest(MouseRButtonUp, &pt);
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     NSLog(@"Drawing");
-    CGContextRef cg_ref = [[NSGraphicsContext currentContext] CGContext];
-    NSColor* col = [NSColor colorWithCalibratedRed:(CGFloat)0/255
-                                             green:(CGFloat)200/255
-                                              blue:(CGFloat)200/255
-                                             alpha:(CGFloat)1.0];
-    [col set];
-    static CGFloat i = 0;
-    i += 0.5f;
-    CGContextStrokeRectWithWidth(cg_ref, CGRectMake(10 + i, 10 + i, 50, 50), 1.0f);
+    g_cg_ref = [[NSGraphicsContext currentContext] CGContext];
+    
+    if (g_top_layout)
+    {
+        auto iter = g_top_layout->begin();
+        auto top_elem = (*(++iter))->body.elem;
+        nvpDraw->drawAll(top_elem);
+    }
 }
 
 @end

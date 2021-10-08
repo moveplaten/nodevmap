@@ -15,6 +15,8 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_USER + 100:
     {
+        auto draw_port = new D2dNvpDrawPort;
+        nvpDraw->initDrawPort(draw_port);
         baseMsg->hitTest(MsgInit, &pt);
     }
     break;

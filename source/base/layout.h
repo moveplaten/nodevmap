@@ -82,9 +82,10 @@ extern AllElem* g_all_elem_store;
 
 struct NvpLayoutBody
 {
-    BaseRect rect; //local space, ref to up level;
+    BaseRect ref_up; //local space, ref to up level;
+    BaseRect ref_top; //world space, ref to top level;
+    
     BaseElement* elem;
-    NvpDraw* draw;
     NvpLevel* sub; //sub level;
 };
 

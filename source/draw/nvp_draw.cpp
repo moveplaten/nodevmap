@@ -1,103 +1,71 @@
 #include "draw.h"
 #include "base/base.h"
 
-void NvpDraw::Record(const BaseRect& rec, NvpColor col, RecordOption opt)
+NvpDraw* const nvpDraw = nullptr;
+NvpDrawPort* NvpDraw::g_draw_port = nullptr;
+
+void NvpDraw::Record(BaseElement* base, NvpColor* cols,
+    RecordOption opt,
+    const BaseRect* rect, NvpDraw* draw)
 {
-    if (opt == Clear)
-    {
-        recs.clear();
-        cols.clear();
-        record_offset = 0;
-    }
-    
-    ++record_offset;
-    auto rec_begin = recs.begin();
-    auto col_begin = cols.begin();
-
-    auto width = rec.right - rec.left;
-    auto height = rec.bottom - rec.top;
-
-    auto header = getLayoutHead(elem->getSelfLayout());
-    auto up_elem = header->up_elem;
-    auto up_rect = up_elem->getRect();
-
-    BaseRect new_rect;
-
-    //left_top system;
-    new_rect.left = up_rect->left + rec.left;
-    new_rect.top = up_rect->top + rec.top;
-
-    auto depth = header->cur_depth;
-
-    for (uint32_t i = 0; i < depth; ++i)
-    {
-        header = getLayoutHead(up_elem->getSelfLayout());
-        if (header->up_elem)
-        {
-            up_elem = header->up_elem;
-            up_rect = up_elem->getRect();
-            new_rect.left += up_rect->left;
-            new_rect.top += up_rect->top;
-        }
-    }
-
-    new_rect.right = new_rect.left + width;
-    new_rect.bottom = new_rect.top + height;
-
-    for (int i = 0; i < record_offset - 1; ++i)
-    {
-        ++rec_begin;
-        ++col_begin;
-    }
-    if (rec_begin == recs.end())
-    {
-        recs.push_back(new_rect);
-        cols.push_back(col);
-    }
-    else
-    {
-        *rec_begin = new_rect;
-        *col_begin = col;
-    }
-
-    if (opt == BeginEnd || opt == End)
-    {
-        realDraw();
-        record_offset = 0;
-    }
-    
-    if (opt == Clear)
-    {
-        record_offset = 0;
-    }
-}
-
-void NvpDraw::realDraw()
-{
-    auto iter = g_top_layout->begin();
-    auto top = *(++iter);
-    auto top_elem = top->body.elem;
-    /////////////////////////////////////////////////////////
-    doBegin();
-
-    subLevelDraw(top_elem);
-    
-    doEnd();
-    /////////////////////////////////////////////////////////
-}
-
-void subLevelDraw(BaseElement* elem)
-{
-    if (!elem)
+    if (!base)
     {
         return;
     }
 
-    auto sub_level = elem->getSelfLayout()->sub;
-    auto draw = elem->getSelfLayout()->draw;
-    if (draw)
+    if (rect)
     {
-        draw->doDraw();
+        base->self_layout->ref_up = *rect; //ref_up is input from user;
+
+        auto iter = base->self_level->begin();
+        auto up_elem = (*iter)->head->up_elem;
+        if (up_elem)
+        {
+            auto up_view_rect = up_elem->self_layout->ref_top;
+            auto view_rect = &(base->self_layout->ref_top);
+
+            auto width = rect->right - rect->left;
+            auto height = rect->bottom - rect->top;
+
+            view_rect->left = rect->left + up_view_rect.left;
+            view_rect->top = rect->top + up_view_rect.top;
+            view_rect->right = view_rect->left + width;
+            view_rect->bottom = view_rect->top + height;
+        }
+    }
+
+    bool set_color = true;
+
+    if (draw && cols)
+    {
+        base->self_draw = draw;
+        draw->setColor(cols);
+        set_color = false;
+    }
+
+    if (base->self_draw && set_color && cols)
+    {
+        base->self_draw->setColor(cols);
+    }
+
+    if (opt == Draw)
+    {
+        g_draw_port->beginDraw();
+    }
+}
+
+void NvpDraw::drawAll(BaseElement* base)
+{
+    if (!base)
+    {
+        return;
+    }
+
+    auto sub_level = base->self_layout->sub;
+    
+    if (base->self_draw)
+    {
+        base->self_draw->realDraw(base);
     }
     if (!sub_level)
     {
@@ -110,6 +78,54 @@ void subLevelDraw(BaseElement* elem)
     for (size_t i = 0; i < size - 1; ++i)
     {
         auto next = *(++iter);
-        subLevelDraw(next->body.elem);
+        drawAll(next->body.elem);
     }
+}
+
+void NvpFrameOneRect::realDraw(BaseElement* base)
+{
+    auto main_rect = base->getRectRefTop();
+    g_draw_port->frameRect(*main_rect, color);
+}
+
+void NvpFrameFiveRect::realDraw(BaseElement* base)
+{
+    auto main_rect = base->getRectRefTop();
+
+    auto min_width = (main_rect->right - main_rect->left) * percent;
+    auto min_height = (main_rect->bottom - main_rect->top) * percent;
+
+    BaseRect TL, TR, BL, BR;
+    
+    TL.left = main_rect->left;
+    TL.top = main_rect->top;
+    TL.right = TL.left + min_width;
+    TL.bottom = TL.top + min_height;
+
+    TR.right = main_rect->right;
+    TR.top = main_rect->top;
+    TR.left = TR.right - min_width;
+    TR.bottom = TR.top + min_height;
+
+    BL.left = main_rect->left;
+    BL.bottom = main_rect->bottom;
+    BL.right = BL.left + min_width;
+    BL.top = BL.bottom - min_height;
+
+    BR.right = main_rect->right;
+    BR.bottom = main_rect->bottom;
+    BR.left = BR.right - min_width;
+    BR.top = BR.bottom - min_height;
+
+    g_draw_port->frameRect(*main_rect, color[0]);
+    g_draw_port->frameRect(TL, color[1]);
+    g_draw_port->frameRect(TR, color[1]);
+    g_draw_port->frameRect(BL, color[1]);
+    g_draw_port->frameRect(BR, color[1]);
+}
+
+void NvpFillOneRect::realDraw(BaseElement* base)
+{
+    auto main_rect = base->getRectRefTop();
+    g_draw_port->fillRect(*main_rect, color);
 }
