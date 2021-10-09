@@ -8,7 +8,7 @@
 int main(int argc, const char * argv[])
 {
     NvpLevel::iterator iter;
-    BaseElement b(0, 0, 0, 0, iter);
+    BaseElement b(0, "0", 0, 0, iter);
     elemGen("test0", MsgNone, nullptr);
     ElemStorage<100, int> e;
     

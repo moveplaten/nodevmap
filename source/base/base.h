@@ -73,7 +73,7 @@ class BaseElement
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
-    const std::string& getSelfName() { return *self_name; }
+    const std::string& getSelfName() { return self_name; }
     NvpLayoutBody* const getSelfLayout()
     {
         return self_layout;
@@ -112,7 +112,7 @@ public:
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement(const elemIDSize id, const std::string* name,
+    BaseElement(const elemIDSize id, const std::string& name,
         NvpLayoutBody* const layout, NvpLevel* const level,
         NvpLevel::iterator const iter);
 
@@ -124,7 +124,7 @@ private:
     typedef std::map<MsgBaseType, BaseAction*> MsgActMap;
 
     const elemIDSize self_id;
-    const std::string* const self_name;
+    const std::string& self_name;
     bool self_visible = true;
     NvpDraw* self_draw = nullptr;
 

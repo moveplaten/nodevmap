@@ -113,7 +113,7 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
     //OutputDebugStringA(temp);
 }
 
-BaseElement::BaseElement(const elemIDSize id, const std::string* name,
+BaseElement::BaseElement(const elemIDSize id, const std::string& name,
     NvpLayoutBody* const layout, NvpLevel* const level,
     NvpLevel::iterator const iter)
     :self_id(id), self_name(name), self_layout(layout), self_level(level),

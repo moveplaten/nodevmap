@@ -32,6 +32,10 @@ void NvpDraw::Record(BaseElement* base, NvpColor* cols,
             view_rect->right = view_rect->left + width;
             view_rect->bottom = view_rect->top + height;
         }
+        else if (base->getSelfName() == "top_layout")
+        {
+            base->self_layout->ref_top = *rect;
+        }
     }
 
     bool set_color = true;

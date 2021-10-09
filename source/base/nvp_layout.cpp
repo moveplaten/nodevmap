@@ -59,8 +59,8 @@ ElemGenerator::ElemGenerator(const std::string& str,
             auto iter = --end;
 
             auto result = elem_map->insert({ str, nullptr });
-            auto content = &(*(result.first));
-            auto str_ref = &(content->first);
+            auto& content = result.first;
+            auto& str_ref = content->first;
             
             BaseElement* base = new BaseElement(id, str_ref, layout, level, iter);
             gen_elem = base;
