@@ -20,6 +20,8 @@ class BaseMessage
 {
 public:
     void hitTest(MsgBaseType msg_type, mousePt* pt);
+    
+    mousePt getLastMouseLDown() { return g_last_downL_pt; }
 
 protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
@@ -29,9 +31,13 @@ private:
     static BaseElement* g_mouse_drag_id;
     static BaseElement* g_before_leave_id;
     
+    static mousePt g_last_downL_pt; //local space;
+
     void initAll(NvpLevel* level);
     bool checkLeave();
     BaseElement* inRange(mousePt* pt, NvpLevel* level);
+
+    void mousePtToLocal(BaseElement* base, mousePt* pt);
 
     friend class BaseElement;
 };

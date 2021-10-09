@@ -5,6 +5,7 @@ BaseMessage* const baseMsg = nullptr;
 BaseElement* BaseMessage::g_now_hit_id = nullptr;
 BaseElement* BaseMessage::g_mouse_drag_id = nullptr;
 BaseElement* BaseMessage::g_before_leave_id = nullptr;
+mousePt BaseMessage::g_last_downL_pt = { 0 };
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
@@ -31,6 +32,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else if (msg_type == MouseLButtonDown && g_now_hit_id)
     {
+        mousePtToLocal(g_now_hit_id, pt);
         g_mouse_drag_id = g_now_hit_id;
         g_now_hit_id->msgRoute(MouseLButtonDown, pt);
     }
@@ -56,6 +58,12 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
             hitTest(MouseLeave, pt);
         }
     }
+}
+
+void BaseMessage::mousePtToLocal(BaseElement* base, mousePt* pt)
+{
+    g_last_downL_pt.x = pt->x - base->getRectRefTop()->left;
+    g_last_downL_pt.y = pt->y - base->getRectRefTop()->top;
 }
 
 void BaseMessage::initAll(NvpLevel* level)

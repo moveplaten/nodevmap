@@ -86,52 +86,6 @@ class Act2MouseLeave : public BaseAction
 }Act2MouseLeave;
 /////////////////////////////////////////////////////////////////////////
 
-class Act1MouseLButtonDown : public BaseAction
-{
-public:
-    static mousePt last_pt;
-    static bool can_drag;
-    virtual void realAction(BaseElement* base) override
-    {
-        can_drag = true;
-        last_pt = local_pt;
-    }
-}Act1MouseLButtonDown;
-mousePt Act1MouseLButtonDown::last_pt;
-bool Act1MouseLButtonDown::can_drag = false;
-
-class Act1MouseLButtonUp : public Act1MouseLButtonDown
-{
-public:
-    virtual void realAction(BaseElement* base) override
-    {
-        can_drag = false;
-    }
-}Act1MouseLButtonUp;
-
-class Act2MouseLButtonDown : public BaseAction
-{
-public:
-    static mousePt last_pt;
-    static bool can_drag;
-    virtual void realAction(BaseElement* base) override
-    {
-        can_drag = true;
-        last_pt = local_pt;
-    }
-}Act2MouseLButtonDown;
-mousePt Act2MouseLButtonDown::last_pt;
-bool Act2MouseLButtonDown::can_drag = false;
-
-class Act2MouseLButtonUp : public Act2MouseLButtonDown
-{
-public:
-    virtual void realAction(BaseElement* base) override
-    {
-        can_drag = false;
-    }
-}Act2MouseLButtonUp;
-
 static void subLevelRecord(BaseElement* elem)
 {
     if (!elem)
@@ -163,29 +117,25 @@ class Act1MouseDrag : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        if (Act1MouseLButtonDown.can_drag)
-        {
-            mousePt last_pt = Act1MouseLButtonDown.last_pt;
-            ptSize sub_x = local_pt.x - last_pt.x;
-            ptSize sub_y = local_pt.y - last_pt.y;
-            const BaseRect* old_rect = base->getRectRefUp();
+        mousePt last_pt = baseMsg->getLastMouseLDown();
+        ptSize sub_x = local_pt.x - last_pt.x;
+        ptSize sub_y = local_pt.y - last_pt.y;
+        const BaseRect* old_rect = base->getRectRefUp();
 
-            //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+        //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
-            BaseRect new_rect;
-            new_rect.left = old_rect->left + sub_x;
-            new_rect.right = old_rect->right + sub_x;
-            new_rect.top = old_rect->top + sub_y;
-            new_rect.bottom = old_rect->bottom + sub_y;
-            
-            nvpDraw->Record(base, 0, NoneDraw, &new_rect);
+        BaseRect new_rect;
+        new_rect.left = old_rect->left + sub_x;
+        new_rect.right = old_rect->right + sub_x;
+        new_rect.top = old_rect->top + sub_y;
+        new_rect.bottom = old_rect->bottom + sub_y;
 
-            subLevelRecord(base);
-            
-            NvpColor col = { 200, 200, 200 };
-            nvpDraw->Record(base, &col, Draw);
+        nvpDraw->Record(base, 0, NoneDraw, &new_rect);
 
-        }
+        subLevelRecord(base);
+
+        NvpColor col = { 200, 200, 200 };
+        nvpDraw->Record(base, &col, Draw);
     }
 }Act1MouseDrag;
 
@@ -193,24 +143,21 @@ class Act2MouseDrag : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        if (Act2MouseLButtonDown.can_drag)
-        {
-            mousePt last_pt = Act2MouseLButtonDown.last_pt;
-            ptSize sub_x = local_pt.x - last_pt.x;
-            ptSize sub_y = local_pt.y - last_pt.y;
-            const BaseRect* old_rect = base->getRectRefUp();
+        mousePt last_pt = baseMsg->getLastMouseLDown();
+        ptSize sub_x = local_pt.x - last_pt.x;
+        ptSize sub_y = local_pt.y - last_pt.y;
+        const BaseRect* old_rect = base->getRectRefUp();
 
-            //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+        //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
 
-            BaseRect new_rect;
-            new_rect.left = old_rect->left + sub_x;
-            new_rect.right = old_rect->right + sub_x;
-            new_rect.top = old_rect->top + sub_y;
-            new_rect.bottom = old_rect->bottom + sub_y;
+        BaseRect new_rect;
+        new_rect.left = old_rect->left + sub_x;
+        new_rect.right = old_rect->right + sub_x;
+        new_rect.top = old_rect->top + sub_y;
+        new_rect.bottom = old_rect->bottom + sub_y;
 
-            NvpColor col = { 0, 200, 200 };
-            nvpDraw->Record(base, &col, Draw, &new_rect);
-        }
+        NvpColor col = { 0, 200, 200 };
+        nvpDraw->Record(base, &col, Draw, &new_rect);
     }
 }Act2MouseDrag;
 
@@ -485,8 +432,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(number_str, MouseMove, &ActMouseMove);
             elemGen(number_str, MouseLeave, &ActMouseLeave);
-            elemGen(number_str, MouseLButtonDown, &Act1MouseLButtonDown);
-            elemGen(number_str, MouseLButtonUp, &Act1MouseLButtonUp);
             elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
             elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
 
@@ -501,8 +446,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
             elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
             elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
             elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
@@ -514,8 +457,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
             elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
             elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
             elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
@@ -527,8 +468,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
             elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
             elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
             elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
@@ -541,8 +480,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
             elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
             elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
             elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
 
@@ -555,8 +492,6 @@ class Act3MouseLButtonDown : public BaseAction
             // same act as v1 except init position;
             elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
             elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseLButtonDown, &Act1MouseLButtonDown, sub_level);
-            elemGen(sub_string, MouseLButtonUp, &Act1MouseLButtonUp, sub_level);
             elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
             elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
         }
@@ -568,15 +503,11 @@ ELEM_GEN(init, MsgNone, ActInit) //init first;
 ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseMove, ActMouseMove)
 ELEM_GEN(v1, MouseLeave, ActMouseLeave)
-ELEM_GEN(v1, MouseLButtonDown, Act1MouseLButtonDown)
-ELEM_GEN(v1, MouseLButtonUp, Act1MouseLButtonUp)
 ELEM_GEN(v1, MouseMove_MouseLButtonDown, Act1MouseDrag)
 
 ELEM_GEN(v2, MsgInit, Act2Init)
 ELEM_GEN(v2, MouseMove, Act2MouseMove)
 ELEM_GEN(v2, MouseLeave, Act2MouseLeave)
-ELEM_GEN(v2, MouseLButtonDown, Act2MouseLButtonDown)
-ELEM_GEN(v2, MouseLButtonUp, Act2MouseLButtonUp);
 ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
 
 ELEM_GEN(v3, MsgInit, Act3Init) //v3 is Add Button;
