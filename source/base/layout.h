@@ -36,49 +36,65 @@ class BaseAction;
 ElemGenerator x##y##z(#x, y, &z);
 
 #define ELEM_GEN_FULL(x, y, z, l)\
-ElemGenerator x##y##z##l(#x, y, &z, l);
+ElemGenerator x##y##z(#x, y, &z, l);
 
 union NvpLayout;
 struct NvpLayoutHead;
 struct NvpLayoutBody;
 typedef std::list<NvpLayout*> NvpLevel;
 
-extern NvpLevel* g_top_layout; //the whole client area, should init global;
+typedef ElemStorage<100000, NvpLayoutBody> AllElem;
+typedef std::map<std::string, BaseElement*> ElemMap;
 
-//below are all default;
-extern NvpLevel* g_top_node_view;
-extern NvpLevel* g_top_menu_bar;
-extern NvpLevel* g_top_status_bar;
+class NvpBuild
+{
+public:
+    NvpBuild(BaseElement* const top_layout, BaseElement* const top_node_view,
+        BaseElement* const top_menu_stat, AllElem* const all_elem_store)
+        :g_top_layout(top_layout), g_top_node_view(top_node_view),
+        g_top_menu_stat(top_menu_stat), g_all_elem_store(all_elem_store) {}
+
+    
+    BaseElement* subElemGen(const std::string& str, MsgBaseType msg_type,
+        BaseAction* msg_act, BaseElement* up);
+
+    void subElemDel(BaseElement* elem);
+
+    NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
+
+    BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
+        BaseAction* msg_act, NvpLevel* level);
+
+    bool elemDel(const std::string& str, NvpLevel* level);
+
+    NvpLevel* subLevelGen(BaseElement* elem);
+
+    void initDefaultLayout(AllElem* const all_elem);
+
+    BaseElement* const g_top_layout;    //0; the whole client area;
+    BaseElement* const g_top_node_view; //1;
+    BaseElement* const g_top_menu_stat; //1;
+    AllElem* const g_all_elem_store;
+};
+
+
+/// GLOBAL nvpBuild;
+extern NvpBuild* nvpBuild;
+
 
 class ElemGenerator
 {
 public:
-    ElemGenerator(const std::string& str,
-        MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level = g_top_node_view);
+    ElemGenerator(const std::string& str, MsgBaseType msg_type,
+        BaseAction* msg_act, BaseElement* up = nvpBuild->g_top_node_view);
+
+    ElemGenerator(const std::string& str, MsgBaseType msg_type,
+        BaseAction* msg_act, NvpLevel* level);
 
     ~ElemGenerator() {}
 
-    void initDefaultLayout();
-
     BaseElement* gen_elem = nullptr;
 };
-
-BaseElement* elemGen(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
-    NvpLevel* level = g_top_node_view);
-
-bool elemDel(const std::string& str, NvpLevel* level);
-
-NvpLevel* subLevelGen(BaseElement* elem);
-
-void subLevelDel(BaseElement* elem);
-
-NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
-
-typedef ElemStorage<100000, NvpLayoutBody> AllElem;
-typedef std::map<std::string, BaseElement*> ElemMap;
-
-extern AllElem* g_all_elem_store;
-//extern ElemMap* g_all_elem_map;
 
 struct NvpLayoutBody
 {

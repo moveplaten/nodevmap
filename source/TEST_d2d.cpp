@@ -360,7 +360,7 @@ static void subLevelRemove(BaseElement* elem)
         NvpColor col = { 0, 0, 0 };
         nvpDraw->Record(next->body.elem, &col, Draw);
         subLevelRemove(next->body.elem);
-        elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
+        nvpBuild->elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
     }
 }
 
@@ -373,7 +373,7 @@ class ActMouseRButtonDown : public BaseAction
 
         subLevelRemove(base);
         
-        elemDel(base->getSelfName(), base->getSelfLevel());
+        nvpBuild->elemDel(base->getSelfName(), base->getSelfLevel());
     }
 }ActMouseRButtonDown;
 
@@ -389,7 +389,7 @@ class Act3MouseRButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            auto iter = g_top_node_view->begin();
+            auto iter = nvpBuild->g_top_node_view->getSelfLayout()->sub->begin();
             auto elem_map = (*iter)->head->cur_map;
             auto ret = elem_map->find(number_str);
             if (ret == elem_map->end())
@@ -410,7 +410,7 @@ class Act3MouseRButtonDown : public BaseAction
                     offset = -1;
                 }
 
-                elemDel(number_str, g_top_node_view);
+                nvpBuild->elemDel(number_str, nvpBuild->g_top_node_view->getSelfLayout()->sub);
             }
         }
     }
@@ -426,79 +426,76 @@ class Act3MouseLButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            BaseElement* elem = elemGen(number_str, MsgInit, &ActRandomInit);
+            BaseElement* elem = nvpBuild->subElemGen(number_str, MsgInit, &ActRandomInit, nvpBuild->g_top_node_view);
             mousePt pt;
             elem->msgRoute(MsgInit, &pt);
             // same act as v1 except init position;
-            elemGen(number_str, MouseMove, &ActMouseMove);
-            elemGen(number_str, MouseLeave, &ActMouseLeave);
-            elemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown); //Delete;
-            elemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag);
+            nvpBuild->subElemGen(number_str, MouseMove, &ActMouseMove, nvpBuild->g_top_node_view);
+            nvpBuild->subElemGen(number_str, MouseLeave, &ActMouseLeave, nvpBuild->g_top_node_view);
+            nvpBuild->subElemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, nvpBuild->g_top_node_view); //Delete;
+            nvpBuild->subElemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, nvpBuild->g_top_node_view);
 
 
             /////////////////////////////////////////////////////////////////
-            auto sub_level = subLevelGen(elem);
             std::string sub_string;
             sub_string = "_1";
             
-            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
-            elem->msgRoute(MsgInit);
+            auto sub_elem_1 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            sub_elem_1->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
-            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            nvpBuild->subElemGen(sub_string, MouseMove, &ActMouseMove, elem);
+            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_2";
             
-            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
-            elem->msgRoute(MsgInit);
+            auto sub_elem_2 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            sub_elem_2->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
-            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            nvpBuild->subElemGen(sub_string, MouseMove, &ActMouseMove, elem);
+            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_3";
             
-            elem = elemGen(sub_string, MsgInit, &ActSubInit, sub_level);
-            elem->msgRoute(MsgInit);
+            auto sub_elem_3 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            sub_elem_3->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
-            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            nvpBuild->subElemGen(sub_string, MouseMove, &ActMouseMove, elem);
+            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
 
             /////////////////////////////////////////////////////////////////
-            sub_level = subLevelGen(elem);
             sub_string = "_1";
 
-            elem = elemGen(sub_string, MsgInit, &Act2SubInit, sub_level);
-            elem->msgRoute(MsgInit);
+            auto sub_elem_1_1 = nvpBuild->subElemGen(sub_string, MsgInit, &Act2SubInit, sub_elem_1);
+            sub_elem_1_1->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
-            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            nvpBuild->subElemGen(sub_string, MouseMove, &ActMouseMove, sub_elem_1);
+            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1);
+            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1); //Delete;
+            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1);
 
             /////////////////////////////////////////////////////////////////
-            sub_level = subLevelGen(elem);
             sub_string = "_1";
 
-            elem = elemGen(sub_string, MsgInit, &Act3SubInit, sub_level);
+            elem = nvpBuild->subElemGen(sub_string, MsgInit, &Act3SubInit, sub_elem_1_1);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            elemGen(sub_string, MouseMove, &ActMouseMove, sub_level);
-            elemGen(sub_string, MouseLeave, &ActMouseLeave, sub_level);
-            elemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_level); //Delete;
-            elemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_level);
+            nvpBuild->subElemGen(sub_string, MouseMove, &ActMouseMove, sub_elem_1_1);
+            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1_1);
+            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1_1); //Delete;
+            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1_1);
         }
     }
 }Act3MouseLButtonDown;
 
-ELEM_GEN(init, MsgNone, ActInit) //init first;
+ELEM_GEN_FULL(init, MsgNone, ActInit, (BaseElement*)nullptr) //init first;
 
 ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseMove, ActMouseMove)
@@ -517,77 +514,14 @@ ELEM_GEN(v3, MouseLButtonDown, Act3MouseLButtonDown) //generate
 ELEM_GEN(v3, MouseRButtonDown, Act3MouseRButtonDown) //delete
 
 /////////////////////////////////////////////////////////////////////
-class MenuInit : public BaseAction
-{
-    virtual void realAction(BaseElement* base) override
-    {
-        auto iter = g_top_menu_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-
-        auto draw = new NvpFillOneRect;
-        NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect, draw);
-    }
-}MenuInit;
-
-class MenuMouseMove : public BaseAction
-{
-    virtual void realAction(BaseElement* base) override
-    {
-        auto iter = g_top_status_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-        auto width = rect.right - rect.left;
-        auto height = rect.bottom - rect.top;
-        rect.left = rect.top = 0;
-        rect.right = width;
-        rect.bottom = height;
-
-        NvpColor col = { 200, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect);
-    }
-}MenuMouseMove;
-
-class MenuMouseLeave : public BaseAction
-{
-    virtual void realAction(BaseElement* base) override
-    {
-        auto iter = g_top_status_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-        auto width = rect.right - rect.left;
-        auto height = rect.bottom - rect.top;
-        rect.left = rect.top = 0;
-        rect.right = width;
-        rect.bottom = height;
-
-        NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect);
-    }
-}MenuMouseLeave;
-
-ELEM_GEN_FULL(menu_bar, MsgInit, MenuInit, g_top_menu_bar)
-ELEM_GEN_FULL(menu_bar, MouseMove, MenuMouseMove, g_top_menu_bar)
-ELEM_GEN_FULL(menu_bar, MouseLeave, MenuMouseLeave, g_top_menu_bar)
-/////////////////////////////////////////////////////////////////////
 
 class StatInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto iter = g_top_status_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-        auto width = rect.right - rect.left;
-        auto height = rect.bottom - rect.top;
-        rect.left = rect.top = 0;
-        rect.right = width;
-        rect.bottom = height;
-
         auto draw = new NvpFillOneRect;
         NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect, draw);
+        nvpDraw->Record(base, &col, Draw, nullptr, draw);
     }
 }StatInit;
 
@@ -595,17 +529,8 @@ class StatMouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto iter = g_top_status_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-        auto width = rect.right - rect.left;
-        auto height = rect.bottom - rect.top;
-        rect.left = rect.top = 0;
-        rect.right = width;
-        rect.bottom = height;
-
         NvpColor col = { 200, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect);
+        nvpDraw->Record(base, &col, Draw);
     }
 }StatMouseMove;
 
@@ -613,21 +538,12 @@ class StatMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto iter = g_top_status_bar->begin();
-        auto elem = (*iter)->head->up_elem;
-        auto rect = elem->getSelfLayout()->ref_up;
-        auto width = rect.right - rect.left;
-        auto height = rect.bottom - rect.top;
-        rect.left = rect.top = 0;
-        rect.right = width;
-        rect.bottom = height;
-
         NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, &col, Draw, &rect);
+        nvpDraw->Record(base, &col, Draw);
     }
 }StatMouseLeave;
 
-ELEM_GEN_FULL(status_bar, MsgInit, StatInit, g_top_status_bar)
-ELEM_GEN_FULL(status_bar, MouseMove, StatMouseMove, g_top_status_bar)
-ELEM_GEN_FULL(status_bar, MouseLeave, StatMouseLeave, g_top_status_bar)
+ELEM_GEN_FULL(top_menu_stat, MsgInit, StatInit, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_menu_stat, MouseMove, StatMouseMove, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, nvpBuild->g_top_layout)
 /////////////////////////////////////////////////////////////////////

@@ -141,5 +141,5 @@ BaseElement::~BaseElement()
         self_level->erase(self_iter);
     }
 
-    g_all_elem_store->deleteOneElem(self_id);
+    nvpBuild->g_all_elem_store->deleteOneElem(self_id);
 }

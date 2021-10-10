@@ -88,10 +88,9 @@ void D2dNvpDrawPort::beginDraw()
 
     ////////////////////////////////////////////////////////////////////////////
 
-    if (g_top_layout)
+    if (nvpBuild)
     {
-        auto iter = g_top_layout->begin();
-        auto top_elem = (*(++iter))->body.elem;
+        auto top_elem = nvpBuild->g_top_layout;
         nvpDraw->drawAll(top_elem);
     }
 

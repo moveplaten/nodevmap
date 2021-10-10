@@ -27,29 +27,26 @@
 {
     NSRect wnd_rect = [g_main_wnd.contentView bounds];
     
-    if (g_top_layout)
+    if (nvpBuild)
     {
-        auto iter = g_top_layout->begin();
-        auto layout = *(++iter);
-        auto elem = layout->body.elem;
         BaseRect rect;
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
-    }
-    
-    if (g_top_node_view)
-    {
-        auto iter = g_top_node_view->begin();
-        auto elem = (*iter)->head->up_elem;
-        BaseRect rect;
+        nvpDraw->Record(nvpBuild->g_top_layout, nullptr, NoneDraw, &rect);
+
         rect.left = 0.0f;
-        rect.top = 20.0f;
+        rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height - 20.0f;
-        nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
+        nvpDraw->Record(nvpBuild->g_top_node_view, nullptr, NoneDraw, &rect);
+        
+        rect.left = 0.0f;
+        rect.top = wnd_rect.size.height - 20.0f;
+        rect.right = wnd_rect.size.width;
+        rect.bottom = wnd_rect.size.height;
+        nvpDraw->Record(nvpBuild->g_top_menu_stat, nullptr, NoneDraw, &rect);
     }
 }
 
@@ -154,10 +151,9 @@
     NSLog(@"Drawing");
     g_cg_ref = [[NSGraphicsContext currentContext] CGContext];
     
-    if (g_top_layout)
+    if (nvpBuild)
     {
-        auto iter = g_top_layout->begin();
-        auto top_elem = (*(++iter))->body.elem;
+        auto top_elem = nvpBuild->g_top_layout;
         nvpDraw->drawAll(top_elem);
     }
 }

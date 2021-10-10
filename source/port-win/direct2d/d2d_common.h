@@ -35,69 +35,32 @@ public:
         m_pRT->Resize(size);
         D2D1_SIZE_F client = m_pRT->GetSize();
         
-        if (g_top_layout)
+        if (nvpBuild)
         {
-            auto iter = g_top_layout->begin();
-            auto layout = *(++iter);
-            auto elem = layout->body.elem;
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
-        }
-        
-        if (g_top_node_view)
-        {
-            auto iter = g_top_node_view->begin();
-            auto elem = (*iter)->head->up_elem;
-            BaseRect rect;
-            rect.left = 0.0f;
-            rect.top = 20.0f;
-            rect.right = client.width;
-            rect.bottom = client.height - 20.0f;
-            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
-        }
-        
-        if (g_top_menu_bar)
-        {
-            auto iter = g_top_menu_bar->begin();
-            auto elem = (*iter)->head->up_elem;
-            BaseRect rect;
+            nvpDraw->Record(nvpBuild->g_top_layout, nullptr, NoneDraw, &rect);
+
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
-            rect.bottom = 20.0f;
-            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
-        }
-        
-        if (g_top_status_bar)
-        {
-            auto iter = g_top_status_bar->begin();
-            auto elem = (*iter)->head->up_elem;
-            BaseRect rect;
+            rect.bottom = client.height - 20.0f;
+            nvpDraw->Record(nvpBuild->g_top_node_view, nullptr, NoneDraw, &rect);
+
             rect.left = 0.0f;
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(elem, nullptr, NoneDraw, &rect);
+            nvpDraw->Record(nvpBuild->g_top_menu_stat, nullptr, NoneDraw, &rect);
         }
     }
 
     void onRender()
     {
-        auto iter = g_top_menu_bar->begin();
-        auto layout = *(++iter);
-        auto elem = layout->body.elem;
-        if (elem->getSelfDraw())
-        {
-            elem->msgRoute(MouseLeave);
-        }
-        
-        iter = g_top_status_bar->begin();
-        layout = *(++iter);
-        elem = layout->body.elem;
+        auto elem = nvpBuild->g_top_menu_stat;
         if (elem->getSelfDraw())
         {
             elem->msgRoute(MouseLeave);

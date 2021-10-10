@@ -102,7 +102,10 @@ public:
         return self_draw;
     }
 
-    elemIDSize getIncreaseID() { return g_all_elem_store->getTotalUsed(); }
+    elemIDSize getIncreaseID()
+    {
+        return nvpBuild->g_all_elem_store->getTotalUsed();
+    }
     //BaseElement* getElementByID(elemIDSize id)
     //{
     //    BaseShape* content = base_shapes->readOneElem(id);

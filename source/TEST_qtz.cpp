@@ -113,7 +113,7 @@ class Act2MouseDrag : public BaseAction
     }
 }Act2MouseDrag;
 
-ELEM_GEN(init, MsgNone, Act1Init) //init first;
+ELEM_GEN_FULL(init, MsgNone, Act1Init, (BaseElement*)nullptr) //init first;
 
 ELEM_GEN(v1, MsgInit, Act1Init)
 ELEM_GEN(v1, MouseMove, Act1MouseMove)
@@ -124,3 +124,38 @@ ELEM_GEN(v2, MsgInit, Act2Init)
 ELEM_GEN(v2, MouseMove, Act2MouseMove)
 ELEM_GEN(v2, MouseLeave, Act2MouseLeave)
 ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
+
+/////////////////////////////////////////////////////////////////////
+
+class StatInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw, nullptr, draw);
+    }
+}StatInit;
+
+class StatMouseMove : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        NvpColor col = { 200, 200, 255 };
+        nvpDraw->Record(base, &col, Draw);
+    }
+}StatMouseMove;
+
+class StatMouseLeave : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        NvpColor col = { 100, 200, 255 };
+        nvpDraw->Record(base, &col, Draw);
+    }
+}StatMouseLeave;
+
+ELEM_GEN_FULL(top_menu_stat, MsgInit, StatInit, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_menu_stat, MouseMove, StatMouseMove, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, nvpBuild->g_top_layout)
+/////////////////////////////////////////////////////////////////////

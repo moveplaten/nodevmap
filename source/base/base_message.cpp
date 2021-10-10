@@ -11,7 +11,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
     if (msg_type == MsgInit)
     {
-        initAll(g_top_layout);
+        initAll(nvpBuild->g_top_layout->getSelfLevel());
     }
     else if (msg_type == MouseEnter)
     {
@@ -38,7 +38,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else
     {
-        BaseElement* fetch = inRange(pt, g_top_layout);
+        BaseElement* fetch = inRange(pt, nvpBuild->g_top_layout->getSelfLevel());
 
         if (fetch)
         {
