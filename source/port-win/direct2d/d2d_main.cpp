@@ -112,7 +112,8 @@ void D2dNvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
 
     auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
     auto colf = D2D1::ColorF(color);
-
+    colf.a = 0.8f;
+    
     ID2D1SolidColorBrush* brush;
     HRESULT hr;
     hr = target->CreateSolidColorBrush(colf, &brush);
@@ -134,6 +135,7 @@ void D2dNvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 
     auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
     auto colf = D2D1::ColorF(color);
+    colf.a = 0.8f;
 
     ID2D1SolidColorBrush* brush;
     HRESULT hr;

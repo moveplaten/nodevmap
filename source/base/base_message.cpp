@@ -32,6 +32,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else if (msg_type == MouseLButtonDown && g_now_hit_id)
     {
+        nvpBuild->moveToAllTop(g_now_hit_id);
         mousePtToLocal(g_now_hit_id, pt);
         g_mouse_drag_id = g_now_hit_id;
         g_now_hit_id->msgRoute(MouseLButtonDown, pt);
@@ -114,8 +115,8 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
     {
         auto size = level->size();
         auto content = *level;
-        auto iter = content.begin();
-        ++iter;
+        auto iter = content.end();
+        --iter;
         for (size_t i = 0; i < size - 1; ++i)
         {
             auto rect = &(*iter)->body.ref_top;
@@ -127,7 +128,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
             }
             else
             {
-                ++iter;
+                --iter;
             }
         }
         if (hit == -1)

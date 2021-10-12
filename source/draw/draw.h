@@ -70,6 +70,7 @@ extern NvpDraw* const nvpDraw;
 
 class NvpFrameOneRect : public NvpDraw
 {
+public:
     virtual void realDraw(BaseElement* base) override;
     virtual void setColor(NvpColor* cols) override
     {
@@ -100,6 +101,7 @@ public:
 
 class NvpFillOneRect : public NvpDraw
 {
+public:
     virtual void realDraw(BaseElement* base) override;
     virtual void setColor(NvpColor* cols) override
     {
@@ -107,4 +109,23 @@ class NvpFillOneRect : public NvpDraw
     }
 
     NvpColor color;
+};
+
+class NvpFillFiveRect : public NvpDraw
+{
+public:
+    NvpFillFiveRect(int p /*1~50*/)
+    {
+        percent = p / 100.0f;
+    }
+    void setPersent(int p) { percent = p / 100.0f; }
+    virtual void realDraw(BaseElement* base) override;
+    virtual void setColor(NvpColor* cols) override
+    {
+        color[0] = cols[0];
+        color[1] = cols[1];
+    }
+
+    NvpColor color[2];
+    float percent;
 };

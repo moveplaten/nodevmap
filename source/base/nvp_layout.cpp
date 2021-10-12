@@ -42,6 +42,17 @@ void NvpBuild::subElemDel(BaseElement* elem)
     delete sub_level;
 }
 
+void NvpBuild::moveToAllTop(BaseElement* elem)
+{
+    elem->self_level->erase(elem->self_iter);
+
+    auto layout = (NvpLayout*)elem->self_layout;
+    auto iter = elem->self_level->end();
+    
+    auto ret_iter = elem->self_level->insert(iter, layout);
+    elem->self_iter = ret_iter;
+}
+
 NvpLayoutHead* NvpBuild::getLayoutHead(NvpLayoutBody* current)
 {
     if (!current)

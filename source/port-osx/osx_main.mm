@@ -52,7 +52,7 @@ int main(int argc, const char * argv[])
     [g_main_wnd setTitle:@"nodevmap"];
     [g_main_wnd setRestorable:NO];
     [g_main_wnd setLevel:NSFloatingWindowLevel]; //always on top;
-    [g_main_wnd setAlphaValue:0.9f]; //transparent;
+    //[g_main_wnd setAlphaValue:0.9f]; //transparent;
     
     //show the window;
     [g_main_wnd orderFront:nil];

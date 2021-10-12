@@ -147,8 +147,9 @@ private:
 
     NvpLayoutBody* const self_layout;
     NvpLevel* const self_level;
-    NvpLevel::iterator const self_iter;
+    NvpLevel::iterator self_iter;
 
     friend class BaseMessage;
     friend class NvpDraw;
+    friend class NvpBuild;
 };

@@ -60,6 +60,8 @@ public:
 
     void subElemDel(BaseElement* elem);
 
+    void moveToAllTop(BaseElement* elem);
+
     NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
 
     BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,

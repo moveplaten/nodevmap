@@ -13,7 +13,7 @@ void QtzNvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
                                                  blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)1.0];
+                                                alpha:(CGFloat)0.8];
     [ns_col set];
     
     NSRect ns_rec;
@@ -30,7 +30,7 @@ void QtzNvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
                                                  blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)1.0];
+                                                alpha:(CGFloat)0.8];
     [ns_col set];
     
     NSRect ns_rec;

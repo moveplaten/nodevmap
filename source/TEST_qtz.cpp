@@ -9,26 +9,34 @@ class Act1Init : public BaseAction
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
 
-        auto draw = new NvpFrameOneRect;
-        NvpColor col = { 255, 0, 0 };
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 150, 150, 150 };
         nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }Act1Init;
 
-class Act1MouseMove : public BaseAction
+class Act1MouseEnter : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor col = { 200, 200, 200 };
+        auto draw = (NvpFillOneRect*)base->getSelfDraw();
+        auto col = draw->color;
+        col.Red += 50;
+        col.Green += 50;
+        col.Blue += 50;
         nvpDraw->Record(base, &col, Draw);
     }
-}Act1MouseMove;
+}Act1MouseEnter;
 
 class Act1MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor col = { 150, 150, 150 };
+        auto draw = (NvpFillOneRect*)base->getSelfDraw();
+        auto col = draw->color;
+        col.Red -= 50;
+        col.Green -= 50;
+        col.Blue -= 50;
         nvpDraw->Record(base, &col, Draw);
     }
 }Act1MouseLeave;
@@ -44,26 +52,34 @@ class Act2Init : public BaseAction
         rect.top = 10;
         rect.bottom = 50;
 
-        auto draw = new NvpFrameOneRect;
-        NvpColor col = { 0, 255, 0 };
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 0, 150, 150 };
         nvpDraw->Record(base, &col, Draw, &rect, draw);
     }
 }Act2Init;
 
-class Act2MouseMove : public BaseAction
+class Act2MouseEnter : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor col = { 0, 200, 200 };
+        auto draw = (NvpFillOneRect*)base->getSelfDraw();
+        auto col = draw->color;
+        col.Red += 50;
+        col.Green += 50;
+        col.Blue += 50;
         nvpDraw->Record(base, &col, Draw);
     }
-}Act2MouseMove;
+}Act2MouseEnter;
 
 class Act2MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor col = { 0, 150, 150 };
+        auto draw = (NvpFillOneRect*)base->getSelfDraw();
+        auto col = draw->color;
+        col.Red -= 50;
+        col.Green -= 50;
+        col.Blue -= 50;
         nvpDraw->Record(base, &col, Draw);
     }
 }Act2MouseLeave;
@@ -86,8 +102,8 @@ class Act1MouseDrag : public BaseAction
         new_rect.top = old_rect->top + sub_y;
         new_rect.bottom = old_rect->bottom + sub_y;
 
-        NvpColor col = { 200, 200, 200 };
-        nvpDraw->Record(base, &col, Draw, &new_rect);
+        //NvpColor col = { 200, 200, 200 };
+        nvpDraw->Record(base, 0, Draw, &new_rect);
     }
 }Act1MouseDrag;
 
@@ -108,20 +124,20 @@ class Act2MouseDrag : public BaseAction
         new_rect.top = old_rect->top + sub_y;
         new_rect.bottom = old_rect->bottom + sub_y;
 
-        NvpColor col = { 0, 200, 200 };
-        nvpDraw->Record(base, &col, Draw, &new_rect);
+        //NvpColor col = { 0, 200, 200 };
+        nvpDraw->Record(base, 0, Draw, &new_rect);
     }
 }Act2MouseDrag;
 
 ELEM_GEN_FULL(init, MsgNone, Act1Init, (BaseElement*)nullptr) //init first;
 
 ELEM_GEN(v1, MsgInit, Act1Init)
-ELEM_GEN(v1, MouseMove, Act1MouseMove)
+ELEM_GEN(v1, MouseEnter, Act1MouseEnter)
 ELEM_GEN(v1, MouseLeave, Act1MouseLeave)
 ELEM_GEN(v1, MouseMove_MouseLButtonDown, Act1MouseDrag)
 
 ELEM_GEN(v2, MsgInit, Act2Init)
-ELEM_GEN(v2, MouseMove, Act2MouseMove)
+ELEM_GEN(v2, MouseEnter, Act2MouseEnter)
 ELEM_GEN(v2, MouseLeave, Act2MouseLeave)
 ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
 
