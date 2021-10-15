@@ -4,12 +4,6 @@
 
 typedef uint32_t msgTypeSize;
 
-typedef struct
-{
-    float x;
-    float y;
-}mousePt;
-
 typedef float ptSize;
 
 //#define TEMP_TEST_0
@@ -97,11 +91,6 @@ public:
     //    self_layout->ref_up = *rect;
     //}
 
-    NvpDraw* getSelfDraw()
-    {
-        return self_draw;
-    }
-
     elemIDSize getIncreaseID()
     {
         return nvpBuild->g_all_elem_store->getTotalUsed();
@@ -129,7 +118,7 @@ private:
     const elemIDSize self_id;
     const std::string& self_name;
     bool self_visible = true;
-    NvpDraw* self_draw = nullptr;
+    NvpDrawVec* self_draw = nullptr;
 
 #ifndef TEMP_TEST_0
     MsgActMap msg_act_map;

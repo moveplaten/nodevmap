@@ -1,4 +1,5 @@
 #include "base.h"
+#include "draw/draw.h"
 
 #ifdef TEMP_TEST_0
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
@@ -133,6 +134,12 @@ BaseElement::~BaseElement()
 
     if (self_draw)
     {
+        auto size = self_draw->size();
+        for (size_t i = 0; i < size; ++i)
+        {
+            delete (*self_draw)[i];
+        }
+        
         delete self_draw;
     }
     

@@ -34,19 +34,19 @@
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        nvpDraw->Record(nvpBuild->g_top_layout, nullptr, NoneDraw, &rect);
+        nvpDraw->Record(nvpBuild->g_top_layout, 0, nullptr, NoneDraw, &rect);
 
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height - 20.0f;
-        nvpDraw->Record(nvpBuild->g_top_node_view, nullptr, NoneDraw, &rect);
+        nvpDraw->Record(nvpBuild->g_top_node_view, 0, nullptr, NoneDraw, &rect);
         
         rect.left = 0.0f;
         rect.top = wnd_rect.size.height - 20.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        nvpDraw->Record(nvpBuild->g_top_menu_stat, nullptr, NoneDraw, &rect);
+        nvpDraw->Record(nvpBuild->g_top_menu_stat, 0, nullptr, NoneDraw, &rect);
     }
 }
 
@@ -150,6 +150,11 @@
 {
     NSLog(@"Drawing");
     g_cg_ref = [[NSGraphicsContext currentContext] CGContext];
+    
+    if (g_ct_font_ref == nil)
+    {
+        g_ct_font_ref = CTFontCreateWithName((CFStringRef)@"Helvetica", 12, NULL);
+    }
     
     if (nvpBuild)
     {

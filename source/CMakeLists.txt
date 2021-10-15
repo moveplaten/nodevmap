@@ -8,6 +8,9 @@ set(nodevmap_SOURCES
     base/elem_storage.cpp
     base/nvp_layout.cpp
     draw/nvp_draw.cpp
+    draw/draw_text.cpp
+    draw/draw_rect.cpp
+    util/nvp_util.cpp
     )
 
 ################################################################################
@@ -27,6 +30,7 @@ if(WIN32)
 
     target_link_libraries(TEST_d2d
         d2d1
+        dwrite
     )
 endif()
 

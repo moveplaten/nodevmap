@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 struct BaseRect;
+
 class BaseElement;
 
 struct NvpColor
@@ -11,6 +13,12 @@ struct NvpColor
     uint8_t Green;
     uint8_t Blue;
     uint8_t Alpha;
+};
+
+struct NvpXyCoord
+{
+    float x;
+    float y;
 };
 
 enum RecordOption
@@ -23,7 +31,11 @@ class NvpDrawPort
 {
 public:
     virtual void beginDraw() = 0;
-    
+
+    //draw all str from left to right just one line;
+    //start from base rect left-top coord;
+    virtual void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo) = 0;
+
     virtual void fillRect(const BaseRect& rect, NvpColor colo) = 0;
     virtual void frameRect(const BaseRect& rect, NvpColor colo) = 0; //only border;
     
@@ -32,9 +44,11 @@ public:
 class NvpDraw
 {
 public:
-    void Record(BaseElement* base, NvpColor* cols = nullptr,
+    void Record(BaseElement* base, size_t offset, NvpColor* cols = nullptr,
         RecordOption opt = NoneDraw,
         const BaseRect* rect = nullptr, NvpDraw* draw = nullptr);
+
+    NvpDraw* getOneDraw(BaseElement* base, size_t offset); //offset from 0;
 
     void drawAll(BaseElement* base);
     
@@ -68,10 +82,9 @@ protected:
 extern NvpDraw* const nvpDraw;
 
 
-class NvpFrameOneRect : public NvpDraw
+class NvpDrawOneColor : public NvpDraw
 {
 public:
-    virtual void realDraw(BaseElement* base) override;
     virtual void setColor(NvpColor* cols) override
     {
         color = cols[0];
@@ -80,7 +93,34 @@ public:
     NvpColor color;
 };
 
-class NvpFrameFiveRect : public NvpDraw
+class NvpDrawTwoColor : public NvpDraw
+{
+public:
+    virtual void setColor(NvpColor* cols) override
+    {
+        color[0] = cols[0];
+        color[1] = cols[1];
+    }
+
+    NvpColor color[2];
+};
+
+class NvpDrawTextOneLineOneColor : public NvpDrawOneColor
+{
+public:
+    virtual void realDraw(BaseElement* base) override;
+
+    NvpXyCoord start_pt = { 0 };
+    std::string str_to_draw;
+};
+
+class NvpFrameOneRect : public NvpDrawOneColor
+{
+public:
+    virtual void realDraw(BaseElement* base) override;
+};
+
+class NvpFrameFiveRect : public NvpDrawTwoColor
 {
 public:
     NvpFrameFiveRect(int p /*1~50*/)
@@ -89,43 +129,20 @@ public:
     }
     void setPersent(int p) { percent = p / 100.0f; }
     virtual void realDraw(BaseElement* base) override;
-    virtual void setColor(NvpColor* cols) override
-    {
-        color[0] = cols[0];
-        color[1] = cols[1];
-    }
 
-    NvpColor color[2];
     float percent;
 };
 
-class NvpFillOneRect : public NvpDraw
+class NvpFillOneRect : public NvpFrameOneRect
 {
 public:
     virtual void realDraw(BaseElement* base) override;
-    virtual void setColor(NvpColor* cols) override
-    {
-        color = cols[0];
-    }
-
-    NvpColor color;
 };
 
-class NvpFillFiveRect : public NvpDraw
+class NvpFillFiveRect : public NvpFrameFiveRect
 {
 public:
-    NvpFillFiveRect(int p /*1~50*/)
-    {
-        percent = p / 100.0f;
-    }
-    void setPersent(int p) { percent = p / 100.0f; }
+    NvpFillFiveRect(int p /*1~50*/) : NvpFrameFiveRect(p) {}
+    
     virtual void realDraw(BaseElement* base) override;
-    virtual void setColor(NvpColor* cols) override
-    {
-        color[0] = cols[0];
-        color[1] = cols[1];
-    }
-
-    NvpColor color[2];
-    float percent;
 };

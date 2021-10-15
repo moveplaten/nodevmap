@@ -1,5 +1,4 @@
 #include "base/base.h"
-#include "base/layout.h"
 #include "direct2d/d2d_common.h"
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -51,6 +50,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     if (!initD2dDevice(hwndMain)) //give control to access to d2d;
     {
+        MessageBox(nullptr, "Init Direct2d Failed", NULL, MB_OK);
         return false;
     }
 

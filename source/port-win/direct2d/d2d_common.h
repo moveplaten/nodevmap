@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
+#include <dwrite.h>
 
 #include "draw/draw.h"
 #include "base/base.h"
@@ -42,28 +43,28 @@ public:
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(nvpBuild->g_top_layout, nullptr, NoneDraw, &rect);
+            nvpDraw->Record(nvpBuild->g_top_layout, 0, nullptr, NoneDraw, &rect);
 
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height - 20.0f;
-            nvpDraw->Record(nvpBuild->g_top_node_view, nullptr, NoneDraw, &rect);
+            nvpDraw->Record(nvpBuild->g_top_node_view, 0, nullptr, NoneDraw, &rect);
 
             rect.left = 0.0f;
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(nvpBuild->g_top_menu_stat, nullptr, NoneDraw, &rect);
+            nvpDraw->Record(nvpBuild->g_top_menu_stat, 0, nullptr, NoneDraw, &rect);
         }
     }
 
     void onRender()
     {
-        auto elem = nvpBuild->g_top_menu_stat;
-        if (elem->getSelfDraw())
+        auto draw = nvpDraw->getDrawPort();
+        if (draw)
         {
-            elem->msgRoute(MouseLeave);
+            draw->beginDraw();
         }
     }
 
@@ -72,6 +73,10 @@ public:
     D2dUtil::D2dUtil(HWND hwnd):m_hwnd(hwnd),
                                 m_pD2DFactory(nullptr),
                                 m_pRT(nullptr),
+                                m_pDWriteFactory(nullptr),
+                                m_pFontCollection(nullptr),
+                                m_pDWriteFontFace(nullptr),
+                                m_pDWriteFont(nullptr),
                                 draw_fps(0)
     {
     }
@@ -85,6 +90,12 @@ private:
     ID2D1Factory* m_pD2DFactory;
     ID2D1HwndRenderTarget* m_pRT;
 
+    IDWriteFactory* m_pDWriteFactory;
+    IDWriteFontCollection* m_pFontCollection;
+    
+    IDWriteFontFace* m_pDWriteFontFace;
+    IDWriteFont* m_pDWriteFont;
+
     double draw_fps;
     friend class D2dNvpDrawPort;
 };
@@ -92,7 +103,9 @@ private:
 class D2dNvpDrawPort : public NvpDrawPort
 {
     virtual void beginDraw() override;
-    
+
+    virtual void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo) override;
+
     virtual void fillRect(const BaseRect& rect, NvpColor colo) override;
     virtual void frameRect(const BaseRect& rect, NvpColor colo) override;
     

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <vector>
 #include <string>
 #include <list>
 #include <map>
 #include "elem_storage.h"
-#include "draw/draw.h"
 
 enum MsgBaseType
 {
@@ -21,6 +21,12 @@ enum MsgBaseType
 
 };
 
+struct mousePt
+{
+    float x;
+    float y;
+};
+
 struct BaseRect
 {
     float left;
@@ -31,6 +37,8 @@ struct BaseRect
 
 class BaseElement;
 class BaseAction;
+class NvpDraw;
+typedef std::vector<NvpDraw*> NvpDrawVec;
 
 #define ELEM_GEN(x, y, z)\
 ElemGenerator x##y##z(#x, y, &z);
