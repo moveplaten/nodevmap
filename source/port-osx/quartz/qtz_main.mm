@@ -5,12 +5,12 @@ NSWindow* g_main_wnd;
 CGContextRef g_cg_ref;
 CTFontRef g_ct_font_ref = nil;
 
-void QtzNvpDrawPort::beginDraw()
+void NvpDrawPort::beginDraw()
 {
     [g_main_wnd.contentView setNeedsDisplay:YES];
 }
 
-void QtzNvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
+void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
 {
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
@@ -47,7 +47,7 @@ void QtzNvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, 
     delete[](points);
 }
 
-void QtzNvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
+void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
 {
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
@@ -64,7 +64,7 @@ void QtzNvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
     CGContextFillRect(g_cg_ref, ns_rec);
 }
 
-void QtzNvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
+void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
 {
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255

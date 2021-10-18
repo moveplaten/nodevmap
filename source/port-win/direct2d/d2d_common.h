@@ -97,16 +97,5 @@ private:
     IDWriteFont* m_pDWriteFont;
 
     double draw_fps;
-    friend class D2dNvpDrawPort;
-};
-
-class D2dNvpDrawPort : public NvpDrawPort
-{
-    virtual void beginDraw() override;
-
-    virtual void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo) override;
-
-    virtual void fillRect(const BaseRect& rect, NvpColor colo) override;
-    virtual void frameRect(const BaseRect& rect, NvpColor colo) override;
-    
+    friend class NvpDrawPort;
 };

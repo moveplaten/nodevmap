@@ -30,14 +30,19 @@ enum RecordOption
 class NvpDrawPort
 {
 public:
-    virtual void beginDraw() = 0;
+    //where define these functions
+    //port-win/direct2d/d2d_main.cpp
+    //port-osx/quartz/qtz_main.mm
+
+    
+    void beginDraw();
 
     //draw all str from left to right just one line;
     //start from base rect left-top coord;
-    virtual void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo) = 0;
+    void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo);
 
-    virtual void fillRect(const BaseRect& rect, NvpColor colo) = 0;
-    virtual void frameRect(const BaseRect& rect, NvpColor colo) = 0; //only border;
+    void fillRect(const BaseRect& rect, NvpColor colo);
+    void frameRect(const BaseRect& rect, NvpColor colo); //only border;
     
 };
 
@@ -53,14 +58,6 @@ public:
     void drawAll(BaseElement* base);
     
     NvpDrawPort* getDrawPort() { return g_draw_port; }
-
-    void initDrawPort(NvpDrawPort* draw_port)
-    {
-        if (!g_draw_port)
-        {
-            g_draw_port = draw_port;
-        }
-    }
 
     NvpDraw()
     {

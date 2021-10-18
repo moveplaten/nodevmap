@@ -133,7 +133,7 @@ double getFPS(int channel)
     return fps;
 }
 
-void D2dNvpDrawPort::beginDraw()
+void NvpDrawPort::beginDraw()
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
     target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
@@ -159,7 +159,7 @@ void D2dNvpDrawPort::beginDraw()
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
 }
 
-void D2dNvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
+void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
 {
     auto str_size = str.size();
     auto u32_str = nvpUtil->utf8_to_utf32(str);
@@ -208,7 +208,7 @@ void D2dNvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, 
     brush->Release();
 }
 
-void D2dNvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
+void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 
@@ -231,7 +231,7 @@ void D2dNvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
     brush->Release();
 }
 
-void D2dNvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
+void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 

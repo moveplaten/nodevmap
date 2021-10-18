@@ -10,8 +10,6 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
     NSLog(@"launch finish");
-    auto draw_port = new QtzNvpDrawPort;
-    nvpDraw->initDrawPort(draw_port);
     
     [self windowDidResize:notification]; //ensure size top_layout before MsgInit;
     
