@@ -95,8 +95,8 @@ extern NvpBuild* nvpBuild;
 class ElemGenerator
 {
 public:
-    ElemGenerator(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, BaseElement* up = nvpBuild->g_top_node_view);
+    ElemGenerator(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
+        BaseElement* up = nvpBuild ? nvpBuild->g_top_node_view : nullptr);
 
     ElemGenerator(const std::string& str, MsgBaseType msg_type,
         BaseAction* msg_act, NvpLevel* level);

@@ -543,7 +543,6 @@ class Act3MouseLButtonDown : public BaseAction
     }
 }Act3MouseLButtonDown;
 
-ELEM_GEN_FULL(init, MsgNone, ActInit, (BaseElement*)nullptr) //init first;
 
 ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseEnter, ActMouseEnter)

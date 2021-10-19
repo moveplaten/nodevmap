@@ -62,10 +62,8 @@ public:
     void onRender()
     {
         auto draw = nvpDraw->getDrawPort();
-        if (draw)
-        {
-            draw->beginDraw();
-        }
+
+        draw->beginDraw();
     }
 
     //void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);

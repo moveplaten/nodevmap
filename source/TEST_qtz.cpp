@@ -141,7 +141,6 @@ class Act2MouseDrag : public BaseAction
     }
 }Act2MouseDrag;
 
-ELEM_GEN_FULL(init, MsgNone, Act1Init, (BaseElement*)nullptr) //init first;
 
 ELEM_GEN(v1, MsgInit, Act1Init)
 ELEM_GEN(v1, MouseEnter, Act1MouseEnter)

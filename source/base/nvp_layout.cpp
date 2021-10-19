@@ -130,6 +130,12 @@ NvpLevel* NvpBuild::subLevelGen(BaseElement* elem)
 ElemGenerator::ElemGenerator(const std::string& str,
     MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up)
 {
+    if (!nvpBuild)
+    {
+        ElemGenerator(str, msg_type, msg_act, (NvpLevel*)nullptr);
+        up = nvpBuild->g_top_node_view;
+    }
+
     auto level = nvpBuild->subLevelGen(up);
     ElemGenerator(str, msg_type, msg_act, level);
 }
