@@ -63,7 +63,7 @@ public:
     {
     }
 
-    ~NvpDraw()
+    virtual ~NvpDraw()
     {
     }
 
