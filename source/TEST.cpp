@@ -1,6 +1,5 @@
 #include "base/base.h"
 #include "draw/draw.h"
-#include "port-win/direct2d/d2d_common.h"
 
 class ActInit : public BaseAction
 {
@@ -253,14 +252,17 @@ class ActRandomInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        static long seed = 0; ++seed;
         BaseRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 100;
-        srand(seed);
-        int temp = rand();
-        int move_x = rand() / 100;
-        int move_y = rand() / 100;
+        static int move_x = 0;
+        static int move_y = 0;
+        move_x += 50; move_y += 50;
+        if (move_x >= 300)
+        {
+            move_x = 50;
+            move_y = 50;
+        }
         rect.left += move_x;
         rect.right += move_x;
         rect.top += move_y;
@@ -273,13 +275,9 @@ class ActRandomInit : public BaseAction
         int r = 255 * sin(tr + rand() / 1000);
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
-        NvpColor col = { abs(r), abs(g), abs(b) };
+        NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
         auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, opt[offset], &rect, draw);
-        if (offset >= ARRAYSIZE(opt) - 1)
-        {
-            offset = -1;
-        }
+        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
     }
 }ActRandomInit;
 
@@ -287,14 +285,17 @@ class ActSubInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        static long seed = 0; ++seed;
         BaseRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 40;
-        srand(seed);
-        int temp = rand();
-        int move_x = rand() / 500;
-        int move_y = rand() / 500;
+        static int move_x = 0;
+        static int move_y = 0;
+        move_x += 15; move_y += 15;
+        if (move_x >= 60)
+        {
+            move_x = 15;
+            move_y = 15;
+        }
         rect.left += move_x;
         rect.right += move_x;
         rect.top += move_y;
@@ -307,13 +308,9 @@ class ActSubInit : public BaseAction
         int r = 255 * sin(tr + rand() / 1000);
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
-        NvpColor col = { abs(r), abs(g), abs(b) };
+        NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
         auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, opt[offset], &rect, draw);
-        if (offset >= ARRAYSIZE(opt) - 1)
-        {
-            offset = -1;
-        }
+        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
     }
 }ActSubInit;
 
@@ -321,14 +318,17 @@ class Act2SubInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        static long seed = 0; ++seed;
         BaseRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 20;
-        srand(seed);
-        int temp = rand();
-        int move_x = rand() / 2000;
-        int move_y = rand() / 2000;
+        static int move_x = 0;
+        static int move_y = 0;
+        move_x += 10; move_y += 10;
+        if (move_x >= 20)
+        {
+            move_x = 10;
+            move_y = 10;
+        }
         rect.left += move_x;
         rect.right += move_x;
         rect.top += move_y;
@@ -341,13 +341,9 @@ class Act2SubInit : public BaseAction
         int r = 255 * sin(tr + rand() / 1000);
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
-        NvpColor col = { abs(r), abs(g), abs(b) };
+        NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
         auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, opt[offset], &rect, draw);
-        if (offset >= ARRAYSIZE(opt) - 1)
-        {
-            offset = -1;
-        }
+        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
     }
 }Act2SubInit;
 
@@ -355,14 +351,17 @@ class Act3SubInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        static long seed = 0; ++seed;
         BaseRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 10;
-        srand(seed);
-        int temp = rand();
-        int move_x = rand() / 5000;
-        int move_y = rand() / 5000;
+        static int move_x = 0;
+        static int move_y = 0;
+        move_x += 5; move_y += 5;
+        if (move_x >= 10)
+        {
+            move_x = 5;
+            move_y = 5;
+        }
         rect.left += move_x;
         rect.right += move_x;
         rect.top += move_y;
@@ -375,13 +374,9 @@ class Act3SubInit : public BaseAction
         int r = 255 * sin(tr + rand() / 1000);
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
-        NvpColor col = { abs(r), abs(g), abs(b) };
+        NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
         auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, opt[offset], &rect, draw);
-        if (offset >= ARRAYSIZE(opt) - 1)
-        {
-            offset = -1;
-        }
+        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
     }
 }Act3SubInit;
 
@@ -452,11 +447,7 @@ class Act3MouseRButtonDown : public BaseAction
                 static int offset = -1; ++offset;
 
                 NvpColor col = { 0, 0, 0 };
-                nvpDraw->Record(shape, 0, &col, opt[offset]);
-                if (offset >= ARRAYSIZE(opt) - 1)
-                {
-                    offset = -1;
-                }
+                nvpDraw->Record(shape, 0, &col);
 
                 nvpBuild->elemDel(number_str, nvpBuild->g_top_node_view->getSelfLayout()->sub);
             }
@@ -600,3 +591,16 @@ ELEM_GEN_FULL(top_menu_stat, MsgInit, StatInit, nvpBuild->g_top_layout)
 ELEM_GEN_FULL(top_menu_stat, MouseMove, StatMouseMove, nvpBuild->g_top_layout)
 ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, nvpBuild->g_top_layout)
 /////////////////////////////////////////////////////////////////////
+
+class NodeViewInit : public BaseAction
+{
+    virtual void realAction(BaseElement* base) override
+    {
+        auto draw = new NvpFillOneRect;
+        NvpColor col = { 40, 40, 45 };
+
+        nvpDraw->Record(base, 0, &col, Draw, 0, draw);
+    }
+}NodeViewInit;
+
+ELEM_GEN_FULL(top_node_view, MsgInit, NodeViewInit, nvpBuild->g_top_layout)

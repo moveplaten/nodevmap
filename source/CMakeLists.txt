@@ -11,6 +11,7 @@ set(nodevmap_SOURCES
     draw/draw_text.cpp
     draw/draw_rect.cpp
     util/nvp_util.cpp
+    TEST.cpp
     )
 
 ################################################################################
@@ -22,13 +23,12 @@ set(nodevmap_WIN_SOURCES
     )
 
 if(WIN32)
-    add_executable(TEST_d2d WIN32
-        TEST_d2d.cpp
+    add_executable(nodevmap WIN32
         ${nodevmap_SOURCES}
         ${nodevmap_WIN_SOURCES}
     )
 
-    target_link_libraries(TEST_d2d
+    target_link_libraries(nodevmap
         d2d1
         dwrite
     )
@@ -49,13 +49,12 @@ if(CMAKE_HOST_APPLE)
     set(CMAKE_CXX_FLAGS "-std=c++11")
     find_library(COCOA Cocoa)
 
-    add_executable(TEST_qtz
-        TEST_qtz.cpp
+    add_executable(nodevmap
         ${nodevmap_SOURCES}
         ${nodevmap_OSX_SOURCES}
     )
 
-    target_link_libraries(TEST_qtz
+    target_link_libraries(nodevmap
         ${COCOA}
     )
 endif()
