@@ -3,10 +3,10 @@
 NvpBuild* nvpBuild = nullptr;
 
 BaseElement* NvpBuild::subElemGen(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up)
+    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up, bool be_top)
 {
     auto level = subLevelGen(up);
-    return elemGen(str, msg_type, msg_act, level);
+    return elemGen(str, msg_type, msg_act, level, be_top);
 }
 
 void NvpBuild::subElemDel(BaseElement* elem)
@@ -71,9 +71,9 @@ NvpLayoutHead* NvpBuild::getLayoutHead(NvpLayoutBody* current)
 }
 
 BaseElement* NvpBuild::elemGen(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level)
+    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level, bool be_top)
 {
-    auto result = ElemGenerator(str, msg_type, msg_act, level);
+    auto result = ElemGenerator(str, msg_type, msg_act, level, be_top);
     return result.gen_elem;
 }
 
@@ -128,20 +128,20 @@ NvpLevel* NvpBuild::subLevelGen(BaseElement* elem)
 }
 
 ElemGenerator::ElemGenerator(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up)
+    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up, bool be_top)
 {
     if (!nvpBuild)
     {
-        ElemGenerator(str, msg_type, msg_act, (NvpLevel*)nullptr);
+        ElemGenerator(str, msg_type, msg_act, (NvpLevel*)nullptr, be_top);
         up = nvpBuild->g_top_node_view;
     }
 
     auto level = nvpBuild->subLevelGen(up);
-    ElemGenerator(str, msg_type, msg_act, level);
+    ElemGenerator(str, msg_type, msg_act, level, be_top);
 }
 
 ElemGenerator::ElemGenerator(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level)
+    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level, bool be_top)
 {
     static AllElem* temp_all;
     
@@ -171,7 +171,7 @@ ElemGenerator::ElemGenerator(const std::string& str,
             auto& content = result.first;
             auto& str_ref = content->first;
             
-            BaseElement* base = new BaseElement(id, str_ref, layout, level, iter);
+            BaseElement* base = new BaseElement(id, str_ref, layout, level, iter, be_top);
             gen_elem = base;
             base->linkMsg(msg_type, msg_act);
             content->second = base;
@@ -204,10 +204,10 @@ void NvpBuild::initDefaultLayout(AllElem* const all_elem)
     head_info->cur_map = elem_map;
     top_level->push_back((NvpLayout*)head_info);
 
-    auto top_layout = elemGen("top_layout", MsgNone, nullptr, top_level);
+    auto top_layout = elemGen("top_layout", MsgNone, nullptr, top_level, false);
 
-    auto top_node_view = subElemGen("top_node_view", MsgNone, nullptr, top_layout);
-    auto top_menu_stat = subElemGen("top_menu_stat", MsgNone, nullptr, top_layout);
+    auto top_node_view = subElemGen("top_node_view", MsgNone, nullptr, top_layout, false);
+    auto top_menu_stat = subElemGen("top_menu_stat", MsgNone, nullptr, top_layout, false);
 
     nvpBuild = new NvpBuild(top_layout, top_node_view, top_menu_stat, all_elem);
 }

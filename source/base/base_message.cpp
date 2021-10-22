@@ -32,7 +32,11 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else if (msg_type == MouseLButtonDown && g_now_hit_id)
     {
-        nvpBuild->moveToAllTop(g_now_hit_id);
+        if (g_now_hit_id->can_be_top)
+        {
+            nvpBuild->moveToAllTop(g_now_hit_id);
+        }
+        
         mousePtToLocal(g_now_hit_id, pt);
         g_mouse_drag_id = g_now_hit_id;
         g_now_hit_id->msgRoute(MouseLButtonDown, pt);

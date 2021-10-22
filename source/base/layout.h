@@ -64,7 +64,7 @@ public:
 
     
     BaseElement* subElemGen(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, BaseElement* up);
+        BaseAction* msg_act, BaseElement* up, bool be_top = true);
 
     void subElemDel(BaseElement* elem);
 
@@ -73,7 +73,7 @@ public:
     NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
 
     BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpLevel* level);
+        BaseAction* msg_act, NvpLevel* level, bool be_top = true);
 
     bool elemDel(const std::string& str, NvpLevel* level);
 
@@ -96,10 +96,11 @@ class ElemGenerator
 {
 public:
     ElemGenerator(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
-        BaseElement* up = nvpBuild ? nvpBuild->g_top_node_view : nullptr);
+        BaseElement* up = nvpBuild ? nvpBuild->g_top_node_view : nullptr,
+        bool be_top = true);
 
     ElemGenerator(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpLevel* level);
+        BaseAction* msg_act, NvpLevel* level, bool be_top = true);
 
     ~ElemGenerator() {}
 

@@ -106,7 +106,7 @@ public:
 
     BaseElement(const elemIDSize id, const std::string& name,
         NvpLayoutBody* const layout, NvpLevel* const level,
-        NvpLevel::iterator const iter);
+        NvpLevel::iterator const iter, const bool be_top = true);
 
     ~BaseElement();
 
@@ -117,6 +117,7 @@ private:
 
     const elemIDSize self_id;
     const std::string& self_name;
+    const bool can_be_top;
     bool self_visible = true;
     NvpDrawVec* self_draw = nullptr;
 

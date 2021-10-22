@@ -51,7 +51,7 @@ class ActMouseLButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-
+        nvpDraw->Record(base, 0, nullptr, Draw);
     }
 }ActMouseLButtonDown;
 
@@ -473,6 +473,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(number_str, MouseLeave, &ActMouseLeave, nvpBuild->g_top_node_view);
             nvpBuild->subElemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, nvpBuild->g_top_node_view); //Delete;
             nvpBuild->subElemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, nvpBuild->g_top_node_view);
+            nvpBuild->subElemGen(number_str, MouseLButtonDown, &ActMouseLButtonDown, nvpBuild->g_top_node_view);
 
 
             /////////////////////////////////////////////////////////////////
@@ -486,6 +487,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_2";
@@ -497,6 +499,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_3";
@@ -508,6 +511,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_1";
@@ -519,6 +523,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1);
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1);
+            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_1";
@@ -530,6 +535,7 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1_1);
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1_1); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1_1);
+            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1_1);
         }
     }
 }Act3MouseLButtonDown;
@@ -539,11 +545,13 @@ ELEM_GEN(v1, MsgInit, ActInit)
 ELEM_GEN(v1, MouseEnter, ActMouseEnter)
 ELEM_GEN(v1, MouseLeave, ActMouseLeave)
 ELEM_GEN(v1, MouseMove_MouseLButtonDown, Act1MouseDrag)
+ELEM_GEN(v1, MouseLButtonDown, ActMouseLButtonDown)
 
 ELEM_GEN(v2, MsgInit, Act2Init)
 ELEM_GEN(v2, MouseEnter, Act2MouseEnter)
 ELEM_GEN(v2, MouseLeave, Act2MouseLeave)
 ELEM_GEN(v2, MouseMove_MouseLButtonDown, Act2MouseDrag)
+ELEM_GEN(v2, MouseLButtonDown, ActMouseLButtonDown)
 
 ELEM_GEN(v3, MsgInit, Act3Init) //v3 is Add Button;
 ELEM_GEN(v3, MouseMove, Act3MouseMove)
