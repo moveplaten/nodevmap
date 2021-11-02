@@ -107,32 +107,6 @@ HRESULT D2dUtil::createDeviceTarget()
     return hr;
 }
 
-#define MAX_QPC_CHANNEL 100
-
-LONGLONG getQPCInterval(int channel)
-{
-    if (channel >= MAX_QPC_CHANNEL || channel < 0)
-    {
-        return -1;
-    }
-    LARGE_INTEGER QPC;
-    QueryPerformanceCounter(&QPC);
-    LONGLONG now = QPC.QuadPart;
-    static LONGLONG prev[MAX_QPC_CHANNEL] = { 0 };
-    LONGLONG QPCInterval = now - prev[channel];
-    prev[channel] = now;
-    return QPCInterval;
-}
-
-double getFPS(int channel)
-{
-    LARGE_INTEGER Frequency;
-    QueryPerformanceFrequency(&Frequency);
-    double timeInterval = (double)getQPCInterval(channel) / (double)Frequency.QuadPart;
-    double fps = (double)1.0 / timeInterval;
-    return fps;
-}
-
 void NvpDrawPort::beginDraw()
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
@@ -153,7 +127,7 @@ void NvpDrawPort::beginDraw()
 
     target->EndDraw();
     
-    D2dUtil::g_d2dutil->draw_fps = getFPS(0);
+    D2dUtil::g_d2dutil->draw_fps = nvpUtil->getFpsByChannel(0);
     char tempc[30] = { 0 };
     sprintf(tempc, "draw fps : %f", D2dUtil::g_d2dutil->draw_fps);
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);

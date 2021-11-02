@@ -2,6 +2,7 @@
 
 #import "quartz/qtz_common.h"
 #include "base/base.h"
+#include "util/util.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -146,7 +147,8 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    NSLog(@"Drawing");
+    auto fps = nvpUtil->getFpsByChannel(0);
+    NSLog(@"Drawing FPS %f", fps);
     g_cg_ref = [[NSGraphicsContext currentContext] CGContext];
     
     if (g_ct_font_ref == nil)
