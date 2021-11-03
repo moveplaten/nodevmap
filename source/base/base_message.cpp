@@ -11,7 +11,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
     if (msg_type == MsgInit)
     {
-        initAll(nvpBuild->g_top_layout->getSelfLevel());
+        initAll(nvpBuild->g_top_layout);
     }
     else if (msg_type == MouseEnter)
     {
@@ -32,7 +32,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else if (msg_type == MouseLButtonDown && g_now_hit_id)
     {
-        if (g_now_hit_id->can_be_top)
+        if (g_now_hit_id->canBeTop())
         {
             nvpBuild->moveToAllTop(g_now_hit_id);
         }
@@ -43,7 +43,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else
     {
-        BaseElement* fetch = inRange(pt, nvpBuild->g_top_layout->getSelfLevel());
+        BaseElement* fetch = inRange(pt, nvpBuild->g_top_layout);
 
         if (fetch)
         {
@@ -71,21 +71,28 @@ void BaseMessage::mousePtToLocal(BaseElement* base, mousePt* pt)
     g_last_downL_pt.y = pt->y - base->getRectRefTop()->top;
 }
 
-void BaseMessage::initAll(NvpLevel* level)
+void BaseMessage::initAll(BaseElement* base)
 {
-    if (!level)
+    for (;;)
     {
-        return;
-    }
+        if (base)
+        {
+            base->msgRoute(MsgInit);
+        }
 
-    size_t size = level->size();
-    auto iter = level->begin();
+        auto sub = nvpBuild->getSubLast(base);
 
-    for (size_t i = 0; i < size - 1; ++i)
-    {
-        auto next = *(++iter);
-        next->body.elem->msgRoute(MsgInit);
-        initAll(next->body.sub);
+        if (sub)
+        {
+            initAll(sub);
+        }
+
+        base = nvpBuild->getNextReverse(base);
+        
+        if (!base)
+        {
+            break;
+        }
     }
 }
 
@@ -108,51 +115,43 @@ bool BaseMessage::checkLeave()
     }
 }
 
-BaseElement* BaseMessage::inRange(mousePt* pt, NvpLevel* level)
+BaseElement* BaseMessage::inRange(mousePt* pt, BaseElement* base)
 {
-    ptSize pt_x = pt->x;
-    ptSize pt_y = pt->y;
-    size_t hit = -1;
-    static BaseElement* hit_elem = nullptr;
-
-    if (level)
+    for (;;)
     {
-        auto size = level->size();
-        auto content = *level;
-        auto iter = content.end();
-        --iter;
-        for (size_t i = 0; i < size - 1; ++i)
+        bool hit = false;
+
+        if (base)
         {
-            auto rect = &(*iter)->body.ref_top;
-            if (rect->left <= pt_x && rect->right > pt_x &&
-            rect->top <= pt_y && rect->bottom > pt_y)
+            auto rect = base->getRectRefTop();
+            
+            if (rect->left <= pt->x && rect->right > pt->x &&
+                rect->top <= pt->y && rect->bottom > pt->y)
             {
-                hit = i;
-                hit_elem = (*iter)->body.elem;
-            }
-            else
-            {
-                --iter;
+                g_now_hit_id = base;
+                hit = true;
             }
         }
-        if (hit == -1)
+        
+        if (hit)
         {
-            g_now_hit_id = hit_elem;
-            return hit_elem;
+            auto sub = nvpBuild->getSubLast(base);
+
+            if (sub)
+            {
+                inRange(pt, sub);
+            }
+
+            break;
         }
-        else if ((*iter)->body.sub)
+
+        base = nvpBuild->getNextReverse(base);
+
+        if (!base)
         {
-            mousePt pt_new;
-            pt_new.x = pt_x;
-            pt_new.y = pt_y;
-            inRange(&pt_new, (*iter)->body.sub);
-        }
-        else
-        {
-            g_now_hit_id = (*iter)->body.elem;
-            hit_elem = (*iter)->body.elem;
-            return hit_elem;
+            break;
         }
     }
-    return hit_elem;
+
+    return g_now_hit_id;
 }

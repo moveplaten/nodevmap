@@ -7,9 +7,9 @@
 
 int main(int argc, const char * argv[])
 {
-    NvpLevel::iterator iter;
-    BaseElement b(0, "0", 0, 0, iter);
-    nvpBuild->elemGen("test0", MsgNone, nullptr, nullptr);
+    //NvpLevel::iterator iter;
+    //BaseElement b(0, "0", 0, 0, iter);
+    //nvpBuild->elemGen("test0", MsgNone, nullptr, nullptr);
     ElemStorage<100, int> e;
     
     [NSApplication sharedApplication];

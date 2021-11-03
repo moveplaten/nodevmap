@@ -27,9 +27,9 @@ private:
     
     static mousePt g_last_downL_pt; //local space;
 
-    void initAll(NvpLevel* level);
+    void initAll(BaseElement* base);
     bool checkLeave();
-    BaseElement* inRange(mousePt* pt, NvpLevel* level);
+    BaseElement* inRange(mousePt* pt, BaseElement* base);
 
     void mousePtToLocal(BaseElement* base, mousePt* pt);
 
@@ -67,21 +67,16 @@ class BaseElement
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
+    
     const std::string& getSelfName() { return self_name; }
-    NvpLayoutBody* const getSelfLayout()
-    {
-        return self_layout;
-    }
 
-    NvpLevel* const getSelfLevel()
-    {
-        return self_level;
-    }
+    bool canBeTop() { return can_be_top; }
 
     const BaseRect* getRectRefUp()
     {
         return &(self_layout->ref_up);
     }
+    
     const BaseRect* getRectRefTop()
     {
         return &(self_layout->ref_top);
@@ -105,8 +100,8 @@ public:
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
     BaseElement(const elemIDSize id, const std::string& name,
-        NvpLayoutBody* const layout, NvpLevel* const level,
-        NvpLevel::iterator const iter, const bool be_top = true);
+        NvpBuild::NvpLayoutBody* const layout, NvpBuild::NvpLevel* const level,
+        NvpBuild::NvpLevel::iterator const iter, const bool be_top = true);
 
     ~BaseElement();
 
@@ -135,11 +130,10 @@ private:
     msgTypeSize linked_msg_size = 0;
 #endif // TEMP_TEST_0
 
-    NvpLayoutBody* const self_layout;
-    NvpLevel* const self_level;
-    NvpLevel::iterator self_iter;
+    NvpBuild::NvpLayoutBody* const self_layout;
+    NvpBuild::NvpLevel* const self_level;
+    NvpBuild::NvpLevel::iterator self_iter;
 
-    friend class BaseMessage;
-    friend class NvpDraw;
     friend class NvpBuild;
+    friend class NvpDraw;
 };

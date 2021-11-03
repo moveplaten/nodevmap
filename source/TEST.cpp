@@ -115,6 +115,7 @@ class Act2MouseLeave : public BaseAction
 
 static void subLevelRecord(BaseElement* elem)
 {
+    #if 0
     if (!elem)
     {
         return;
@@ -138,6 +139,7 @@ static void subLevelRecord(BaseElement* elem)
         nvpDraw->Record(next->body.elem, 0, 0, NoneDraw, rect);
         subLevelRecord(next->body.elem);
     }
+    #endif
 }
 
 class Act1MouseDrag : public BaseAction
@@ -382,6 +384,7 @@ class Act3SubInit : public BaseAction
 
 static void subLevelRemove(BaseElement* elem)
 {
+    #if 0
     if (!elem)
     {
         return;
@@ -405,6 +408,7 @@ static void subLevelRemove(BaseElement* elem)
         subLevelRemove(next->body.elem);
         nvpBuild->elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
     }
+    #endif
 }
 
 class ActMouseRButtonDown : public BaseAction
@@ -416,7 +420,7 @@ class ActMouseRButtonDown : public BaseAction
 
         subLevelRemove(base);
         
-        nvpBuild->elemDel(base->getSelfName(), base->getSelfLevel());
+        //nvpBuild->elemDel(base->getSelfName(), base->getSelfLevel());
     }
 }ActMouseRButtonDown;
 
@@ -426,6 +430,7 @@ class Act3MouseRButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
+        #if 0
         for (elemIDSize add_number = 0; add_number < MAX_TEST_ELEM; ++add_number)
         {
             std::string number_str("add_");
@@ -452,6 +457,7 @@ class Act3MouseRButtonDown : public BaseAction
                 nvpBuild->elemDel(number_str, nvpBuild->g_top_node_view->getSelfLayout()->sub);
             }
         }
+        #endif
     }
 }Act3MouseRButtonDown;
 
