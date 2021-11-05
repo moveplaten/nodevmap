@@ -49,6 +49,10 @@ ElemGenerator x##y##z(#x, y, &z, l);
 class NvpBuild
 {
 public:
+    BaseElement* getSubFirst(BaseElement* base);
+
+    BaseElement* getNext(BaseElement* base);
+    
     BaseElement* getSubLast(BaseElement* base);
 
     BaseElement* getNextReverse(BaseElement* base);

@@ -80,14 +80,14 @@ void BaseMessage::initAll(BaseElement* base)
             base->msgRoute(MsgInit);
         }
 
-        auto sub = nvpBuild->getSubLast(base);
+        auto sub = nvpBuild->getSubFirst(base);
 
         if (sub)
         {
             initAll(sub);
         }
 
-        base = nvpBuild->getNextReverse(base);
+        base = nvpBuild->getNext(base);
         
         if (!base)
         {

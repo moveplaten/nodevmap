@@ -75,34 +75,33 @@ NvpDraw* NvpDraw::getOneDraw(BaseElement* base, size_t offset)
 
 void NvpDraw::drawAll(BaseElement* base)
 {
-    if (!base)
+    for (;;)
     {
-        return;
-    }
-
-    auto sub_level = base->self_layout->sub;
-    
-    if (base->self_draw)
-    {
-        auto draw_size = (*(base->self_draw)).size();
-
-        for (size_t i = 0; i < draw_size; ++i)
+        if (base)
         {
-            (*(base->self_draw))[i]->realDraw(base);
+            if (base->self_draw)
+            {
+                auto draw_size = (*(base->self_draw)).size();
+
+                for (size_t i = 0; i < draw_size; ++i)
+                {
+                    (*(base->self_draw))[i]->realDraw(base);
+                }
+            }
         }
-    }
 
-    if (!sub_level)
-    {
-        return;
-    }
+        auto sub = nvpBuild->getSubFirst(base);
 
-    size_t size = sub_level->size();
-    auto iter = sub_level->begin();
+        if (sub)
+        {
+            drawAll(sub);
+        }
 
-    for (size_t i = 0; i < size - 1; ++i)
-    {
-        auto next = *(++iter);
-        drawAll(next->body.elem);
+        base = nvpBuild->getNext(base);
+
+        if (!base)
+        {
+            break;
+        }
     }
 }

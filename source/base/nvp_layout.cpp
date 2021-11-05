@@ -2,6 +2,45 @@
 
 NvpBuild* nvpBuild = nullptr;
 
+BaseElement* NvpBuild::getSubFirst(BaseElement* base)
+{
+    if (!base)
+    {
+        return nullptr;
+    }
+
+    if (!base->self_layout->sub)
+    {
+        return nullptr;
+    }
+
+    auto iter = base->self_layout->sub->begin();
+
+    if (++iter == base->self_layout->sub->end())
+    {
+        return nullptr;
+    }
+
+    return (*iter)->body.elem;
+}
+
+BaseElement* NvpBuild::getNext(BaseElement* base)
+{
+    if (!base)
+    {
+        return nullptr;
+    }
+
+    auto iter = base->self_iter;
+
+    if (++iter == base->self_level->end())
+    {
+        return nullptr;
+    }
+
+    return (*iter)->body.elem;
+}
+
 BaseElement* NvpBuild::getSubLast(BaseElement* base)
 {
     if (!base)
