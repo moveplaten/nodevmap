@@ -33,19 +33,19 @@
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        nvpDraw->Record(nvpBuild->g_top_layout, 0, nullptr, NoneDraw, &rect);
+        nvpBuild->setBaseRect(nvpBuild->g_top_layout, rect);
 
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height - 20.0f;
-        nvpDraw->Record(nvpBuild->g_top_node_view, 0, nullptr, NoneDraw, &rect);
+        nvpBuild->setBaseRect(nvpBuild->g_top_node_view, rect);
         
         rect.left = 0.0f;
         rect.top = wnd_rect.size.height - 20.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        nvpDraw->Record(nvpBuild->g_top_menu_stat, 0, nullptr, NoneDraw, &rect);
+        nvpBuild->setBaseRect(nvpBuild->g_top_menu_stat, rect);
     }
 }
 
@@ -159,7 +159,7 @@
     if (nvpBuild)
     {
         auto top_elem = nvpBuild->g_top_layout;
-        nvpDraw->drawAll(top_elem);
+        NvpDraw::drawAll(top_elem);
     }
 }
 

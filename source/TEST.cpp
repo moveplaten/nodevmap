@@ -8,16 +8,20 @@ class ActInit : public BaseAction
         BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
+        nvpBuild->setBaseRect(base, rect);
 
-        auto draw = new NvpFillOneRect;
         NvpColor col = { 150, 150, 150 };
-        nvpDraw->Record(base, 0, &col, Draw, &rect, draw);
-
-        auto font = new NvpDrawTextOneLineOneColor;
-        font->str_to_draw = "Node-V1-!@#$%^&*()_+";
-        font->start_pt.y = 25;
         NvpColor font_col = { 230, 230, 230 };
-        nvpDraw->Record(base, 1, &font_col, Draw, 0, font);
+
+        NvpDrawCache rect_elem(Draw_Rect_Same_Elem);
+        rect_elem.setColor(col);
+        nvp_draw->pushDraw(rect_elem);
+
+        NvpDrawCache text(Draw_Text_One_Line);
+        text.setColor(font_col);
+        text.text_one_line->setText("Node-V1-!@#$%^&*()_+");
+        text.text_one_line->setStart({ 0, 25 });
+        nvp_draw->pushDraw(text);
     }
 }ActInit;
 
@@ -25,12 +29,8 @@ class ActMouseEnter : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = (NvpFillOneRect*)nvpDraw->getOneDraw(base, 0);
-        auto col = draw->color;
-        col.Red += 50;
-        col.Green += 50;
-        col.Blue += 50;
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto rect = nvp_draw->getDraw(0);
+        rect->colorBright();
     }
 }ActMouseEnter;
 
@@ -38,12 +38,8 @@ class ActMouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = (NvpFillOneRect*)nvpDraw->getOneDraw(base, 0);
-        auto col = draw->color;
-        col.Red -= 50;
-        col.Green -= 50;
-        col.Blue -= 50;
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto rect = nvp_draw->getDraw(0);
+        rect->colorDarker();
     }
 }ActMouseLeave;
 
@@ -51,7 +47,7 @@ class ActMouseLButtonDown : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        nvpDraw->Record(base, 0, nullptr, Draw);
+        
     }
 }ActMouseLButtonDown;
 
@@ -73,16 +69,20 @@ class Act2Init : public BaseAction
         rect.right = 90;
         rect.top = 10;
         rect.bottom = 50;
+        nvpBuild->setBaseRect(base, rect);
 
-        auto draw = new NvpFillOneRect;
         NvpColor col = { 0, 150, 150 };
-        nvpDraw->Record(base, 0, &col, Draw, &rect, draw);
-
-        auto font = new NvpDrawTextOneLineOneColor;
-        font->str_to_draw = "fNode-V2-font-Test";
-        font->start_pt.y = 25;
         NvpColor font_col = { 230, 230, 230 };
-        nvpDraw->Record(base, 1, &font_col, Draw, 0, font);
+
+        NvpDrawCache rect_elem(Draw_Rect_Same_Elem);
+        rect_elem.setColor(col);
+        nvp_draw->pushDraw(rect_elem);
+
+        NvpDrawCache text(Draw_Text_One_Line);
+        text.setColor(font_col);
+        text.text_one_line->setText("fNode-V2-font-Test");
+        text.text_one_line->setStart({ 0, 25 });
+        nvp_draw->pushDraw(text);
     }
 }Act2Init;
 
@@ -90,12 +90,8 @@ class Act2MouseEnter : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = (NvpFillOneRect*)nvpDraw->getOneDraw(base, 0);
-        auto col = draw->color;
-        col.Red += 50;
-        col.Green += 50;
-        col.Blue += 50;
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto rect = nvp_draw->getDraw(0);
+        rect->colorBright();
     }
 }Act2MouseEnter;
 
@@ -103,12 +99,8 @@ class Act2MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = (NvpFillOneRect*)nvpDraw->getOneDraw(base, 0);
-        auto col = draw->color;
-        col.Red -= 50;
-        col.Green -= 50;
-        col.Blue -= 50;
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto rect = nvp_draw->getDraw(0);
+        rect->colorDarker();
     }
 }Act2MouseLeave;
 /////////////////////////////////////////////////////////////////////////
@@ -149,22 +141,17 @@ class Act1MouseDrag : public BaseAction
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
-        const BaseRect* old_rect = base->getRectRefUp();
-
-        //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+        const BaseRect& old_rect = base->getRectRefUp();
 
         BaseRect new_rect;
-        new_rect.left = old_rect->left + sub_x;
-        new_rect.right = old_rect->right + sub_x;
-        new_rect.top = old_rect->top + sub_y;
-        new_rect.bottom = old_rect->bottom + sub_y;
+        new_rect.left = old_rect.left + sub_x;
+        new_rect.right = old_rect.right + sub_x;
+        new_rect.top = old_rect.top + sub_y;
+        new_rect.bottom = old_rect.bottom + sub_y;
 
-        nvpDraw->Record(base, 0, 0, NoneDraw, &new_rect);
+        nvpBuild->setBaseRect(base, new_rect);
 
         subLevelRecord(base);
-
-        //NvpColor col = { 200, 200, 200 };
-        nvpDraw->Record(base, 0, 0, Draw);
     }
 }Act1MouseDrag;
 
@@ -175,18 +162,15 @@ class Act2MouseDrag : public BaseAction
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
-        const BaseRect* old_rect = base->getRectRefUp();
-
-        //draw->fillRect(*old_rect, RGB(0, 0, 0), Begin);
+        const BaseRect& old_rect = base->getRectRefUp();
 
         BaseRect new_rect;
-        new_rect.left = old_rect->left + sub_x;
-        new_rect.right = old_rect->right + sub_x;
-        new_rect.top = old_rect->top + sub_y;
-        new_rect.bottom = old_rect->bottom + sub_y;
+        new_rect.left = old_rect.left + sub_x;
+        new_rect.right = old_rect.right + sub_x;
+        new_rect.top = old_rect.top + sub_y;
+        new_rect.bottom = old_rect.bottom + sub_y;
 
-        //NvpColor col = { 0, 200, 200 };
-        nvpDraw->Record(base, 0, 0, Draw, &new_rect);
+        nvpBuild->setBaseRect(base, new_rect);
     }
 }Act2MouseDrag;
 
@@ -200,15 +184,19 @@ class Act3Init : public BaseAction
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
-    
+        nvpBuild->setBaseRect(base, rect);
+
         NvpColor hColor = { 0, 200, 200 };
         NvpColor hColor2 = { 200, 200, 200 };
-        NvpColor colors[2];
-        colors[0] = hColor;
-        colors[1] = hColor2;
 
-        auto draw = new NvpFillFiveRect(40);
-        nvpDraw->Record(base, 0, colors, Draw, &rect, draw);
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(hColor);
+        nvp_draw->pushDraw(one_rect);
+
+        NvpDrawCache four_rect(Draw_Four_Rect_Percent);
+        four_rect.setColor(hColor2);
+        four_rect.four_rect_percent->setPercent(40);
+        nvp_draw->pushDraw(four_rect);
     }
 }Act3Init;
 
@@ -216,16 +204,8 @@ class Act3MouseMove : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor hColor = { 0, 200, 200 };
-        NvpColor hColor2 = { 200, 200, 200 };
-        NvpColor colors[2];
-        colors[0] = hColor;
-        colors[1] = hColor2;
-
-        auto draw = (NvpFillFiveRect*)nvpDraw->getOneDraw(base, 0);
-        draw->setPersent(36);
-
-        nvpDraw->Record(base, 0, colors, Draw);
+        auto four_rect = nvp_draw->getDraw(1);
+        four_rect->four_rect_percent->setPercent(36);
     }
 }Act3MouseMove;
 
@@ -233,22 +213,14 @@ class Act3MouseLeave : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        NvpColor hColor = { 0, 200, 200 };
-        NvpColor hColor2 = { 200, 200, 200 };
-        NvpColor colors[2];
-        colors[0] = hColor;
-        colors[1] = hColor2;
-
-        auto draw = (NvpFillFiveRect*)nvpDraw->getOneDraw(base, 0);
-        draw->setPersent(40);
-
-        nvpDraw->Record(base, 0, colors, Draw);
+        auto four_rect = nvp_draw->getDraw(1);
+        four_rect->four_rect_percent->setPercent(40);
     }
 }Act3MouseLeave;
 
 //global opt speed control;
-static RecordOption opt[] = { NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw,
-    NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, Draw };
+//static RecordOption opt[] = { NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw,
+//    NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, NoneDraw, Draw };
 
 class ActRandomInit : public BaseAction
 {
@@ -278,8 +250,11 @@ class ActRandomInit : public BaseAction
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
         NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
-        auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
+
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvpBuild->setBaseRect(base, rect);
+        nvp_draw->pushDraw(one_rect);
     }
 }ActRandomInit;
 
@@ -311,8 +286,11 @@ class ActSubInit : public BaseAction
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
         NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
-        auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
+
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvpBuild->setBaseRect(base, rect);
+        nvp_draw->pushDraw(one_rect);
     }
 }ActSubInit;
 
@@ -344,8 +322,11 @@ class Act2SubInit : public BaseAction
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
         NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
-        auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
+
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvpBuild->setBaseRect(base, rect);
+        nvp_draw->pushDraw(one_rect);
     }
 }Act2SubInit;
 
@@ -377,8 +358,11 @@ class Act3SubInit : public BaseAction
         int g = 255 * cos(tg + rand() / 1000);
         int b = 255 * sin(tb + rand() / 1000);
         NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
-        auto draw = new NvpFillOneRect;
-        nvpDraw->Record(base, 0, &col, NoneDraw, &rect, draw);
+
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvpBuild->setBaseRect(base, rect);
+        nvp_draw->pushDraw(one_rect);
     }
 }Act3SubInit;
 
@@ -416,7 +400,7 @@ class ActMouseRButtonDown : public BaseAction
     virtual void realAction(BaseElement* base) override
     {
         NvpColor col = { 0, 0, 0 };
-        nvpDraw->Record(base, 0, &col);
+        //nvpDraw->Record(base, 0, &col);
 
         subLevelRemove(base);
         
@@ -571,15 +555,18 @@ class StatInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = new NvpFillOneRect;
         NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, 0, &col, Draw, nullptr, draw);
-
-        auto font = new NvpDrawTextOneLineOneColor;
-        font->str_to_draw = "  Menu  |  Stat";
-        font->start_pt.y = 13;
         NvpColor font_col = { 230, 230, 230 };
-        nvpDraw->Record(base, 1, &font_col, Draw, 0, font);
+        
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvp_draw->pushDraw(one_rect);
+
+        NvpDrawCache text(Draw_Text_One_Line);
+        text.setColor(font_col);
+        text.text_one_line->setText("  Menu  |  Stat");
+        text.text_one_line->setStart({ 0, 13 });
+        nvp_draw->pushDraw(text);
     }
 }StatInit;
 
@@ -588,7 +575,8 @@ class StatMouseMove : public BaseAction
     virtual void realAction(BaseElement* base) override
     {
         NvpColor col = { 200, 200, 255 };
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto one_rect = nvp_draw->getDraw(0);
+        one_rect->setColor(col);
     }
 }StatMouseMove;
 
@@ -597,7 +585,8 @@ class StatMouseLeave : public BaseAction
     virtual void realAction(BaseElement* base) override
     {
         NvpColor col = { 100, 200, 255 };
-        nvpDraw->Record(base, 0, &col, Draw);
+        auto one_rect = nvp_draw->getDraw(0);
+        one_rect->setColor(col);
     }
 }StatMouseLeave;
 
@@ -610,10 +599,10 @@ class NodeViewInit : public BaseAction
 {
     virtual void realAction(BaseElement* base) override
     {
-        auto draw = new NvpFillOneRect;
         NvpColor col = { 40, 40, 45 };
-
-        nvpDraw->Record(base, 0, &col, Draw, 0, draw);
+        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        one_rect.setColor(col);
+        nvp_draw->pushDraw(one_rect);
     }
 }NodeViewInit;
 

@@ -43,27 +43,25 @@ public:
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(nvpBuild->g_top_layout, 0, nullptr, NoneDraw, &rect);
+            nvpBuild->setBaseRect(nvpBuild->g_top_layout, rect);
 
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height - 20.0f;
-            nvpDraw->Record(nvpBuild->g_top_node_view, 0, nullptr, NoneDraw, &rect);
+            nvpBuild->setBaseRect(nvpBuild->g_top_node_view, rect);
 
             rect.left = 0.0f;
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpDraw->Record(nvpBuild->g_top_menu_stat, 0, nullptr, NoneDraw, &rect);
+            nvpBuild->setBaseRect(nvpBuild->g_top_menu_stat, rect);
         }
     }
 
     void onRender()
     {
-        auto draw = nvpDraw->getDrawPort();
-
-        draw->beginDraw();
+        NvpDrawPort::beginDraw();
     }
 
     //void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);

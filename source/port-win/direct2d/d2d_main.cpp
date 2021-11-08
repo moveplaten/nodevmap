@@ -120,7 +120,7 @@ void NvpDrawPort::beginDraw()
     if (nvpBuild)
     {
         auto top_elem = nvpBuild->g_top_layout;
-        nvpDraw->drawAll(top_elem);
+        NvpDraw::drawAll(top_elem);
     }
 
     ////////////////////////////////////////////////////////////////////////////

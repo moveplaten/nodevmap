@@ -93,22 +93,37 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
     {
         auto temp = *ret;
         BaseAction* act = temp.second;
+        
         if (pt)
         {
             act->mousePtToLocal(this, pt);
         }
+        
+        act->prepareDraw(this, msg_type);
+        
         act->realAction(this);
     }
 }
 #endif // !TEMP_TEST_0
 
 
+void BaseAction::prepareDraw(BaseElement* base, MsgBaseType type)
+{
+    if (type == MsgInit)
+    {
+        auto draw = new NvpDraw(base);
+        base->self_draw = draw;
+    }
+    
+    this->nvp_draw = base->self_draw;
+}
+
 void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 {
     world_pt = *pt;
 
-    local_pt.x = pt->x - base->getRectRefTop()->left;
-    local_pt.y = pt->y - base->getRectRefTop()->top;
+    local_pt.x = pt->x - base->getRectRefTop().left;
+    local_pt.y = pt->y - base->getRectRefTop().top;
     //char temp[100];
     //sprintf(temp, "\nworld_x = %f, world_y = %f\nlocal_x = %f, local_y = %f\n\n", world_pt.x, world_pt.y, local_pt.x, local_pt.y);
     //OutputDebugStringA(temp);
@@ -135,15 +150,9 @@ BaseElement::~BaseElement()
 
     if (self_draw)
     {
-        auto size = self_draw->size();
-        for (size_t i = 0; i < size; ++i)
-        {
-            delete (*self_draw)[i];
-        }
-        
         delete self_draw;
     }
-    
+
     if (self_level)
     {
         self_level->erase(self_iter);

@@ -1,4 +1,5 @@
 #include "base.h"
+#include "draw/draw.h"
 #include <stdio.h>
 
 BaseMessage* const baseMsg = nullptr;
@@ -9,6 +10,10 @@ mousePt BaseMessage::g_last_downL_pt = { 0 };
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 {
+    static uint8_t hit_test_depth = 0;
+
+    ++hit_test_depth; //do not change it;
+
     if (msg_type == MsgInit)
     {
         initAll(nvpBuild->g_top_layout);
@@ -63,12 +68,19 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
             hitTest(MouseLeave, pt);
         }
     }
+
+    --hit_test_depth;
+
+    if (hit_test_depth == 0)
+    {
+        NvpDrawPort::beginDraw();
+    }
 }
 
 void BaseMessage::mousePtToLocal(BaseElement* base, mousePt* pt)
 {
-    g_last_downL_pt.x = pt->x - base->getRectRefTop()->left;
-    g_last_downL_pt.y = pt->y - base->getRectRefTop()->top;
+    g_last_downL_pt.x = pt->x - base->getRectRefTop().left;
+    g_last_downL_pt.y = pt->y - base->getRectRefTop().top;
 }
 
 void BaseMessage::initAll(BaseElement* base)
@@ -123,10 +135,10 @@ BaseElement* BaseMessage::inRange(mousePt* pt, BaseElement* base)
 
         if (base)
         {
-            auto rect = base->getRectRefTop();
+            auto& rect = base->getRectRefTop();
             
-            if (rect->left <= pt->x && rect->right > pt->x &&
-                rect->top <= pt->y && rect->bottom > pt->y)
+            if (rect.left <= pt->x && rect.right > pt->x &&
+                rect.top <= pt->y && rect.bottom > pt->y)
             {
                 g_now_hit_id = base;
                 hit = true;

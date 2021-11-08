@@ -38,7 +38,6 @@ struct BaseRect
 class BaseElement;
 class BaseAction;
 class NvpDraw;
-typedef std::vector<NvpDraw*> NvpDrawVec;
 
 #define ELEM_GEN(x, y, z)\
 ElemGenerator x##y##z(#x, y, &z);
@@ -49,6 +48,8 @@ ElemGenerator x##y##z(#x, y, &z, l);
 class NvpBuild
 {
 public:
+    void setBaseRect(BaseElement* base, const BaseRect& rect);
+
     BaseElement* getSubFirst(BaseElement* base);
 
     BaseElement* getNext(BaseElement* base);

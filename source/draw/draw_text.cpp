@@ -1,11 +1,41 @@
 #include "draw.h"
 #include "base/base.h"
 
-void NvpDrawTextOneLineOneColor::realDraw(BaseElement* base)
+void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, NvpXyCoord xy,
+    const std::string& str, const NvpStyle& style)
 {
-    auto main_rect = base->getRectRefTop();
-    NvpXyCoord draw_pt;
-    draw_pt.x = main_rect->left + start_pt.x;
-    draw_pt.y = main_rect->top + start_pt.y;
-    g_draw_port->drawTextFromLToR(draw_pt, str_to_draw, color);
+    auto& main_rect = base.getRectRefTop();
+
+    NvpXyCoord start;
+    start.x = main_rect.left + xy.x;
+    start.y = main_rect.top + xy.y;
+
+    auto one_style = style.getStyle();
+
+    switch (one_style)
+    {
+    case NvpStyle::Fill:
+    {
+
+    }
+    //break;
+
+    case NvpStyle::Frame:
+    {
+
+    }
+    //break;
+
+    case NvpStyle::Fill_Frame:
+    {
+
+    }
+    //break;
+
+    default:
+    {
+        NvpDrawPort::drawTextFromLToR(start, str, style.getColor());
+    }
+    break;
+    }
 }

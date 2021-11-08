@@ -53,12 +53,18 @@ public:
     {
         local_pt.x = 0; local_pt.y = 0;
         world_pt.x = 0; world_pt.y = 0;
+        nvp_draw = nullptr;
     }
 
     ~BaseAction() {}
 
+protected:
+    NvpDraw* nvp_draw;
+
 private:
     void mousePtToLocal(BaseElement* base, mousePt* pt);
+
+    void prepareDraw(BaseElement* base, MsgBaseType type);
 
     friend class BaseElement;
 };
@@ -72,14 +78,19 @@ public:
 
     bool canBeTop() { return can_be_top; }
 
-    const BaseRect* getRectRefUp()
+    const BaseRect& getRectRefUp() const
     {
-        return &(self_layout->ref_up);
+        return self_layout->ref_up;
     }
     
-    const BaseRect* getRectRefTop()
+    const BaseRect& getRectRefTop() const
     {
-        return &(self_layout->ref_top);
+        return self_layout->ref_top;
+    }
+
+    NvpDraw* getSelfDraw()
+    {
+        return self_draw;
     }
     //void setRect(const BaseRect* rect) //use NvpDraw::Record to set;
     //{
@@ -114,7 +125,7 @@ private:
     const std::string& self_name;
     const bool can_be_top;
     bool self_visible = true;
-    NvpDrawVec* self_draw = nullptr;
+    NvpDraw* self_draw = nullptr;
 
 #ifndef TEMP_TEST_0
     MsgActMap msg_act_map;
@@ -135,5 +146,5 @@ private:
     NvpBuild::NvpLevel::iterator self_iter;
 
     friend class NvpBuild;
-    friend class NvpDraw;
+    friend class BaseAction;
 };
