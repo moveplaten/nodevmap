@@ -94,7 +94,7 @@ void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
     {
         auto xy = cache.text_one_line->getStart();
         auto text = cache.text_one_line->getText();
-        NvpDrawReal::Draw_Text_One_Line(base, xy, text, cache.a_style);
+        NvpDrawReal::Draw_Text_One_Line(base, cache.a_style, xy, text);
     }
     break;
 
@@ -118,27 +118,13 @@ void NvpDrawCache::OptByPush(Opt opt)
     {
     case Draw_Text_One_Line:
     {
-        if (opt == DEL && !is_push)
-        {
-            delete text_one_line;
-        }
-        else if (opt == NEW)
-        {
-            text_one_line = new NvpDrawData::TextOneLine<>;
-        }
+        NvpOptPush<NvpDrawData::TextOneLine<>>(&text_one_line, opt, is_push);
     }
     break;
 
     case Draw_Four_Rect_Percent:
     {
-        if (opt == DEL && !is_push)
-        {
-            delete four_rect_percent;
-        }
-        else if (opt == NEW)
-        {
-            four_rect_percent = new NvpDrawData::FourRectPercent<>;
-        }
+        NvpOptPush<NvpDrawData::FourRectPercent<>>(&four_rect_percent, opt, is_push);
     }
     break;
 
@@ -178,13 +164,13 @@ NvpStyle::Style NvpDrawCache::getStyle()
 }
 
 NvpDrawCache::NvpDrawCache(const NvpStyle& style, NvpDrawCommand command)
-    :a_style(style), a_command(command)
+    :a_style(style), a_command(command), is_push(false)
 {
     OptByPush(NEW);
 }
 
 NvpDrawCache::NvpDrawCache(NvpDrawCommand command)
-    :a_command(command)
+    :a_command(command), is_push(false)
 {
     OptByPush(NEW);
 }

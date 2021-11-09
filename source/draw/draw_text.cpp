@@ -1,8 +1,8 @@
 #include "draw.h"
 #include "base/base.h"
 
-void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, NvpXyCoord xy,
-    const std::string& str, const NvpStyle& style)
+void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,
+    NvpXyCoord xy, const std::string& str)
 {
     auto& main_rect = base.getRectRefTop();
 

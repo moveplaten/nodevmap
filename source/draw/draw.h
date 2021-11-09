@@ -58,12 +58,13 @@ public:
 
     static void Draw_One_Rect(const BaseRect& rect, const NvpStyle& style);
 
-    static void Draw_Text_One_Line(const BaseElement& base, NvpXyCoord xy,
-        const std::string& str, const NvpStyle& style);
+    static void Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,
+        NvpXyCoord xy, const std::string& str);
 
     static void Draw_Rect_Same_Elem(const BaseElement& base, const NvpStyle& style);
 
-    static void Draw_Four_Rect_Percent(const BaseElement& base, const NvpStyle& style, int percent);
+    static void Draw_Four_Rect_Percent(const BaseElement& base, const NvpStyle& style,
+        int percent);
 
 };
 
@@ -187,7 +188,23 @@ private:
 
     NvpDrawCommand a_command;
 
-    bool is_push = false;
+    bool is_push;
+
+    template<typename T> class NvpOptPush
+    {
+    public:
+        NvpOptPush(T** t, Opt opt, bool is_push)
+        {
+            if (opt == DEL && !is_push)
+            {
+                delete *t;
+            }
+            else if (opt == NEW)
+            {
+                *t = new T;
+            }
+        }
+    };
 
     friend class NvpDraw;
 };
