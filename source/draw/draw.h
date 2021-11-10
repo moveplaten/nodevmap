@@ -40,6 +40,7 @@ public:
 };
 
 class NvpStyle;
+class NvpDrawCache;
 
 enum NvpDrawCommand
 {
@@ -72,6 +73,12 @@ namespace NvpDrawData
 {
     ////////////////////////////////////////////////////////////////////////////
 
+    #define NVP_DRAW_PRIVATE(V)                                     \
+    void drawPrivate(const BaseElement& base, const NvpStyle& style)\
+    {                                                               \
+        V                                                           \
+    }                                                               \
+
     typedef NvpDrawCommand Command;
 
     template<Command D> class DrawSafe
@@ -94,6 +101,18 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
+    template<Command D = Draw_Rect_Same_Elem> class RectSameElem :
+        DrawSafe<Draw_Rect_Same_Elem>
+    {
+    public:
+        NVP_DRAW_PRIVATE
+        (
+            NvpDrawReal::Draw_Rect_Same_Elem(base, style);
+        )
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+
     template<Command D = Draw_Text_One_Line> class TextOneLine :
         DrawSafe<Draw_Text_One_Line>
     {
@@ -107,6 +126,12 @@ namespace NvpDrawData
     private:
         std::string text;
         NvpXyCoord start;
+
+    public:
+        NVP_DRAW_PRIVATE
+        (
+            NvpDrawReal::Draw_Text_One_Line(base, style, start, text);
+        )
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -120,6 +145,12 @@ namespace NvpDrawData
 
     private:
         int percent;
+
+    public:
+        NVP_DRAW_PRIVATE
+        (
+            NvpDrawReal::Draw_Four_Rect_Percent(base, style, percent);
+        )
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -158,8 +189,8 @@ private:
 class NvpDrawCache
 {
 public:
-    NvpDrawCache(const NvpStyle& style, NvpDrawCommand command);
-    NvpDrawCache(NvpDrawCommand command);
+    NvpDrawCache(const NvpStyle& style, const NvpDrawCommand command);
+    NvpDrawCache(const NvpDrawCommand command);
     ~NvpDrawCache();
 
     void colorBright();
@@ -173,38 +204,66 @@ public:
 
     union
     {
-        NvpDrawData::NullData<>* null_data;
-        NvpDrawData::TextOneLine<>* text_one_line;
-        NvpDrawData::FourRectPercent<>* four_rect_percent;
+        NvpDrawData::NullData<>* const null_data;
+        NvpDrawData::RectSameElem<>* const rect_same_elem;
+        NvpDrawData::TextOneLine<>* const text_one_line;
+        NvpDrawData::FourRectPercent<>* const four_rect_percent;
 
     };
 
 private:
-    enum Opt { NEW, DEL };
+    enum Opt { NEW, DELE, DRAW };
     
-    void OptByPush(Opt opt);
+    void OptByPush(const Opt opt);
+
+    struct Param
+    {
+        Param(const BaseElement& base) : base_elem(base) {};
+        
+        const BaseElement& base_elem;
+    };
+
+    void OptSwitch(const Opt opt, const Param* const param = nullptr);
+
+    template<typename T>
+    void NvpOptPush(T* const* t, const Opt opt, const bool is_push,
+        const Param* const param, const NvpStyle& style)
+    {
+        switch (opt)
+        {
+        case NEW:
+        {
+            T** t_ = const_cast<T**>(t);
+
+            (*t_) = new T;
+        }
+        break;
+
+        case DELE:
+        {
+            if (!is_push)
+            {
+                delete (*t);
+            }
+        }
+        break;
+
+        case DRAW:
+        {
+            (*t)->drawPrivate(param->base_elem, style); //from NvpDrawData;
+        }
+        break;
+
+        default:
+            break;
+        }
+    }
 
     NvpStyle a_style;
 
-    NvpDrawCommand a_command;
+    const NvpDrawCommand a_command;
 
     bool is_push;
-
-    template<typename T> class NvpOptPush
-    {
-    public:
-        NvpOptPush(T** t, Opt opt, bool is_push)
-        {
-            if (opt == DEL && !is_push)
-            {
-                delete *t;
-            }
-            else if (opt == NEW)
-            {
-                *t = new T;
-            }
-        }
-    };
 
     friend class NvpDraw;
 };

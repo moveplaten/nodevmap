@@ -80,28 +80,32 @@ void NvpDraw::drawAll(BaseElement* base)
 
 void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
 {
-    auto command = cache.a_command;
+    NvpDrawCache::Param param(base);
+    
+    const_cast<NvpDrawCache&>(cache).OptSwitch(NvpDrawCache::DRAW, &param);
+}
+
+void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param)
+{
+    auto command = this->a_command;
 
     switch (command)
     {
     case Draw_Rect_Same_Elem:
     {
-        NvpDrawReal::Draw_Rect_Same_Elem(base, cache.a_style);
+        NvpOptPush<NvpDrawData::RectSameElem<>>(&rect_same_elem, opt, is_push, param, a_style);
     }
     break;
 
     case Draw_Text_One_Line:
     {
-        auto xy = cache.text_one_line->getStart();
-        auto text = cache.text_one_line->getText();
-        NvpDrawReal::Draw_Text_One_Line(base, cache.a_style, xy, text);
+        NvpOptPush<NvpDrawData::TextOneLine<>>(&text_one_line, opt, is_push, param, a_style);
     }
     break;
 
     case Draw_Four_Rect_Percent:
     {
-        auto percent = cache.four_rect_percent->getPercent();
-        NvpDrawReal::Draw_Four_Rect_Percent(base, cache.a_style, percent);
+        NvpOptPush<NvpDrawData::FourRectPercent<>>(&four_rect_percent, opt, is_push, param, a_style);
     }
     break;
 
@@ -110,27 +114,9 @@ void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
     }
 }
 
-void NvpDrawCache::OptByPush(Opt opt)
+void NvpDrawCache::OptByPush(const Opt opt)
 {
-    auto command = a_command;
-    
-    switch (command)
-    {
-    case Draw_Text_One_Line:
-    {
-        NvpOptPush<NvpDrawData::TextOneLine<>>(&text_one_line, opt, is_push);
-    }
-    break;
-
-    case Draw_Four_Rect_Percent:
-    {
-        NvpOptPush<NvpDrawData::FourRectPercent<>>(&four_rect_percent, opt, is_push);
-    }
-    break;
-
-    default:
-        break;
-    }
+    OptSwitch(opt);
 }
 
 void NvpDrawCache::colorBright()
@@ -177,7 +163,7 @@ NvpDrawCache::NvpDrawCache(NvpDrawCommand command)
 
 NvpDrawCache::~NvpDrawCache()
 {
-    OptByPush(DEL);
+    OptByPush(DELE);
 }
 
 void NvpDraw::pushDraw(NvpDrawCache& cache)
