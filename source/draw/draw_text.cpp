@@ -1,4 +1,4 @@
-#include "draw.h"
+#include "draw_priv.h"
 #include "base/base.h"
 
 void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,

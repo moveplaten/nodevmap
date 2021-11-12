@@ -1,4 +1,4 @@
-#include "draw.h"
+#include "draw_priv.h"
 #include "base/base.h"
 
 void NvpDrawReal::Draw_One_Rect(const BaseRect& rect, const NvpStyle& style)

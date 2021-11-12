@@ -1,5 +1,5 @@
 #include "base/base.h"
-#include "draw/draw.h"
+#include "draw/draw_priv.h"
 
 class ActInit : public BaseAction
 {

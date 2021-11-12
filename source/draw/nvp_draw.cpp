@@ -1,4 +1,4 @@
-#include "draw.h"
+#include "draw_priv.h"
 #include "base/base.h"
 
 void NvpStyle::colorBright()
@@ -175,6 +175,11 @@ void NvpDraw::pushDraw(NvpDrawCache& cache)
 NvpDrawCache* NvpDraw::getDraw(size_t order)
 {
     return &draw_cache[order];
+}
+
+NvpDraw::NvpDraw(BaseElement* base) : base_elem(base)
+{
+    
 }
 
 NvpDraw::~NvpDraw()
