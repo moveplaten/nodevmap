@@ -4,8 +4,6 @@
 
 typedef uint32_t msgTypeSize;
 
-typedef float ptSize;
-
 //#define TEMP_TEST_0
 
 class BaseElement;

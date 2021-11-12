@@ -29,6 +29,24 @@ void NvpBuild::setBaseRect(BaseElement* base, const BaseRect& rect)
     }
 }
 
+BaseElement* NvpBuild::findSameLevel(const std::string& str, BaseElement* base)
+{
+    auto head = *(base->self_level->begin());
+    auto elem_map = head->head->cur_map;
+    auto ret = elem_map->find(str);
+
+    if (ret == elem_map->end())
+    {
+        return nullptr;
+    }
+    else
+    {
+        auto elem = *ret;
+        BaseElement* base = elem.second;
+        return base;
+    }
+}
+
 BaseElement* NvpBuild::getSubFirst(BaseElement* base)
 {
     if (!base)

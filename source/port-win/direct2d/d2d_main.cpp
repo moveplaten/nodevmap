@@ -133,11 +133,12 @@ void NvpDrawPort::beginDraw()
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
 }
 
-void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
+void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
+    ptSize size_font, NvpColor colo)
 {
     auto str_size = str.size();
     auto u32_str = nvpUtil->utf8_to_utf32(str);
-    float font_size = 12.0f;
+    float font_size = size_font;
     
     DWRITE_GLYPH_RUN glyph_run;
     memset(&glyph_run, 0, sizeof(DWRITE_GLYPH_RUN));

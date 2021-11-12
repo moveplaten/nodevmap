@@ -197,6 +197,12 @@ class Act3Init : public BaseAction
         four_rect.setColor(hColor2);
         four_rect.four_rect_percent->setPercent(40);
         nvp_draw->pushDraw(four_rect);
+
+        NvpDrawCache font(Draw_Text_One_Line);
+        font.setColor({ 200, 100, 100 });
+        font.text_one_line->setText(" -Click Change Node Font Size-");
+        font.text_one_line->setStart({ 40, 25 });
+        nvp_draw->pushDraw(font);
     }
 }Act3Init;
 
@@ -442,6 +448,17 @@ class Act3MouseRButtonDown : public BaseAction
             }
         }
         #endif
+
+        auto v2 = nvpBuild->findSameLevel("v2", base);
+
+        if (v2)
+        {
+            auto draw = v2->getSelfDraw();
+            auto font = draw->getDraw(1);
+            auto font_size = font->text_one_line->getFontSize();
+            font_size -= 0.5f;
+            font->text_one_line->setFontSize(font_size);
+        }
     }
 }Act3MouseRButtonDown;
 
@@ -526,6 +543,16 @@ class Act3MouseLButtonDown : public BaseAction
             nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1_1); //Delete;
             nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1_1);
             nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1_1);
+        }
+        auto v2 = nvpBuild->findSameLevel("v2", base);
+
+        if (v2)
+        {
+            auto draw = v2->getSelfDraw();
+            auto font = draw->getDraw(1);
+            auto font_size = font->text_one_line->getFontSize();
+            font_size += 0.5f;
+            font->text_one_line->setFontSize(font_size);
         }
     }
 }Act3MouseLButtonDown;

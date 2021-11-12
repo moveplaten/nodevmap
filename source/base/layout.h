@@ -21,6 +21,8 @@ enum MsgBaseType
 
 };
 
+typedef float ptSize;
+
 struct mousePt
 {
     float x;
@@ -49,6 +51,8 @@ class NvpBuild
 {
 public:
     void setBaseRect(BaseElement* base, const BaseRect& rect);
+
+    BaseElement* findSameLevel(const std::string& str, BaseElement* base);
 
     BaseElement* getSubFirst(BaseElement* base);
 

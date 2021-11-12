@@ -10,7 +10,8 @@ void NvpDrawPort::beginDraw()
     [g_main_wnd.contentView setNeedsDisplay:YES];
 }
 
-void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo)
+void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
+                                   ptSize font_size, NvpColor colo)
 {
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
@@ -21,7 +22,9 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str, Nvp
     CGContextSetTextPosition(g_cg_ref, start.x, start.y);
     CGAffineTransform font_ctm;
     font_ctm = CGContextGetTextMatrix(g_cg_ref);
-    font_ctm.d = -1.0f; //flipped;
+    CGFloat font_scale = font_size / 12.0f;
+    font_ctm.d = -font_scale; //flipped;
+    font_ctm.a = font_scale;
     CGContextSetTextMatrix(g_cg_ref, font_ctm);
     
     auto str_size = str.size();

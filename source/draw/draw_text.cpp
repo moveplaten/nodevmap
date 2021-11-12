@@ -2,7 +2,7 @@
 #include "base/base.h"
 
 void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,
-    NvpXyCoord xy, const std::string& str)
+    NvpXyCoord xy, const std::string& str, ptSize font_size)
 {
     auto& main_rect = base.getRectRefTop();
 
@@ -34,7 +34,7 @@ void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, const NvpStyle& st
 
     default:
     {
-        NvpDrawPort::drawTextFromLToR(start, str, style.getColor());
+        NvpDrawPort::drawTextFromLToR(start, str, font_size, style.getColor());
     }
     break;
     }

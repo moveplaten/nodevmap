@@ -32,7 +32,8 @@ public:
 
     //draw all str from left to right just one line;
     //start from base rect left-top coord;
-    static void drawTextFromLToR(NvpXyCoord start, const std::string& str, NvpColor colo);
+    static void drawTextFromLToR(NvpXyCoord start, const std::string& str,
+        ptSize font_size, NvpColor colo);
 
     static void fillRect(const BaseRect& rect, NvpColor colo);
     static void frameRect(const BaseRect& rect, NvpColor colo); //only border;
@@ -60,7 +61,7 @@ public:
     static void Draw_One_Rect(const BaseRect& rect, const NvpStyle& style);
 
     static void Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,
-        NvpXyCoord xy, const std::string& str);
+        NvpXyCoord xy, const std::string& str, ptSize font_size);
 
     static void Draw_Rect_Same_Elem(const BaseElement& base, const NvpStyle& style);
 
@@ -123,14 +124,18 @@ namespace NvpDrawData
         const std::string& getText() { valid(D); return text; }
         NvpXyCoord getStart() { valid(D); return start; }
 
+        ptSize getFontSize() { valid(D); return font_size; }
+        void setFontSize(ptSize size) { valid(D); assert(size > 0); font_size = size; }
+
     private:
-        std::string text;
-        NvpXyCoord start;
+        std::string text = "?";
+        NvpXyCoord start = { 0, 0 };
+        ptSize font_size = 12.0f;
 
     public:
         NVP_DRAW_PRIVATE
         (
-            NvpDrawReal::Draw_Text_One_Line(base, style, start, text);
+            NvpDrawReal::Draw_Text_One_Line(base, style, start, text, font_size);
         )
     };
 
@@ -226,8 +231,7 @@ private:
     void OptSwitch(const Opt opt, const Param* const param = nullptr);
 
     template<typename T>
-    void NvpOptPush(T* const* t, const Opt opt, const bool is_push,
-        const Param* const param, const NvpStyle& style)
+    void NvpOptPush(T* const* t, const Opt opt, const Param* const param)
     {
         switch (opt)
         {
@@ -241,7 +245,7 @@ private:
 
         case DELE:
         {
-            if (!is_push)
+            if (!this->is_push)
             {
                 delete (*t);
             }
@@ -250,7 +254,7 @@ private:
 
         case DRAW:
         {
-            (*t)->drawPrivate(param->base_elem, style); //from NvpDrawData;
+            (*t)->drawPrivate(param->base_elem, this->a_style); //from NvpDrawData;
         }
         break;
 
