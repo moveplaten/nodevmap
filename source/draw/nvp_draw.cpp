@@ -62,14 +62,14 @@ void NvpDraw::drawAll(BaseElement* base)
             }
         }
 
-        auto sub = nvpBuild->getSubFirst(base);
+        auto sub = NvpLayout::getSubFirst(base);
 
         if (sub)
         {
             drawAll(sub);
         }
 
-        base = nvpBuild->getNext(base);
+        base = NvpLayout::getNext(base);
 
         if (!base)
         {

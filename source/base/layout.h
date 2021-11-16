@@ -47,58 +47,54 @@ ElemGenerator x##y##z(#x, y, &z);
 #define ELEM_GEN_FULL(x, y, z, l)\
 ElemGenerator x##y##z(#x, y, &z, l);
 
-class NvpBuild
+class NvpLayout
 {
 public:
-    void setBaseRect(BaseElement* base, const BaseRect& rect);
+    NvpLayout() = delete;
+    ~NvpLayout();
 
-    BaseElement* findSameLevel(const std::string& str, BaseElement* base);
+    static void setBaseRect(BaseElement* base, const BaseRect& rect);
 
-    BaseElement* getSubFirst(BaseElement* base);
+    void setBaseElem(BaseElement* base) { layout_body.elem = base; }
 
-    BaseElement* getNext(BaseElement* base);
+    const BaseRect& getRectRefUp() const { return layout_body.ref_up; }
     
-    BaseElement* getSubLast(BaseElement* base);
+    const BaseRect& getRectRefTop() const { return layout_body.ref_top; }
 
-    BaseElement* getNextReverse(BaseElement* base);
+    static BaseElement* findSameLevel(const std::string& str, BaseElement* base);
 
-    BaseElement* subElemGen(const std::string& str, MsgBaseType msg_type,
+    static BaseElement* getSubFirst(BaseElement* base);
+
+    static BaseElement* getNext(BaseElement* base);
+    
+    static BaseElement* getSubLast(BaseElement* base);
+
+    static BaseElement* getNextReverse(BaseElement* base);
+
+    static BaseElement* subElemGen(const std::string& str, MsgBaseType msg_type,
         BaseAction* msg_act, BaseElement* up, bool be_top = true);
 
-    void subElemDel(BaseElement* elem);
+    static void subElemDel(BaseElement* elem);
 
-    void moveToAllTop(BaseElement* elem);
+    static void moveToAllTop(BaseElement* elem);
 
-    BaseElement* const g_top_layout;    //0; the whole client area;
-    BaseElement* const g_top_node_view; //1;
-    BaseElement* const g_top_menu_stat; //1;
+    static BaseElement* getTopLayout() { return g_top_layout; }
+
+    static BaseElement* getTopNodeView() { return g_top_node_view; }
+
+    static BaseElement* getTopMenuStat() { return g_top_menu_stat; }
 
 private:
-    union NvpLayout;
-    struct NvpLayoutHead;
-    struct NvpLayoutBody;
+    union NvpLayoutUnit;
 
-    typedef ElemStorage<100000, NvpLayoutBody> AllElem;
     typedef std::map<std::string, BaseElement*> ElemMap;
-    typedef std::list<NvpLayout*> NvpLevel;
+    typedef std::list<NvpLayoutUnit*> NvpLevel;
 
-    NvpBuild(BaseElement* const top_layout, BaseElement* const top_node_view,
-        BaseElement* const top_menu_stat, AllElem* const all_elem_store)
-        :g_top_layout(top_layout), g_top_node_view(top_node_view),
-        g_top_menu_stat(top_menu_stat), g_all_elem_store(all_elem_store) {}
-
-    BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpLevel* level, bool be_top = true);
-
-    bool elemDel(const std::string& str, NvpLevel* level);
-
-    NvpLevel* subLevelGen(BaseElement* elem);
-
-    void initDefaultLayout(AllElem* const all_elem);
-
-    NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
-
-    AllElem* const g_all_elem_store;
+    static BaseElement* g_top_layout;    //0; the whole client area;
+    static BaseElement* g_top_node_view; //1;
+    static BaseElement* g_top_menu_stat; //1;
+    
+    static ElemIDStorage* g_all_id_store;
 
     struct NvpLayoutBody
     {
@@ -120,26 +116,45 @@ private:
         uint32_t cur_depth;
     };
 
-    union NvpLayout
+    union NvpLayoutUnit
     {
         NvpLayoutHead* head; //head is always first, only first one is valid;
         NvpLayoutBody body;
     };
 
+    static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
+        BaseAction* msg_act, NvpLevel* level, bool be_top = true);
+
+    static bool elemDel(const std::string& str, NvpLevel* level);
+
+    static NvpLevel* subLevelGen(BaseElement* elem);
+
+    static void initDefaultLayout();
+
+    static NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
+
+    NvpLayout(NvpLayoutBody& body, NvpLevel& level, NvpLevel::iterator iter)
+        :layout_body(body), layout_level(level), layout_iter(iter)
+    {
+        layout_body.elem = nullptr;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    NvpLayoutBody layout_body;
+    NvpLevel& layout_level;
+    NvpLevel::iterator layout_iter;
+
+    ////////////////////////////////////////////////////////////////////////////
+
     friend class ElemGenerator;
-    friend class BaseElement;
 };
-
-
-/// GLOBAL nvpBuild;
-extern NvpBuild* nvpBuild;
-
 
 class ElemGenerator
 {
 public:
     ElemGenerator(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
-        BaseElement* up = nvpBuild ? nvpBuild->g_top_node_view : nullptr,
+        BaseElement* up = NvpLayout::g_top_layout ? NvpLayout::g_top_node_view : nullptr,
         bool be_top = true);
 
     ~ElemGenerator() {}
@@ -148,7 +163,7 @@ public:
 
 private:
     ElemGenerator(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpBuild::NvpLevel* level, bool be_top = true);
+        BaseAction* msg_act, NvpLayout::NvpLevel* level, bool be_top = true);
 
-    friend class NvpBuild;
+    friend class NvpLayout;
 };

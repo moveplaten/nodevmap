@@ -36,26 +36,26 @@ public:
         m_pRT->Resize(size);
         D2D1_SIZE_F client = m_pRT->GetSize();
         
-        if (nvpBuild)
+        if (NvpLayout::getTopLayout())
         {
             BaseRect rect;
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpBuild->setBaseRect(nvpBuild->g_top_layout, rect);
+            NvpLayout::setBaseRect(NvpLayout::getTopLayout(), rect);
 
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
             rect.bottom = client.height - 20.0f;
-            nvpBuild->setBaseRect(nvpBuild->g_top_node_view, rect);
+            NvpLayout::setBaseRect(NvpLayout::getTopNodeView(), rect);
 
             rect.left = 0.0f;
             rect.top = client.height - 20.0f;
             rect.right = client.width;
             rect.bottom = client.height;
-            nvpBuild->setBaseRect(nvpBuild->g_top_menu_stat, rect);
+            NvpLayout::setBaseRect(NvpLayout::getTopMenuStat(), rect);
         }
     }
 

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef uint64_t elemIDSize;
+typedef uint32_t elemIDSize;
 
 template<elemIDSize N, typename T> class ElemStorage
 {
@@ -43,7 +43,11 @@ public:
 
     //ElemStorage(elemIDSize capacity, elemIDSize content_size)
     //    :max_capacity(capacity), one_content_size(content_size) {}
-    ~ElemStorage() {}
+    ~ElemStorage()
+    {
+        free(contents);
+        free(reused_elems);
+    }
 
 private:
     const T* getContents() { return contents; }
@@ -61,12 +65,61 @@ private:
         = (elemIDSize* const)malloc(max_capacity * sizeof(elemIDSize));
     elemIDSize reused_count = 0;
 
-    /// <summary>
-    /// Debug Help
-    /// </summary>
+    
+#ifdef _DEBUG
     elemIDSize(*p_reused_elems)[1000] = (elemIDSize(*)[1000])reused_elems;
-    T(*p_contents)[1000] = (T(*)[1000])contents; //only debug use;
+    T(*p_contents)[1000] = (T(*)[1000])contents; 
+#endif
+    //only debug use;
+};
 
-    friend class BaseMessage;
-    friend class NvpDraw;
+
+class ElemIDStorage
+{
+public:
+    elemIDSize storeOneElem()
+    {
+        if (reused_count)
+        {
+            const elemIDSize id = reused_elems[--reused_count];
+            return id;
+        }
+        else
+        {
+            const elemIDSize id = current_max_used++;
+            return id;
+        }
+    }
+
+    void deleteOneElem(const elemIDSize id)
+    {
+        reused_elems[reused_count] = id;
+        ++reused_count;
+    }
+    
+    elemIDSize getTotalUsed() { return current_max_used - reused_count; }
+    elemIDSize getTotalMax() { return current_max_used; }
+
+    ElemIDStorage() = default;
+    
+    ~ElemIDStorage()
+    {
+        free(reused_elems);
+    }
+
+private:
+    const elemIDSize max_capacity = INT32_MAX / 1000;
+
+    elemIDSize current_max_used = 0;
+
+    elemIDSize* const reused_elems
+        = (elemIDSize* const)malloc(max_capacity * sizeof(elemIDSize));
+    
+    elemIDSize reused_count = 0;
+
+    
+#ifdef _DEBUG
+    elemIDSize(*p_reused_elems)[1000] = (elemIDSize(*)[1000])reused_elems;
+#endif
+    //only debug use;
 };

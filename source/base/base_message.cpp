@@ -16,7 +16,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
 
     if (msg_type == MsgInit)
     {
-        initAll(nvpBuild->g_top_layout);
+        initAll(NvpLayout::getTopLayout());
     }
     else if (msg_type == MouseEnter)
     {
@@ -39,7 +39,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     {
         if (g_now_hit_id->canBeTop())
         {
-            nvpBuild->moveToAllTop(g_now_hit_id);
+            NvpLayout::moveToAllTop(g_now_hit_id);
         }
         
         mousePtToLocal(g_now_hit_id, pt);
@@ -48,7 +48,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else
     {
-        BaseElement* fetch = inRange(pt, nvpBuild->g_top_layout);
+        BaseElement* fetch = inRange(pt, NvpLayout::getTopLayout());
 
         if (fetch)
         {
@@ -92,14 +92,14 @@ void BaseMessage::initAll(BaseElement* base)
             base->msgRoute(MsgInit);
         }
 
-        auto sub = nvpBuild->getSubFirst(base);
+        auto sub = NvpLayout::getSubFirst(base);
 
         if (sub)
         {
             initAll(sub);
         }
 
-        base = nvpBuild->getNext(base);
+        base = NvpLayout::getNext(base);
         
         if (!base)
         {
@@ -147,7 +147,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, BaseElement* base)
         
         if (hit)
         {
-            auto sub = nvpBuild->getSubLast(base);
+            auto sub = NvpLayout::getSubLast(base);
 
             if (sub)
             {
@@ -157,7 +157,7 @@ BaseElement* BaseMessage::inRange(mousePt* pt, BaseElement* base)
             break;
         }
 
-        base = nvpBuild->getNextReverse(base);
+        base = NvpLayout::getNextReverse(base);
 
         if (!base)
         {

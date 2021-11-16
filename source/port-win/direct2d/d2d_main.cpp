@@ -117,9 +117,9 @@ void NvpDrawPort::beginDraw()
 
     ////////////////////////////////////////////////////////////////////////////
 
-    if (nvpBuild)
+    if (NvpLayout::getTopLayout())
     {
-        auto top_elem = nvpBuild->g_top_layout;
+        auto top_elem = NvpLayout::getTopLayout();
         NvpDraw::drawAll(top_elem);
     }
 

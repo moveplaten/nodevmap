@@ -130,16 +130,11 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 }
 
 BaseElement::BaseElement(const elemIDSize id, const std::string& name,
-    NvpBuild::NvpLayoutBody* const layout, NvpBuild::NvpLevel* const level,
-    NvpBuild::NvpLevel::iterator const iter, const bool be_top)
+    NvpLayout& layout, const bool be_top)
     :self_id(id), self_name(name),
-    self_layout(layout), self_level(level),
-    self_iter(iter), can_be_top(be_top)
+    self_layout(layout), can_be_top(be_top)
 {
-    if (self_layout && self_level)
-    {
-        self_layout->elem = this;
-    }
+    self_layout.setBaseElem(this);
 }
 
 BaseElement::~BaseElement()
@@ -152,11 +147,4 @@ BaseElement::~BaseElement()
     {
         delete self_draw;
     }
-
-    if (self_level)
-    {
-        self_level->erase(self_iter);
-    }
-
-    nvpBuild->g_all_elem_store->deleteOneElem(self_id);
 }

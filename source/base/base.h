@@ -78,12 +78,12 @@ public:
 
     const BaseRect& getRectRefUp() const
     {
-        return self_layout->ref_up;
+        return self_layout.getRectRefUp();
     }
     
     const BaseRect& getRectRefTop() const
     {
-        return self_layout->ref_top;
+        return self_layout.getRectRefTop();
     }
 
     NvpDraw* getSelfDraw()
@@ -95,10 +95,10 @@ public:
     //    self_layout->ref_up = *rect;
     //}
 
-    elemIDSize getIncreaseID()
-    {
-        return nvpBuild->g_all_elem_store->getTotalUsed();
-    }
+    //elemIDSize getIncreaseID()
+    //{
+    //    return nvpBuild->g_all_elem_store->getTotalUsed();
+    //}
     //BaseElement* getElementByID(elemIDSize id)
     //{
     //    BaseShape* content = base_shapes->readOneElem(id);
@@ -108,9 +108,8 @@ public:
 
     void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
 
-    BaseElement(const elemIDSize id, const std::string& name,
-        NvpBuild::NvpLayoutBody* const layout, NvpBuild::NvpLevel* const level,
-        NvpBuild::NvpLevel::iterator const iter, const bool be_top = true);
+    BaseElement(const elemIDSize id, const std::string& name, NvpLayout& layout,
+        const bool be_top);
 
     ~BaseElement();
 
@@ -139,10 +138,9 @@ private:
     msgTypeSize linked_msg_size = 0;
 #endif // TEMP_TEST_0
 
-    NvpBuild::NvpLayoutBody* const self_layout;
-    NvpBuild::NvpLevel* const self_level;
-    NvpBuild::NvpLevel::iterator self_iter;
+    NvpLayout self_layout;
 
-    friend class NvpBuild;
+    friend class NvpLayout;
     friend class BaseAction;
+    friend class ElemGenerator;
 };

@@ -8,7 +8,7 @@ class ActInit : public BaseAction
         BaseRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
 
         NvpColor col = { 150, 150, 150 };
         NvpColor font_col = { 230, 230, 230 };
@@ -69,7 +69,7 @@ class Act2Init : public BaseAction
         rect.right = 90;
         rect.top = 10;
         rect.bottom = 50;
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
 
         NvpColor col = { 0, 150, 150 };
         NvpColor font_col = { 230, 230, 230 };
@@ -149,7 +149,7 @@ class Act1MouseDrag : public BaseAction
         new_rect.top = old_rect.top + sub_y;
         new_rect.bottom = old_rect.bottom + sub_y;
 
-        nvpBuild->setBaseRect(base, new_rect);
+        NvpLayout::setBaseRect(base, new_rect);
 
         subLevelRecord(base);
     }
@@ -170,7 +170,7 @@ class Act2MouseDrag : public BaseAction
         new_rect.top = old_rect.top + sub_y;
         new_rect.bottom = old_rect.bottom + sub_y;
 
-        nvpBuild->setBaseRect(base, new_rect);
+        NvpLayout::setBaseRect(base, new_rect);
     }
 }Act2MouseDrag;
 
@@ -184,7 +184,7 @@ class Act3Init : public BaseAction
         rect.right = 150;
         rect.top = 10;
         rect.bottom = 50;
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
 
         NvpColor hColor = { 0, 200, 200 };
         NvpColor hColor2 = { 200, 200, 200 };
@@ -259,7 +259,7 @@ class ActRandomInit : public BaseAction
 
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);
         one_rect.setColor(col);
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
         nvp_draw->pushDraw(one_rect);
     }
 }ActRandomInit;
@@ -295,7 +295,7 @@ class ActSubInit : public BaseAction
 
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);
         one_rect.setColor(col);
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
         nvp_draw->pushDraw(one_rect);
     }
 }ActSubInit;
@@ -331,7 +331,7 @@ class Act2SubInit : public BaseAction
 
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);
         one_rect.setColor(col);
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
         nvp_draw->pushDraw(one_rect);
     }
 }Act2SubInit;
@@ -367,7 +367,7 @@ class Act3SubInit : public BaseAction
 
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);
         one_rect.setColor(col);
-        nvpBuild->setBaseRect(base, rect);
+        NvpLayout::setBaseRect(base, rect);
         nvp_draw->pushDraw(one_rect);
     }
 }Act3SubInit;
@@ -396,7 +396,7 @@ static void subLevelRemove(BaseElement* elem)
         NvpColor col = { 0, 0, 0 };
         nvpDraw->Record(next->body.elem, 0, &col, Draw);
         subLevelRemove(next->body.elem);
-        nvpBuild->elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
+        NvpLayout::elemDel(next->body.elem->getSelfName(), next->body.elem->getSelfLevel());
     }
     #endif
 }
@@ -410,7 +410,7 @@ class ActMouseRButtonDown : public BaseAction
 
         subLevelRemove(base);
         
-        //nvpBuild->elemDel(base->getSelfName(), base->getSelfLevel());
+        //NvpLayout::elemDel(base->getSelfName(), base->getSelfLevel());
     }
 }ActMouseRButtonDown;
 
@@ -427,7 +427,7 @@ class Act3MouseRButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            auto iter = nvpBuild->g_top_node_view->getSelfLayout()->sub->begin();
+            auto iter = NvpLayout::g_top_node_view->getSelfLayout()->sub->begin();
             auto elem_map = (*iter)->head->cur_map;
             auto ret = elem_map->find(number_str);
             if (ret == elem_map->end())
@@ -444,12 +444,12 @@ class Act3MouseRButtonDown : public BaseAction
                 NvpColor col = { 0, 0, 0 };
                 nvpDraw->Record(shape, 0, &col);
 
-                nvpBuild->elemDel(number_str, nvpBuild->g_top_node_view->getSelfLayout()->sub);
+                NvpLayout::elemDel(number_str, NvpLayout::g_top_node_view->getSelfLayout()->sub);
             }
         }
         #endif
 
-        auto v2 = nvpBuild->findSameLevel("v2", base);
+        auto v2 = NvpLayout::findSameLevel("v2", base);
 
         if (v2)
         {
@@ -472,79 +472,81 @@ class Act3MouseLButtonDown : public BaseAction
             std::string add_str = std::to_string(add_number);
             number_str = number_str + add_str;
 
-            BaseElement* elem = nvpBuild->subElemGen(number_str, MsgInit, &ActRandomInit, nvpBuild->g_top_node_view);
+            auto elem_top = NvpLayout::getTopNodeView();
+
+            auto elem = NvpLayout::subElemGen(number_str, MsgInit, &ActRandomInit, elem_top);
             mousePt pt;
             elem->msgRoute(MsgInit, &pt);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(number_str, MouseEnter, &ActMouseEnter, nvpBuild->g_top_node_view);
-            nvpBuild->subElemGen(number_str, MouseLeave, &ActMouseLeave, nvpBuild->g_top_node_view);
-            nvpBuild->subElemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, nvpBuild->g_top_node_view); //Delete;
-            nvpBuild->subElemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, nvpBuild->g_top_node_view);
-            nvpBuild->subElemGen(number_str, MouseLButtonDown, &ActMouseLButtonDown, nvpBuild->g_top_node_view);
+            NvpLayout::subElemGen(number_str, MouseEnter, &ActMouseEnter, elem_top);
+            NvpLayout::subElemGen(number_str, MouseLeave, &ActMouseLeave, elem_top);
+            NvpLayout::subElemGen(number_str, MouseRButtonDown, &ActMouseRButtonDown, elem_top); //Delete;
+            NvpLayout::subElemGen(number_str, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem_top);
+            NvpLayout::subElemGen(number_str, MouseLButtonDown, &ActMouseLButtonDown, elem_top);
 
 
             /////////////////////////////////////////////////////////////////
             std::string sub_string;
             sub_string = "_1";
             
-            auto sub_elem_1 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            auto sub_elem_1 = NvpLayout::subElemGen(sub_string, MsgInit, &ActSubInit, elem);
             sub_elem_1->msgRoute(MsgInit);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
-            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
-            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
-            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
-            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
+            NvpLayout::subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
+            NvpLayout::subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            NvpLayout::subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            NvpLayout::subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            NvpLayout::subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_2";
             
-            auto sub_elem_2 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            auto sub_elem_2 = NvpLayout::subElemGen(sub_string, MsgInit, &ActSubInit, elem);
             sub_elem_2->msgRoute(MsgInit);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
-            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
-            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
-            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
-            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
+            NvpLayout::subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
+            NvpLayout::subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            NvpLayout::subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            NvpLayout::subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            NvpLayout::subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_3";
             
-            auto sub_elem_3 = nvpBuild->subElemGen(sub_string, MsgInit, &ActSubInit, elem);
+            auto sub_elem_3 = NvpLayout::subElemGen(sub_string, MsgInit, &ActSubInit, elem);
             sub_elem_3->msgRoute(MsgInit);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
-            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
-            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
-            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
-            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
+            NvpLayout::subElemGen(sub_string, MouseEnter, &ActMouseEnter, elem);
+            NvpLayout::subElemGen(sub_string, MouseLeave, &ActMouseLeave, elem);
+            NvpLayout::subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, elem); //Delete;
+            NvpLayout::subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, elem);
+            NvpLayout::subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, elem);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_1";
 
-            auto sub_elem_1_1 = nvpBuild->subElemGen(sub_string, MsgInit, &Act2SubInit, sub_elem_1);
+            auto sub_elem_1_1 = NvpLayout::subElemGen(sub_string, MsgInit, &Act2SubInit, sub_elem_1);
             sub_elem_1_1->msgRoute(MsgInit);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(sub_string, MouseEnter, &ActMouseEnter, sub_elem_1);
-            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1);
-            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1); //Delete;
-            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1);
-            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1);
+            NvpLayout::subElemGen(sub_string, MouseEnter, &ActMouseEnter, sub_elem_1);
+            NvpLayout::subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1);
+            NvpLayout::subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1); //Delete;
+            NvpLayout::subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1);
+            NvpLayout::subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1);
 
             /////////////////////////////////////////////////////////////////
             sub_string = "_1";
 
-            elem = nvpBuild->subElemGen(sub_string, MsgInit, &Act3SubInit, sub_elem_1_1);
+            elem = NvpLayout::subElemGen(sub_string, MsgInit, &Act3SubInit, sub_elem_1_1);
             elem->msgRoute(MsgInit);
             // same act as v1 except init position;
-            nvpBuild->subElemGen(sub_string, MouseEnter, &ActMouseEnter, sub_elem_1_1);
-            nvpBuild->subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1_1);
-            nvpBuild->subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1_1); //Delete;
-            nvpBuild->subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1_1);
-            nvpBuild->subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1_1);
+            NvpLayout::subElemGen(sub_string, MouseEnter, &ActMouseEnter, sub_elem_1_1);
+            NvpLayout::subElemGen(sub_string, MouseLeave, &ActMouseLeave, sub_elem_1_1);
+            NvpLayout::subElemGen(sub_string, MouseRButtonDown, &ActMouseRButtonDown, sub_elem_1_1); //Delete;
+            NvpLayout::subElemGen(sub_string, MouseMove_MouseLButtonDown, &Act1MouseDrag, sub_elem_1_1);
+            NvpLayout::subElemGen(sub_string, MouseLButtonDown, &ActMouseLButtonDown, sub_elem_1_1);
         }
-        auto v2 = nvpBuild->findSameLevel("v2", base);
+        auto v2 = NvpLayout::findSameLevel("v2", base);
 
         if (v2)
         {
@@ -617,9 +619,9 @@ class StatMouseLeave : public BaseAction
     }
 }StatMouseLeave;
 
-ELEM_GEN_FULL(top_menu_stat, MsgInit, StatInit, nvpBuild->g_top_layout)
-ELEM_GEN_FULL(top_menu_stat, MouseMove, StatMouseMove, nvpBuild->g_top_layout)
-ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_menu_stat, MsgInit, StatInit, NvpLayout::getTopLayout())
+ELEM_GEN_FULL(top_menu_stat, MouseMove, StatMouseMove, NvpLayout::getTopLayout())
+ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, NvpLayout::getTopLayout())
 /////////////////////////////////////////////////////////////////////
 
 class NodeViewInit : public BaseAction
@@ -633,4 +635,4 @@ class NodeViewInit : public BaseAction
     }
 }NodeViewInit;
 
-ELEM_GEN_FULL(top_node_view, MsgInit, NodeViewInit, nvpBuild->g_top_layout)
+ELEM_GEN_FULL(top_node_view, MsgInit, NodeViewInit, NvpLayout::getTopLayout())
