@@ -134,7 +134,7 @@ BaseElement::BaseElement(const elemIDSize id, const std::string& name,
     :self_id(id), self_name(name),
     self_layout(layout), can_be_top(be_top)
 {
-    self_layout.setBaseElem(this);
+    
 }
 
 BaseElement::~BaseElement()

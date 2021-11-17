@@ -55,8 +55,6 @@ public:
 
     static void setBaseRect(BaseElement* base, const BaseRect& rect);
 
-    void setBaseElem(BaseElement* base) { layout_body.elem = base; }
-
     const BaseRect& getRectRefUp() const { return layout_body.ref_up; }
     
     const BaseRect& getRectRefTop() const { return layout_body.ref_top; }
@@ -88,7 +86,7 @@ private:
     union NvpLayoutUnit;
 
     typedef std::map<std::string, BaseElement*> ElemMap;
-    typedef std::list<NvpLayoutUnit*> NvpLevel;
+    typedef std::list<NvpLayoutUnit> NvpLevel;
 
     static BaseElement* g_top_layout;    //0; the whole client area;
     static BaseElement* g_top_node_view; //1;
@@ -101,14 +99,11 @@ private:
         BaseRect ref_up; //local space, ref to up level;
         BaseRect ref_top; //world space, ref to top level;
 
-        BaseElement* elem;
         NvpLevel* sub; //sub level;
     };
 
     struct NvpLayoutHead
     {
-        void* null_head; //should be first?
-
         BaseElement* up_elem;
         NvpLevel* up_level;
 
@@ -116,10 +111,13 @@ private:
         uint32_t cur_depth;
     };
 
-    union NvpLayoutUnit
+    union NvpLayoutUnit //only pointers;
     {
+        NvpLayoutUnit(NvpLayoutHead* _head) { head = _head; }
+        NvpLayoutUnit(BaseElement* _elem) { elem = _elem; }
+        
         NvpLayoutHead* head; //head is always first, only first one is valid;
-        NvpLayoutBody body;
+        BaseElement* elem;
     };
 
     static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
@@ -131,13 +129,10 @@ private:
 
     static void initDefaultLayout();
 
-    static NvpLayoutHead* getLayoutHead(NvpLayoutBody* current);
+    static NvpLayoutHead* getLayoutHead(BaseElement* elem);
 
     NvpLayout(NvpLayoutBody& body, NvpLevel& level, NvpLevel::iterator iter)
-        :layout_body(body), layout_level(level), layout_iter(iter)
-    {
-        layout_body.elem = nullptr;
-    }
+        :layout_body(body), layout_level(level), layout_iter(iter) {}
 
     ////////////////////////////////////////////////////////////////////////////
 
