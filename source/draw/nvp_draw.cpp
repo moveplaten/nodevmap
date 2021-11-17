@@ -93,19 +93,19 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param)
     {
     case Draw_Rect_Same_Elem:
     {
-        NvpOptPush<NvpDrawData::RectSameElem<>>(&rect_same_elem, opt, param);
+        NvpOptPush(&rect_same_elem, opt, param);
     }
     break;
 
     case Draw_Text_One_Line:
     {
-        NvpOptPush<NvpDrawData::TextOneLine<>>(&text_one_line, opt, param);
+        NvpOptPush(&text_one_line, opt, param);
     }
     break;
 
     case Draw_Four_Rect_Percent:
     {
-        NvpOptPush<NvpDrawData::FourRectPercent<>>(&four_rect_percent, opt, param);
+        NvpOptPush(&four_rect_percent, opt, param);
     }
     break;
 
