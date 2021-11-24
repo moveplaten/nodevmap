@@ -3,6 +3,8 @@
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+void initFirst();
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPWSTR    lpCmdLine,
@@ -13,10 +15,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 
-    //NvpLevel::iterator iter;
-    //BaseElement b(0, "0", 0, 0, iter);
-    //nvpBuild->elemGen("test0", MsgNone, nullptr, nullptr);
-    ElemStorage<100, int> e;
+    initFirst();
 
     WNDCLASS wc;
     ZeroMemory(&wc, sizeof(wc));

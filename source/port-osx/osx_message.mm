@@ -14,7 +14,8 @@
     
     [self windowDidResize:notification]; //ensure size top_layout before MsgInit;
     
-    baseMsg->hitTest(MsgInit, nullptr);
+    NvpEventParam param;
+    NvpEvent::fromSysEvent(SysInit, param);
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
@@ -107,42 +108,48 @@
 {
     //NSLog(@"mouse move");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseMove, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseMove, param);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     NSLog(@"mouse drag");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseMove_MouseLButtonDown, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseLDrag, param);
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
     NSLog(@"LButton Down");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseLButtonDown, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseLDown, param);
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
     NSLog(@"LButton UP");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseLButtonUp, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseLUp, param);
 }
 
 - (void)rightMouseDown:(NSEvent *)event
 {
     NSLog(@"RButton Down");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseRButtonDown, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseRDown, param);
 }
 
 - (void)rightMouseUp:(NSEvent *)event
 {
     NSLog(@"RButton UP");
     mousePt pt = [self convertPt:event];
-    baseMsg->hitTest(MouseRButtonUp, &pt);
+    NvpEventParam param(pt);
+    NvpEvent::fromSysEvent(MouseRUp, param);
 }
 
 - (void)drawRect:(NSRect)dirtyRect

@@ -3,15 +3,15 @@ project(nodevmap)
 include_directories("./")
 
 set(nodevmap_SOURCES
-    base/base_message.cpp
     base/base_element.cpp
     base/elem_storage.cpp
+    base/nvp_event.cpp
     base/nvp_layout.cpp
     draw/nvp_draw.cpp
     draw/draw_text.cpp
     draw/draw_rect.cpp
     util/nvp_util.cpp
-    TEST.cpp
+    TEST_0.cpp
     )
 
 ################################################################################

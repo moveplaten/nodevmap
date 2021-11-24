@@ -1,6 +1,7 @@
 #include "base.h"
 #include "draw/draw.h"
 
+#if 0
 #ifdef TEMP_TEST_0
 void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
@@ -128,21 +129,18 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
     //sprintf(temp, "\nworld_x = %f, world_y = %f\nlocal_x = %f, local_y = %f\n\n", world_pt.x, world_pt.y, local_pt.x, local_pt.y);
     //OutputDebugStringA(temp);
 }
+#endif
 
 BaseElement::BaseElement(const elemIDSize id, const std::string& name,
-    NvpLayout& layout, const bool be_top)
+    NvpLayout& layout, NvpEvent* event, const bool top)
     :self_id(id), self_name(name),
-    self_layout(layout), can_be_top(be_top)
+    self_event(event), self_layout(layout), self_top(top)
 {
-    
+
 }
 
 BaseElement::~BaseElement()
 {
-    baseMsg->g_before_leave_id = nullptr;
-    baseMsg->g_mouse_drag_id = nullptr;
-    baseMsg->g_now_hit_id = nullptr;
-
     if (self_draw)
     {
         delete self_draw;

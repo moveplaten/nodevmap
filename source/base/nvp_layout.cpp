@@ -129,10 +129,16 @@ BaseElement* NvpLayout::getNextReverse(BaseElement* base)
 }
 
 BaseElement* NvpLayout::subElemGen(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up, bool be_top)
+    NvpEvent* event, BaseElement* up, bool be_top)
 {
+    if (!g_top_layout)
+    {
+        elemGen(str, event, (NvpLayout::NvpLevel*)nullptr, be_top);
+        up = NvpLayout::g_top_layout;
+    }
+    
     auto level = subLevelGen(up);
-    return elemGen(str, msg_type, msg_act, level, be_top);
+    return elemGen(str, event, level, be_top);
 }
 
 void NvpLayout::subElemDel(BaseElement* elem)
@@ -193,10 +199,57 @@ NvpLayout::NvpLayoutHead* NvpLayout::getLayoutHead(BaseElement* elem)
 }
 
 BaseElement* NvpLayout::elemGen(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, NvpLevel* level, bool be_top)
+    NvpEvent* event, NvpLevel* level, bool be_top)
 {
-    auto result = ElemGenerator(str, msg_type, msg_act, level, be_top);
-    return result.gen_elem;
+    if (!g_top_layout)
+    {
+        static ElemIDStorage id_store;
+        g_all_id_store = &id_store;
+        initDefaultLayout();
+    }
+
+    if (level)
+    {
+        auto head = *(level->begin());
+        auto elem_map = head.head->cur_map;
+        auto ret = elem_map->find(str);
+        if (ret == elem_map->end())
+        {
+            NvpLayoutBody null_layout;
+            memset(&null_layout, 0, sizeof(NvpLayoutBody));
+
+            auto null_iter = level->end();
+            NvpLayout layout(null_layout, *level, null_iter);
+
+            auto result = elem_map->insert({ str, nullptr });
+            auto& content = result.first;
+            auto& str_ref = content->first;
+
+            auto id = NvpLayout::g_all_id_store->storeOneElem();
+
+            BaseElement* base = new BaseElement(id, str_ref, layout, event, be_top);
+
+            NvpLayoutUnit unit(base);
+
+            level->push_back(unit);
+            auto iter = --(level->end());
+            base->self_layout.layout_iter = iter;
+
+            content->second = base;
+
+            return base;
+        }
+        else
+        {
+            auto elem = *ret;
+            BaseElement* base = elem.second;
+
+            base->self_event = event;
+            return base;
+        }
+    }
+
+    return nullptr;
 }
 
 bool NvpLayout::elemDel(const std::string& str, NvpLevel* level)
@@ -251,73 +304,9 @@ NvpLayout::NvpLevel* NvpLayout::subLevelGen(BaseElement* elem)
     return sub_level;
 }
 
-ElemGenerator::ElemGenerator(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, BaseElement* up, bool be_top)
-{
-    if (!NvpLayout::g_top_layout)
-    {
-        ElemGenerator(str, msg_type, msg_act, (NvpLayout::NvpLevel*)nullptr, be_top);
-        up = NvpLayout::g_top_node_view;
-    }
-
-    auto level = NvpLayout::subLevelGen(up);
-    ElemGenerator(str, msg_type, msg_act, level, be_top);
-}
-
-ElemGenerator::ElemGenerator(const std::string& str,
-    MsgBaseType msg_type, BaseAction* msg_act, NvpLayout::NvpLevel* level, bool be_top)
-{
-    if (!NvpLayout::g_top_layout)
-    {
-        static ElemIDStorage id_store;
-        NvpLayout::g_all_id_store = &id_store;
-        NvpLayout::initDefaultLayout();
-    }
-
-    if (level)
-    {
-        auto head = *(level->begin());
-        auto elem_map = head.head->cur_map;
-        auto ret = elem_map->find(str);
-        if (ret == elem_map->end())
-        {
-            NvpLayout::NvpLayoutBody null_layout;
-            memset(&null_layout, 0, sizeof(NvpLayout::NvpLayoutBody));
-            
-            auto null_iter = level->end();
-            NvpLayout layout(null_layout, *level, null_iter);
-
-            auto result = elem_map->insert({ str, nullptr });
-            auto& content = result.first;
-            auto& str_ref = content->first;
-
-            auto id = NvpLayout::g_all_id_store->storeOneElem();
-
-            BaseElement* base = new BaseElement(id, str_ref, layout, be_top);
-
-            NvpLayout::NvpLayoutUnit unit(base);
-
-            level->push_back(unit);
-            auto iter = --(level->end());
-            base->self_layout.layout_iter = iter;
-
-            gen_elem = base;
-            base->linkMsg(msg_type, msg_act);
-            content->second = base;
-        }
-        else
-        {
-            auto elem = *ret;
-            BaseElement* base = elem.second;
-            gen_elem = base;
-            base->linkMsg(msg_type, msg_act);
-        }  
-    }
-}
-
 void NvpLayout::initDefaultLayout()
 {
-    if (NvpLayout::g_top_layout)
+    if (g_top_layout)
     {
         return;
     }
@@ -328,16 +317,18 @@ void NvpLayout::initDefaultLayout()
 
     auto head_info = new NvpLayoutHead;
     memset(head_info, 0, sizeof(NvpLayoutHead));
-    
+
     auto elem_map = new ElemMap;
     head_info->cur_map = elem_map;
     NvpLayoutUnit unit(head_info);
     top_level->push_back(unit);
 
-    g_top_layout = elemGen("top_layout", MsgNone, nullptr, top_level, false);
+    auto null_event = new NvpEvent;
 
-    g_top_node_view = subElemGen("top_node_view", MsgNone, nullptr, g_top_layout, false);
-    g_top_menu_stat = subElemGen("top_menu_stat", MsgNone, nullptr, g_top_layout, false);
+    g_top_layout = elemGen("top_layout", null_event, top_level, false);
+
+    g_top_node_view = subElemGen("top_node_view", null_event, g_top_layout, false);
+    g_top_menu_stat = subElemGen("top_menu_stat", null_event, g_top_layout, false);
 }
 
 NvpLayout::~NvpLayout()

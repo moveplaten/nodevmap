@@ -1,13 +1,11 @@
 #pragma once
 
+#include "event.h"
 #include "layout.h"
 
-typedef uint32_t msgTypeSize;
+class NvpDraw;
 
-//#define TEMP_TEST_0
-
-class BaseElement;
-
+#if 0
 class BaseMessage
 {
 public:
@@ -66,6 +64,7 @@ private:
 
     friend class BaseElement;
 };
+#endif
 
 class BaseElement
 {
@@ -74,7 +73,7 @@ public:
     
     const std::string& getSelfName() { return self_name; }
 
-    bool canBeTop() { return can_be_top; }
+    bool canBeTop() { return self_top; }
 
     const BaseRect& getRectRefUp() const
     {
@@ -89,6 +88,11 @@ public:
     NvpDraw* getSelfDraw()
     {
         return self_draw;
+    }
+
+    NvpEvent* getSelfEvent()
+    {
+        return self_event;
     }
     //void setRect(const BaseRect* rect) //use NvpDraw::Record to set;
     //{
@@ -106,41 +110,22 @@ public:
     //}
     //static BaseElement* getNowHitID() { return g_now_hit_id; }
 
-    void linkMsg(MsgBaseType msg_type, BaseAction* msg_act);
-
-    BaseElement(const elemIDSize id, const std::string& name, NvpLayout& layout,
-        const bool be_top);
+    BaseElement(const elemIDSize id, const std::string& name,
+        NvpLayout& layout, NvpEvent* event, const bool top = true);
 
     ~BaseElement();
 
-    void msgRoute(MsgBaseType msg_type, mousePt* pt = nullptr);
-
 private:
-    typedef std::map<MsgBaseType, BaseAction*> MsgActMap;
-
     const elemIDSize self_id;
     const std::string& self_name;
-    const bool can_be_top;
+    const bool self_top;
     bool self_visible = true;
     NvpDraw* self_draw = nullptr;
 
-#ifndef TEMP_TEST_0
-    MsgActMap msg_act_map;
-#endif // !TEMP_TEST_0
-
-#ifdef TEMP_TEST_0
-    struct LinkedMsg
-    {
-        MsgBaseType linked_msg_type = MsgNone;
-        BaseAction* linked_msg_act = nullptr;
-        LinkedMsg* next_linked_msg = nullptr;
-    } linked_msg;
-    msgTypeSize linked_msg_size = 0;
-#endif // TEMP_TEST_0
+    NvpEvent* self_event;
 
     NvpLayout self_layout;
 
     friend class NvpLayout;
-    friend class BaseAction;
-    friend class ElemGenerator;
+    friend class NvpEvent;
 };

@@ -4,7 +4,7 @@
 #include <string>
 #include <cassert>
 
-#include "base/layout.h"
+#include "base/event.h"
 
 struct BaseRect;
 
@@ -40,7 +40,7 @@ private:
 
 
     friend class NvpDrawReal;
-    friend class BaseMessage;
+    friend class NvpEvent;
     friend class D2dUtil;
 };
 

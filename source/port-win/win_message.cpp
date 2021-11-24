@@ -11,11 +11,13 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     pt.x = pt.x / D2dUtil::g_dpi_scale_X;
     pt.y = pt.y / D2dUtil::g_dpi_scale_Y;
 
+    NvpEventParam param(pt);
+
     switch (message)
     {
     case WM_USER + 100:
     {
-        baseMsg->hitTest(MsgInit, &pt);
+        NvpEvent::fromSysEvent(SysInit, param);
     }
     break;
 
@@ -23,36 +25,36 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         if ((DWORD)wParam && MK_LBUTTON)
         {
-            baseMsg->hitTest(MouseMove_MouseLButtonDown, &pt);
+            NvpEvent::fromSysEvent(MouseLDrag, param);
         }
         else
         {
-            baseMsg->hitTest(MouseMove, &pt);
+            NvpEvent::fromSysEvent(MouseMove, param);
         }
     }
     break;
 
     case WM_LBUTTONDOWN:
     {
-        baseMsg->hitTest(MouseLButtonDown, &pt);
+        NvpEvent::fromSysEvent(MouseLDown, param);
     }
     break;
 
     case WM_LBUTTONUP:
     {
-        baseMsg->hitTest(MouseLButtonUp, &pt);
+        NvpEvent::fromSysEvent(MouseLUp, param);
     }
     break;
 
     case WM_RBUTTONDOWN:
     {
-        baseMsg->hitTest(MouseRButtonDown, &pt);
+        NvpEvent::fromSysEvent(MouseRDown, param);
     }
     break;
 
     case WM_RBUTTONUP:
     {
-        baseMsg->hitTest(MouseRButtonUp, &pt);
+        NvpEvent::fromSysEvent(MouseRUp, param);
     }
     break;
 

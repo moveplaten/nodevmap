@@ -6,29 +6,6 @@
 #include <map>
 #include "elem_storage.h"
 
-enum MsgBaseType
-{
-    MsgNone,
-    MsgInit,
-    MouseMove,
-    MouseEnter,
-    MouseLeave,
-    MouseLButtonDown,
-    MouseLButtonUp,
-    MouseRButtonDown,
-    MouseRButtonUp,
-    MouseMove_MouseLButtonDown,
-
-};
-
-typedef float ptSize;
-
-struct mousePt
-{
-    float x;
-    float y;
-};
-
 struct BaseRect
 {
     float left;
@@ -38,14 +15,7 @@ struct BaseRect
 };
 
 class BaseElement;
-class BaseAction;
-class NvpDraw;
-
-#define ELEM_GEN(x, y, z)\
-ElemGenerator x##y##z(#x, y, &z);
-
-#define ELEM_GEN_FULL(x, y, z, l)\
-ElemGenerator x##y##z(#x, y, &z, l);
+class NvpEvent;
 
 class NvpLayout
 {
@@ -69,8 +39,8 @@ public:
 
     static BaseElement* getNextReverse(BaseElement* base);
 
-    static BaseElement* subElemGen(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, BaseElement* up, bool be_top = true);
+    static BaseElement* subElemGen(const std::string& str, NvpEvent* event,
+        BaseElement* up, bool be_top = true);
 
     static void subElemDel(BaseElement* elem);
 
@@ -120,8 +90,8 @@ private:
         BaseElement* elem;
     };
 
-    static BaseElement* elemGen(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpLevel* level, bool be_top = true);
+    static BaseElement* elemGen(const std::string& str, NvpEvent* event,
+        NvpLevel* level, bool be_top = true);
 
     static bool elemDel(const std::string& str, NvpLevel* level);
 
@@ -141,24 +111,4 @@ private:
     NvpLevel::iterator layout_iter;
 
     ////////////////////////////////////////////////////////////////////////////
-
-    friend class ElemGenerator;
-};
-
-class ElemGenerator
-{
-public:
-    ElemGenerator(const std::string& str, MsgBaseType msg_type, BaseAction* msg_act,
-        BaseElement* up = NvpLayout::g_top_layout ? NvpLayout::g_top_node_view : nullptr,
-        bool be_top = true);
-
-    ~ElemGenerator() {}
-
-    BaseElement* gen_elem = nullptr;
-
-private:
-    ElemGenerator(const std::string& str, MsgBaseType msg_type,
-        BaseAction* msg_act, NvpLayout::NvpLevel* level, bool be_top = true);
-
-    friend class NvpLayout;
 };
