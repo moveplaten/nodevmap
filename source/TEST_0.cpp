@@ -21,12 +21,14 @@ class TopNodeView : public NvpEvent
     {
         auto elem = NvpLayout::findSameLevel("node_view_select", base);
         elem->getSelfEvent()->mouseLUp(elem, param);
+        param.freeCaptureMouse();
     }
 
     void mouseLDrag(BaseElement* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("node_view_select", base);
         elem->getSelfEvent()->mouseLDrag(elem, param);
+        param.wantCaptureMouse(base);
     }
 };
 
@@ -50,6 +52,7 @@ class NodeViewSelect : public NvpEvent
     void mouseLUp(BaseElement* base, NvpEventParam& param) override
     {
         NvpLayout::setBaseRect(base, { 0, 0, 0, 0 });
+        down_pt = { 0 };
     }
 
     void mouseLDrag(BaseElement* base, NvpEventParam& param) override

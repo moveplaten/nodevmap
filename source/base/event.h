@@ -43,9 +43,15 @@ public:
     mousePt getLocalPt() { return local_pt; }
     mousePt getWorldPt() { return world_pt; }
 
+    void wantCaptureMouse(BaseElement* base) { capture_mouse = base; }
+    void freeCaptureMouse() { capture_mouse = nullptr; }
+    BaseElement* getMouseCapture() { return capture_mouse; }
+
 private:
     mousePt local_pt;
     mousePt world_pt;
+
+    BaseElement* capture_mouse = nullptr;
 };
 
 class NvpSysEvent

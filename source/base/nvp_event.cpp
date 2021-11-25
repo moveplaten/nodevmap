@@ -3,8 +3,19 @@
 
 void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
 {
-    BaseElement* base = hitLayout(param.getWorldPt(), NvpLayout::getTopLayout());
+    static BaseElement* mouse_capture = nullptr;
 
+    BaseElement* base;
+
+    if (mouse_capture)
+    {
+        base = mouse_capture;
+    }
+    else
+    {
+        base = hitLayout(param.getWorldPt(), NvpLayout::getTopLayout());
+    }
+    
     if (!base)
     {
         return;
@@ -60,6 +71,8 @@ void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
     default:
         break;
     }
+
+    mouse_capture = param.getMouseCapture();
 
     NvpDrawPort::beginDraw();
 }

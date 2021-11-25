@@ -25,6 +25,8 @@ public:
 
     static void setBaseRect(BaseElement* base, const BaseRect& rect);
 
+    static BaseRect& rectCorrect(BaseRect& rect);
+
     const BaseRect& getRectRefUp() const { return layout_body.ref_up; }
     
     const BaseRect& getRectRefTop() const { return layout_body.ref_top; }

@@ -7,7 +7,8 @@ ElemIDStorage* NvpLayout::g_all_id_store = nullptr;
 
 void NvpLayout::setBaseRect(BaseElement* base, const BaseRect& rect)
 {
-    base->self_layout.layout_body.ref_up = rect; //ref_up is input from user;
+    //ref_up is input from user;
+    base->self_layout.layout_body.ref_up = rectCorrect(const_cast<BaseRect&>(rect));
 
     auto iter = base->self_layout.layout_level.begin();
 
@@ -16,20 +17,37 @@ void NvpLayout::setBaseRect(BaseElement* base, const BaseRect& rect)
     if (up_elem)
     {
         auto up_view_rect = up_elem->self_layout.layout_body.ref_top;
-        auto view_rect = &(base->self_layout.layout_body.ref_top);
+        auto& view_rect = base->self_layout.layout_body.ref_top;
 
         auto width = rect.right - rect.left;
         auto height = rect.bottom - rect.top;
 
-        view_rect->left = rect.left + up_view_rect.left;
-        view_rect->top = rect.top + up_view_rect.top;
-        view_rect->right = view_rect->left + width;
-        view_rect->bottom = view_rect->top + height;
+        view_rect.left = rect.left + up_view_rect.left;
+        view_rect.top = rect.top + up_view_rect.top;
+        view_rect.right = view_rect.left + width;
+        view_rect.bottom = view_rect.top + height;
     }
     else if (base->getSelfName() == "top_layout")
     {
         base->self_layout.layout_body.ref_top = rect;
     }
+}
+
+BaseRect& NvpLayout::rectCorrect(BaseRect& rect)
+{
+    float temp;
+
+    if (rect.left > rect.right)
+    {
+        temp = rect.left; rect.left = rect.right; rect.right = temp;
+    }
+
+    if (rect.top > rect.bottom)
+    {
+        temp = rect.top; rect.top = rect.bottom; rect.bottom = temp;
+    }
+
+    return rect;
 }
 
 BaseElement* NvpLayout::findSameLevel(const std::string& str, BaseElement* base)
