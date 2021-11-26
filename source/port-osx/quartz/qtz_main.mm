@@ -16,7 +16,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
                                                  blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)0.8];
+                                                alpha:(CGFloat)colo.Alpha/255];
     [ns_col set];
     
     CGContextSetTextPosition(g_cg_ref, start.x, start.y);
@@ -55,7 +55,7 @@ void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
                                                  blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)0.8];
+                                                alpha:(CGFloat)colo.Alpha/255];
     [ns_col set];
     
     NSRect ns_rec;
@@ -72,7 +72,7 @@ void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
     NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
                                                 green:(CGFloat)colo.Green/255
                                                  blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)0.8];
+                                                alpha:(CGFloat)colo.Alpha/255];
     [ns_col set];
     
     NSRect ns_rec;

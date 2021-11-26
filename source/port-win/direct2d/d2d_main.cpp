@@ -169,7 +169,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
 
     auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
     auto colf = D2D1::ColorF(color);
-    colf.a = 0.8f;
+    colf.a = colo.Alpha / 255.0f;
     ID2D1SolidColorBrush* brush;
     D2dUtil::g_d2dutil->m_pRT->CreateSolidColorBrush(colf, &brush);
 
@@ -191,7 +191,7 @@ void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
 
     auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
     auto colf = D2D1::ColorF(color);
-    colf.a = 0.8f;
+    colf.a = colo.Alpha / 255.0f;
     
     ID2D1SolidColorBrush* brush;
     HRESULT hr;
@@ -214,7 +214,7 @@ void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 
     auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
     auto colf = D2D1::ColorF(color);
-    colf.a = 0.8f;
+    colf.a = colo.Alpha / 255.0f;
 
     ID2D1SolidColorBrush* brush;
     HRESULT hr;

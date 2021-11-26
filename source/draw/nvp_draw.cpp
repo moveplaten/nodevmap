@@ -43,6 +43,22 @@ uint8_t NvpStyle::darker(uint8_t RGB)
     }
 }
 
+void NvpStyle::setColor(NvpColor colo)
+{
+    if (colo.Red == 0 && colo.Green == 0 && colo.Blue == 0)
+    {
+        colo.Alpha = 0; color = colo;
+    }
+    else
+    {
+        if (colo.Alpha == 0)
+        {
+            colo.Alpha = 200; //default global alpha value;
+        }
+        color = colo;
+    }
+}
+
 void NvpDraw::drawAll(BaseElement* base)
 {
     for (;;)

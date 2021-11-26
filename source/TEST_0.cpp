@@ -38,10 +38,16 @@ class NodeViewSelect : public NvpEvent
 {
     void userInit(BaseElement* base, NvpEventParam& param) override
     {
-        NvpColor col = { 200, 200, 200 };
+        NvpColor col = { 200, 200, 200, 50 };
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
+
+        NvpColor col2 = { 200, 200, 200, 220 };
+        NvpDrawCache one_rect_border(Draw_Rect_Same_Elem);
+        one_rect_border.setStyle(NvpStyle::Frame);
+        one_rect_border.setColor(col2);
+        base->getSelfDraw()->pushDraw(one_rect_border);
     }
 
     void mouseLDown(BaseElement* base, NvpEventParam& param) override

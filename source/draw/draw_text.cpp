@@ -26,12 +26,6 @@ void NvpDrawReal::Draw_Text_One_Line(const BaseElement& base, const NvpStyle& st
     }
     //break;
 
-    case NvpStyle::Fill_Frame:
-    {
-
-    }
-    //break;
-
     default:
     {
         NvpDrawPort::drawTextFromLToR(start, str, font_size, style.getColor());

@@ -19,14 +19,6 @@ void NvpDrawReal::Draw_One_Rect(const BaseRect& rect, const NvpStyle& style)
     }
     break;
 
-    case NvpStyle::Fill_Frame:
-    {
-        NvpDrawPort::fillRect(rect, style.getColor());
-
-        NvpDrawPort::frameRect(rect, style.getColor());
-    }
-    break;
-
     default:
         break;
     }

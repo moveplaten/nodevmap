@@ -128,14 +128,13 @@ class NvpStyle
 public:
     NvpStyle() : color{ 0, 0, 0, 0 }, style(Fill) {}
 
-    void setColor(NvpColor colo) { color = colo; }
+    void setColor(NvpColor colo);
     NvpColor getColor() const { return color; }
 
-    enum Style
+    enum Style : uint8_t
     {
         Fill,
         Frame,
-        Fill_Frame,
     };
     
     void setStyle(Style styl) { style = styl; }
