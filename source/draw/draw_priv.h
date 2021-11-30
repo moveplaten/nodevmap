@@ -36,6 +36,7 @@ namespace NvpDrawData
     ////////////////////////////////////////////////////////////////////////////
 
     #define NVP_DRAW_PRIVATE(V)                                     \
+    public:                                                         \
     void drawPrivate(const BaseElement& base, const NvpStyle& style)\
     {                                                               \
         V                                                           \
@@ -52,7 +53,6 @@ namespace NvpDrawData
 
     class RectSameElem
     {
-    public:
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Rect_Same_Elem(base, style);
@@ -78,7 +78,6 @@ namespace NvpDrawData
         NvpXyCoord start = { 0, 0 };
         ptSize font_size = 12.0f;
 
-    public:
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Text_One_Line(base, style, start, text, font_size);
@@ -96,7 +95,6 @@ namespace NvpDrawData
     private:
         int percent;
 
-    public:
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Four_Rect_Percent(base, style, percent);
