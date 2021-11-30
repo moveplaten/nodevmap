@@ -103,7 +103,7 @@ void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
 
 void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param)
 {
-    auto command = this->a_command;
+    auto command = null_data.getCmd();
 
     switch (command)
     {
@@ -165,15 +165,17 @@ NvpStyle::Style NvpDrawCache::getStyle()
     return a_style.getStyle();
 }
 
-NvpDrawCache::NvpDrawCache(const NvpStyle& style, NvpDrawCommand command)
-    :a_style(style), a_command(command), is_push(false)
+NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawCommand command)
+    :a_style(style), is_push(false)
 {
+    null_data.cmd = command;
     OptByPush(NEW);
 }
 
-NvpDrawCache::NvpDrawCache(NvpDrawCommand command)
-    :a_command(command), is_push(false)
+NvpDrawCache::NvpDrawCache(const NvpDrawCommand command)
+    :is_push(false)
 {
+    null_data.cmd = command;
     OptByPush(NEW);
 }
 

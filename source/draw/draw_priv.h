@@ -41,30 +41,16 @@ namespace NvpDrawData
         V                                                           \
     }                                                               \
 
-    typedef NvpDrawCommand Command;
-
-    template<Command D> class DrawSafe
-    {
-    public:
-        void valid(Command cmd)
-        {
-            assert(cmd == command);
-        }
-    private:
-        Command command = D;
-    };
-
     ////////////////////////////////////////////////////////////////////////////
 
-    template<Command D = Draw_Null> class NullData : DrawSafe<Draw_Null>
+    class NullData
     {
 
     };
 
     ////////////////////////////////////////////////////////////////////////////
 
-    template<Command D = Draw_Rect_Same_Elem> class RectSameElem :
-        DrawSafe<Draw_Rect_Same_Elem>
+    class RectSameElem
     {
     public:
         NVP_DRAW_PRIVATE
@@ -75,18 +61,17 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    template<Command D = Draw_Text_One_Line> class TextOneLine :
-        DrawSafe<Draw_Text_One_Line>
+    class TextOneLine
     {
     public:
-        void setText(const std::string& str) { valid(D); text = str; }
-        void setStart(NvpXyCoord xy) { valid(D); start = xy; }
+        void setText(const std::string& str) { text = str; }
+        void setStart(NvpXyCoord xy) { start = xy; }
 
-        const std::string& getText() { valid(D); return text; }
-        NvpXyCoord getStart() { valid(D); return start; }
+        const std::string& getText() { return text; }
+        NvpXyCoord getStart() { return start; }
 
-        ptSize getFontSize() { valid(D); return font_size; }
-        void setFontSize(ptSize size) { valid(D); assert(size > 0); font_size = size; }
+        ptSize getFontSize() { return font_size; }
+        void setFontSize(ptSize size) { assert(size > 0); font_size = size; }
 
     private:
         std::string text = "?";
@@ -102,12 +87,11 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    template<Command D = Draw_Four_Rect_Percent> class FourRectPercent :
-        DrawSafe<Draw_Four_Rect_Percent>
+    class FourRectPercent
     {
     public:
-        void setPercent(int per /*1~50*/) { valid(D); percent = per; }
-        int getPercent() { valid(D); return percent; }
+        void setPercent(int per /*1~50*/) { percent = per; }
+        int getPercent() { return percent; }
 
     private:
         int percent;
@@ -167,12 +151,43 @@ public:
     void setStyle(NvpStyle::Style style);
     NvpStyle::Style getStyle();
 
+    template<typename T, NvpDrawCommand D>
+    class draw_safe
+    {
+    public:
+        draw_safe(NvpDrawCommand c) : cmd(c), ptr(nullptr)
+        {
+            ptr = new T;
+        }
+
+        T* operator->() const //override ->;
+        {
+            int draw_cmd = D;
+            assert(draw_cmd == this->cmd);
+            return ptr;
+        }
+
+        ~draw_safe()
+        {
+            assert(ptr != nullptr);
+        }
+
+        T* getPtr() const { return ptr; }
+        NvpDrawCommand getCmd() const { return cmd; }
+
+    private:
+        T* ptr;
+        NvpDrawCommand cmd;
+
+        friend class NvpDrawCache;
+    };
+
     union
     {
-        NvpDrawData::NullData<>* const null_data;
-        NvpDrawData::RectSameElem<>* const rect_same_elem;
-        NvpDrawData::TextOneLine<>* const text_one_line;
-        NvpDrawData::FourRectPercent<>* const four_rect_percent;
+        draw_safe<NvpDrawData::NullData, Draw_Null> null_data;
+        draw_safe<NvpDrawData::RectSameElem, Draw_Rect_Same_Elem> const rect_same_elem;
+        draw_safe<NvpDrawData::TextOneLine, Draw_Text_One_Line> const text_one_line;
+        draw_safe<NvpDrawData::FourRectPercent, Draw_Four_Rect_Percent> const four_rect_percent;
 
     };
 
@@ -191,15 +206,13 @@ private:
     void OptSwitch(const Opt opt, const Param* const param = nullptr);
 
     template<typename T>
-    void NvpOptPush(T* const* t, const Opt opt, const Param* const param)
+    void NvpOptPush(const T* t, const Opt opt, const Param* const param)
     {
         switch (opt)
         {
         case NEW:
         {
-            T** t_ = const_cast<T**>(t);
-
-            (*t_) = new T;
+            *(const_cast<T*>(t)) = T(this->null_data.cmd);
         }
         break;
 
@@ -207,14 +220,14 @@ private:
         {
             if (!this->is_push)
             {
-                delete (*t);
+                delete t->getPtr(); //from draw_safe;
             }
         }
         break;
 
         case DRAW:
         {
-            (*t)->drawPrivate(param->base_elem, this->a_style); //from NvpDrawData;
+            t->getPtr()->drawPrivate(param->base_elem, this->a_style); //from NvpDrawData;
         }
         break;
 
@@ -224,8 +237,6 @@ private:
     }
 
     NvpStyle a_style;
-
-    const NvpDrawCommand a_command;
 
     bool is_push;
 
