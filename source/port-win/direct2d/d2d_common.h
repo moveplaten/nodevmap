@@ -26,7 +26,39 @@ public:
 
     HRESULT createDeviceTarget();
     double getDrawFPS() { return draw_fps; }
-    auto getRenderTarget() { return m_pRT; }
+    ID2D1HwndRenderTarget* getRenderTarget() { return m_pRT; }
+
+    static D2D1::ColorF toColorF(NvpColor color)
+    {
+        return D2D1::ColorF((float)color.Red / 255.0f,
+                            (float)color.Green / 255.0f,
+                            (float)color.Blue / 255.0f,
+                            (float)color.Alpha / 255.0f);
+    }
+
+    static D2D1_RECT_F toRectF(const BaseRect& rect)
+    {
+        return D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
+    }
+
+    class AutoSolidBrush
+    {
+    public:
+        AutoSolidBrush(ID2D1RenderTarget* target) : pRT(target), brush(nullptr) {}
+
+        ~AutoSolidBrush() { if (brush) brush->Release(); brush = nullptr; }
+
+        ID2D1SolidColorBrush* create(const D2D1_COLOR_F& color)
+        {
+            HRESULT hr = pRT->CreateSolidColorBrush(color, &brush);
+            if (FAILED(hr)) return nullptr;
+            return brush;
+        }
+
+    private:
+        ID2D1SolidColorBrush* brush;
+        ID2D1RenderTarget* pRT;
+    };
 
     void onResize(UINT width, UINT height)
     {

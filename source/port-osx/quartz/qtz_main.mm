@@ -5,6 +5,24 @@ NSWindow* g_main_wnd;
 CGContextRef g_cg_ref;
 CTFontRef g_ct_font_ref = nil;
 
+static NSColor* toColorNS(NvpColor color)
+{
+    return [NSColor colorWithCalibratedRed:(CGFloat)color.Red / 255
+                                     green:(CGFloat)color.Green / 255
+                                      blue:(CGFloat)color.Blue / 255
+                                     alpha:(CGFloat)color.Alpha / 255];
+}
+
+static NSRect toRectNS(const BaseRect& rect)
+{
+    NSRect ns_rect;
+    ns_rect.origin.x = rect.left;
+    ns_rect.origin.y = rect.top;
+    ns_rect.size.width = rect.right - rect.left;
+    ns_rect.size.height = rect.bottom - rect.top;
+    return ns_rect;
+}
+
 void NvpDrawPort::beginDraw()
 {
     [g_main_wnd.contentView setNeedsDisplay:YES];
@@ -13,10 +31,7 @@ void NvpDrawPort::beginDraw()
 void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
                                    ptSize font_size, NvpColor colo)
 {
-    NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
-                                                green:(CGFloat)colo.Green/255
-                                                 blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)colo.Alpha/255];
+    NSColor* ns_col = toColorNS(colo);
     [ns_col set];
     
     CGContextSetTextPosition(g_cg_ref, start.x, start.y);
@@ -52,34 +67,20 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
 
 void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
 {
-    NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
-                                                green:(CGFloat)colo.Green/255
-                                                 blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)colo.Alpha/255];
+    NSColor* ns_col = toColorNS(colo);
     [ns_col set];
     
-    NSRect ns_rec;
-    ns_rec.origin.x = rect.left;
-    ns_rec.origin.y = rect.top;
-    ns_rec.size.width = rect.right - rect.left;
-    ns_rec.size.height = rect.bottom - rect.top;
+    NSRect ns_rec = toRectNS(rect);
     
     CGContextFillRect(g_cg_ref, ns_rec);
 }
 
 void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
 {
-    NSColor* ns_col = [NSColor colorWithCalibratedRed:(CGFloat)colo.Red/255
-                                                green:(CGFloat)colo.Green/255
-                                                 blue:(CGFloat)colo.Blue/255
-                                                alpha:(CGFloat)colo.Alpha/255];
+    NSColor* ns_col = toColorNS(colo);
     [ns_col set];
     
-    NSRect ns_rec;
-    ns_rec.origin.x = rect.left;
-    ns_rec.origin.y = rect.top;
-    ns_rec.size.width = rect.right - rect.left;
-    ns_rec.size.height = rect.bottom - rect.top;
+    NSRect ns_rec = toRectNS(rect);
     
     CGContextStrokeRectWithWidth(g_cg_ref, ns_rec, 1.0f);
 }

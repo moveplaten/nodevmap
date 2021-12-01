@@ -167,11 +167,11 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
         glyph_advance[i] = (float)glyph_metric[i].advanceWidth * scale;
     }
 
-    auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
-    auto colf = D2D1::ColorF(color);
-    colf.a = colo.Alpha / 255.0f;
-    ID2D1SolidColorBrush* brush;
-    D2dUtil::g_d2dutil->m_pRT->CreateSolidColorBrush(colf, &brush);
+    auto colf = D2dUtil::toColorF(colo);
+
+    D2dUtil::AutoSolidBrush auto_brush(D2dUtil::g_d2dutil->m_pRT);
+    auto brush = auto_brush.create(colf);
+    if (!brush) return;
 
     D2D1_POINT_2F point;
     point.x = start.x; point.y = start.y;
@@ -180,51 +180,34 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
     delete[](glyph_index);
     delete[](glyph_advance);
     delete[](glyph_metric);
-    brush->Release();
 }
 
 void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 
-    D2D1_RECT_F recf = D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
+    auto recf = D2dUtil::toRectF(rect);
 
-    auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
-    auto colf = D2D1::ColorF(color);
-    colf.a = colo.Alpha / 255.0f;
+    auto colf = D2dUtil::toColorF(colo);
+
+    D2dUtil::AutoSolidBrush auto_brush(target);
+    auto brush = auto_brush.create(colf);
+    if (!brush) return;
     
-    ID2D1SolidColorBrush* brush;
-    HRESULT hr;
-    hr = target->CreateSolidColorBrush(colf, &brush);
-    if (FAILED(hr))
-    {
-        return;
-    }
-
     target->FillRectangle(recf, brush);
-
-    brush->Release();
 }
 
 void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 
-    D2D1_RECT_F recf = D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
+    auto recf = D2dUtil::toRectF(rect);
 
-    auto color = RGB(colo.Blue, colo.Green, colo.Red); //BGRA;
-    auto colf = D2D1::ColorF(color);
-    colf.a = colo.Alpha / 255.0f;
+    auto colf = D2dUtil::toColorF(colo);
 
-    ID2D1SolidColorBrush* brush;
-    HRESULT hr;
-    hr = target->CreateSolidColorBrush(colf, &brush);
-    if (FAILED(hr))
-    {
-        return;
-    }
+    D2dUtil::AutoSolidBrush auto_brush(target);
+    auto brush = auto_brush.create(colf);
+    if (!brush) return;
 
     target->DrawRectangle(recf, brush);
-
-    brush->Release();
 }
