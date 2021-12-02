@@ -41,25 +41,6 @@ public:
         return D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
     }
 
-    class AutoSolidBrush
-    {
-    public:
-        AutoSolidBrush(ID2D1RenderTarget* target) : pRT(target), brush(nullptr) {}
-
-        ~AutoSolidBrush() { if (brush) brush->Release(); brush = nullptr; }
-
-        ID2D1SolidColorBrush* create(const D2D1_COLOR_F& color)
-        {
-            HRESULT hr = pRT->CreateSolidColorBrush(color, &brush);
-            if (FAILED(hr)) return nullptr;
-            return brush;
-        }
-
-    private:
-        ID2D1SolidColorBrush* brush;
-        ID2D1RenderTarget* pRT;
-    };
-
     void onResize(UINT width, UINT height)
     {
         D2D1_SIZE_U size;
@@ -126,4 +107,25 @@ private:
 
     double draw_fps;
     friend class NvpDrawPort;
+};
+
+class AutoSolidBrush
+{
+public:
+    AutoSolidBrush(ID2D1RenderTarget* target) : pRT(target), brush(nullptr) {}
+
+    ~AutoSolidBrush() { if (brush) brush->Release(); brush = nullptr; pRT = nullptr; }
+
+    ID2D1SolidColorBrush* create(const D2D1_COLOR_F& color)
+    {
+        if (brush) return nullptr;
+        
+        HRESULT hr = pRT->CreateSolidColorBrush(color, &brush);
+        if (FAILED(hr)) return nullptr;
+        return brush;
+    }
+
+private:
+    ID2D1SolidColorBrush* brush;
+    ID2D1RenderTarget* pRT;
 };

@@ -169,7 +169,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
 
     auto colf = D2dUtil::toColorF(colo);
 
-    D2dUtil::AutoSolidBrush auto_brush(D2dUtil::g_d2dutil->m_pRT);
+    AutoSolidBrush auto_brush(D2dUtil::g_d2dutil->m_pRT);
     auto brush = auto_brush.create(colf);
     if (!brush) return;
 
@@ -190,7 +190,7 @@ void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
 
     auto colf = D2dUtil::toColorF(colo);
 
-    D2dUtil::AutoSolidBrush auto_brush(target);
+    AutoSolidBrush auto_brush(target);
     auto brush = auto_brush.create(colf);
     if (!brush) return;
     
@@ -205,7 +205,7 @@ void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 
     auto colf = D2dUtil::toColorF(colo);
 
-    D2dUtil::AutoSolidBrush auto_brush(target);
+    AutoSolidBrush auto_brush(target);
     auto brush = auto_brush.create(colf);
     if (!brush) return;
 
