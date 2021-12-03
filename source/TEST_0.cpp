@@ -48,6 +48,11 @@ class NodeViewSelect : public NvpEvent
         one_rect_border.setStyle(NvpStyle::Frame);
         one_rect_border.setColor(col2);
         base->getSelfDraw()->pushDraw(one_rect_border);
+
+        NvpColor col3 = { 0, 100, 200, 230 };
+        NvpDrawCache one_line(Draw_One_Line);
+        one_line.setColor(col3);
+        base->getSelfDraw()->pushDraw(one_line);
     }
 
     void mouseLDown(BaseElement* base, NvpEventParam& param) override
@@ -59,6 +64,9 @@ class NodeViewSelect : public NvpEvent
     {
         NvpLayout::setBaseRect(base, { 0, 0, 0, 0 });
         down_pt = { 0 };
+        auto one_line = base->getSelfDraw()->getDraw(2);
+        one_line->one_line->setPoint1({ 0 });
+        one_line->one_line->setPoint2({ 0 });
     }
 
     void mouseLDrag(BaseElement* base, NvpEventParam& param) override
@@ -70,6 +78,16 @@ class NodeViewSelect : public NvpEvent
         select.right = now_pt.x;
         select.bottom = now_pt.y;
         NvpLayout::setBaseRect(base, select);
+
+        NvpXyCoord p1, p2;
+        p1.x = 10;
+        p1.y = 10;
+        
+        p2.x = select.right - select.left - 10;
+        p2.y = select.bottom - select.top - 10;
+        auto one_line = base->getSelfDraw()->getDraw(2);
+        one_line->one_line->setPoint1(p1);
+        one_line->one_line->setPoint2(p2);
     }
 
     mousePt down_pt;
@@ -89,10 +107,10 @@ class TopMenuStat : public NvpEvent
         one_rect.setColor(col);
         draw->pushDraw(one_rect);
 
-        NvpDrawCache text(Draw_Text_One_Line);
+        NvpDrawCache text(Draw_Text_Left_Right);
         text.setColor(font_col);
-        text.text_one_line->setText("  Menu  |  Stat");
-        text.text_one_line->setStart({ 0, 13 });
+        text.text_left_right->setText("  Menu  |  Stat");
+        text.text_left_right->setStart({ 0, 13 });
         draw->pushDraw(text);
     }
 };
@@ -108,9 +126,9 @@ static void nodeInit(BaseElement* base, const BaseRect& rect, const NvpColor& co
     rect_elem.setColor(colo);
     draw->pushDraw(rect_elem);
 
-    NvpDrawCache font(Draw_Text_One_Line);
+    NvpDrawCache font(Draw_Text_Left_Right);
     font.setColor({ 240, 240, 240 });
-    font.text_one_line->setFontSize(font_size);
+    font.text_left_right->setFontSize(font_size);
     draw->pushDraw(font);
 }
 
@@ -118,12 +136,12 @@ static void nodeText(BaseElement* base, NvpEventParam& param)
 {
     mousePt local_pt = param.getLocalPt();
     auto font = base->getSelfDraw()->getDraw(1);
-    font->text_one_line->setStart({ local_pt.x, local_pt.y });
+    font->text_left_right->setStart({ local_pt.x, local_pt.y });
     
     char temp[50];
     sprintf(temp, "X=%f, Y=%f", local_pt.x, local_pt.y);
     std::string str(temp);
-    font->text_one_line->setText(str);
+    font->text_left_right->setText(str);
 }
 
 class TempNode1 : public NvpEvent

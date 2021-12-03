@@ -107,15 +107,21 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param)
 
     switch (command)
     {
+    case Draw_One_Line:
+    {
+        NvpOptPush(&one_line, opt, param);
+    }
+    break;
+
     case Draw_Rect_Same_Elem:
     {
         NvpOptPush(&rect_same_elem, opt, param);
     }
     break;
 
-    case Draw_Text_One_Line:
+    case Draw_Text_Left_Right:
     {
-        NvpOptPush(&text_one_line, opt, param);
+        NvpOptPush(&text_left_right, opt, param);
     }
     break;
 

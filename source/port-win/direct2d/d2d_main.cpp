@@ -211,3 +211,19 @@ void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
 
     target->DrawRectangle(recf, brush);
 }
+
+void NvpDrawPort::drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo)
+{
+    auto target = D2dUtil::g_d2dutil->m_pRT;
+    
+    auto pt1 = D2D1::Point2F(p1.x, p1.y);
+    auto pt2 = D2D1::Point2F(p2.x, p2.y);
+
+    auto colf = D2dUtil::toColorF(colo);
+
+    AutoSolidBrush auto_brush(target);
+    auto brush = auto_brush.create(colf);
+    if (!brush) return;
+
+    target->DrawLine(pt1, pt2, brush);
+}

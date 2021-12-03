@@ -84,3 +84,17 @@ void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
     
     CGContextStrokeRectWithWidth(g_cg_ref, ns_rec, 1.0f);
 }
+
+void NvpDrawPort::drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo)
+{
+    NSColor* ns_col = toColorNS(colo);
+    [ns_col set];
+    
+    CGPoint pt1, pt2;
+    pt1.x = p1.x; pt1.y = p1.y;
+    
+    pt2.x = p2.x; pt2.y = p2.y;
+    
+    CGPoint points[] = { pt1, pt2 };
+    CGContextStrokeLineSegments(g_cg_ref, points, 1);
+}

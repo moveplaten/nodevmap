@@ -2,12 +2,16 @@
 
 #include "draw.h"
 
-enum NvpDrawCommand
+enum NvpDrawCommand : uint8_t
 {
     Draw_Null,
-    
-    Draw_Text_One_Line,
+
+    Draw_One_Line,
+
     Draw_Rect_Same_Elem,
+
+    Draw_Text_Left_Right,
+
     Draw_Four_Rect_Percent,
 
 };
@@ -21,8 +25,11 @@ public:
 
     static void Draw_One_Rect(const BaseRect& rect, const NvpStyle& style);
 
-    static void Draw_Text_One_Line(const BaseElement& base, const NvpStyle& style,
+    static void Draw_Text_Left_Right(const BaseElement& base, const NvpStyle& style,
         NvpXyCoord xy, const std::string& str, ptSize font_size);
+
+    static void Draw_One_Line(const BaseElement& base, const NvpStyle& style,
+        NvpXyCoord p1, NvpXyCoord p2);
 
     static void Draw_Rect_Same_Elem(const BaseElement& base, const NvpStyle& style);
 
@@ -44,14 +51,14 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class NullData
+    class Null_Data
     {
 
     };
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class RectSameElem
+    class Rect_Same_Elem
     {
         NVP_DRAW_PRIVATE
         (
@@ -61,7 +68,7 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class TextOneLine
+    class Text_Left_Right
     {
     public:
         void setText(const std::string& str) { text = str; }
@@ -80,13 +87,34 @@ namespace NvpDrawData
 
         NVP_DRAW_PRIVATE
         (
-            NvpDrawReal::Draw_Text_One_Line(base, style, start, text, font_size);
+            NvpDrawReal::Draw_Text_Left_Right(base, style, start, text, font_size);
         )
     };
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class FourRectPercent
+    class One_Line
+    {
+    public:
+        void setPoint1(NvpXyCoord pt1) { p1 = pt1; }
+        void setPoint2(NvpXyCoord pt2) { p2 = pt2; }
+
+        NvpXyCoord getPoint1() { return p1; }
+        NvpXyCoord getPoint2() { return p2; }
+
+    private:
+        NvpXyCoord p1 = { 0 };
+        NvpXyCoord p2 = { 0 };
+
+        NVP_DRAW_PRIVATE
+        (
+            NvpDrawReal::Draw_One_Line(base, style, p1, p2);
+        )
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    class Four_Rect_Percent
     {
     public:
         void setPercent(int per /*1~50*/) { percent = per; }
@@ -160,7 +188,7 @@ public:
 
         T* operator->() const //override ->;
         {
-            int draw_cmd = D;
+            uint8_t draw_cmd = D;
             assert(draw_cmd == this->cmd);
             return ptr;
         }
@@ -182,10 +210,15 @@ public:
 
     union
     {
-        draw_safe<NvpDrawData::NullData, Draw_Null> null_data;
-        draw_safe<NvpDrawData::RectSameElem, Draw_Rect_Same_Elem> const rect_same_elem;
-        draw_safe<NvpDrawData::TextOneLine, Draw_Text_One_Line> const text_one_line;
-        draw_safe<NvpDrawData::FourRectPercent, Draw_Four_Rect_Percent> const four_rect_percent;
+        draw_safe<NvpDrawData::Null_Data, Draw_Null> null_data;
+
+        draw_safe<NvpDrawData::One_Line, Draw_One_Line> const one_line;
+        
+        draw_safe<NvpDrawData::Rect_Same_Elem, Draw_Rect_Same_Elem> const rect_same_elem;
+        
+        draw_safe<NvpDrawData::Text_Left_Right, Draw_Text_Left_Right> const text_left_right;
+
+        draw_safe<NvpDrawData::Four_Rect_Percent, Draw_Four_Rect_Percent> const four_rect_percent;
 
     };
 
