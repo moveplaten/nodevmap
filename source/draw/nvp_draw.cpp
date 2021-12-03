@@ -107,25 +107,25 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param)
 
     switch (command)
     {
-    case Draw_One_Line:
+    case NvpDrawData::One_Line:
     {
         NvpOptPush(&one_line, opt, param);
     }
     break;
 
-    case Draw_Rect_Same_Elem:
+    case NvpDrawData::Rect_Same_Elem:
     {
         NvpOptPush(&rect_same_elem, opt, param);
     }
     break;
 
-    case Draw_Text_Left_Right:
+    case NvpDrawData::Text_Left_Right:
     {
         NvpOptPush(&text_left_right, opt, param);
     }
     break;
 
-    case Draw_Four_Rect_Percent:
+    case NvpDrawData::Four_Rect_Percent:
     {
         NvpOptPush(&four_rect_percent, opt, param);
     }
@@ -171,14 +171,14 @@ NvpStyle::Style NvpDrawCache::getStyle()
     return a_style.getStyle();
 }
 
-NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawCommand command)
+NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command)
     :a_style(style), is_push(false)
 {
     null_data.cmd = command;
     OptByPush(NEW);
 }
 
-NvpDrawCache::NvpDrawCache(const NvpDrawCommand command)
+NvpDrawCache::NvpDrawCache(const NvpDrawData::Command command)
     :is_push(false)
 {
     null_data.cmd = command;

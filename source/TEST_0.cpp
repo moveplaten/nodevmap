@@ -6,7 +6,7 @@ class TopNodeView : public NvpEvent
     void userInit(BaseElement* base, NvpEventParam& param) override
     {
         NvpColor col = { 40, 40, 45 };
-        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
     }
@@ -39,18 +39,18 @@ class NodeViewSelect : public NvpEvent
     void userInit(BaseElement* base, NvpEventParam& param) override
     {
         NvpColor col = { 200, 200, 200, 50 };
-        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
 
         NvpColor col2 = { 200, 200, 200, 220 };
-        NvpDrawCache one_rect_border(Draw_Rect_Same_Elem);
+        NvpDrawCache one_rect_border(NvpDrawData::Rect_Same_Elem);
         one_rect_border.setStyle(NvpStyle::Frame);
         one_rect_border.setColor(col2);
         base->getSelfDraw()->pushDraw(one_rect_border);
 
         NvpColor col3 = { 0, 100, 200, 230 };
-        NvpDrawCache one_line(Draw_One_Line);
+        NvpDrawCache one_line(NvpDrawData::One_Line);
         one_line.setColor(col3);
         base->getSelfDraw()->pushDraw(one_line);
     }
@@ -103,11 +103,11 @@ class TopMenuStat : public NvpEvent
         NvpColor col = { 100, 200, 255 };
         NvpColor font_col = { 230, 230, 230 };
         
-        NvpDrawCache one_rect(Draw_Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(col);
         draw->pushDraw(one_rect);
 
-        NvpDrawCache text(Draw_Text_Left_Right);
+        NvpDrawCache text(NvpDrawData::Text_Left_Right);
         text.setColor(font_col);
         text.text_left_right->setText("  Menu  |  Stat");
         text.text_left_right->setStart({ 0, 13 });
@@ -122,11 +122,11 @@ static void nodeInit(BaseElement* base, const BaseRect& rect, const NvpColor& co
     auto draw = base->getSelfDraw();
     NvpLayout::setBaseRect(base, rect);
     
-    NvpDrawCache rect_elem(Draw_Rect_Same_Elem);
+    NvpDrawCache rect_elem(NvpDrawData::Rect_Same_Elem);
     rect_elem.setColor(colo);
     draw->pushDraw(rect_elem);
 
-    NvpDrawCache font(Draw_Text_Left_Right);
+    NvpDrawCache font(NvpDrawData::Text_Left_Right);
     font.setColor({ 240, 240, 240 });
     font.text_left_right->setFontSize(font_size);
     draw->pushDraw(font);

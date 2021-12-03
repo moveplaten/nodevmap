@@ -2,20 +2,6 @@
 
 #include "draw.h"
 
-enum NvpDrawCommand : uint8_t
-{
-    Draw_Null,
-
-    Draw_One_Line,
-
-    Draw_Rect_Same_Elem,
-
-    Draw_Text_Left_Right,
-
-    Draw_Four_Rect_Percent,
-
-};
-
 class NvpStyle;
 
 class NvpDrawReal
@@ -41,6 +27,21 @@ public:
 namespace NvpDrawData
 {
     ////////////////////////////////////////////////////////////////////////////
+    
+    enum Command : uint8_t
+    {
+        Null_Data,
+
+        One_Line,
+
+        Rect_Same_Elem,
+
+        Text_Left_Right,
+
+        Four_Rect_Percent,
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
 
     #define NVP_DRAW_PRIVATE(V)                                     \
     public:                                                         \
@@ -51,14 +52,14 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class Null_Data
+    class Null_Data_
     {
 
     };
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class Rect_Same_Elem
+    class Rect_Same_Elem_
     {
         NVP_DRAW_PRIVATE
         (
@@ -68,7 +69,7 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class Text_Left_Right
+    class Text_Left_Right_
     {
     public:
         void setText(const std::string& str) { text = str; }
@@ -93,7 +94,7 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class One_Line
+    class One_Line_
     {
     public:
         void setPoint1(NvpXyCoord pt1) { p1 = pt1; }
@@ -114,7 +115,7 @@ namespace NvpDrawData
 
     ////////////////////////////////////////////////////////////////////////////
 
-    class Four_Rect_Percent
+    class Four_Rect_Percent_
     {
     public:
         void setPercent(int per /*1~50*/) { percent = per; }
@@ -164,8 +165,8 @@ private:
 class NvpDrawCache
 {
 public:
-    NvpDrawCache(const NvpStyle& style, const NvpDrawCommand command);
-    NvpDrawCache(const NvpDrawCommand command);
+    NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command);
+    NvpDrawCache(const NvpDrawData::Command command);
     ~NvpDrawCache();
 
     void colorBright();
@@ -177,11 +178,11 @@ public:
     void setStyle(NvpStyle::Style style);
     NvpStyle::Style getStyle();
 
-    template<typename T, NvpDrawCommand D>
+    template<typename T, NvpDrawData::Command D>
     class draw_safe
     {
     public:
-        draw_safe(NvpDrawCommand c) : cmd(c), ptr(nullptr)
+        draw_safe(NvpDrawData::Command c) : cmd(c), ptr(nullptr)
         {
             ptr = new T;
         }
@@ -199,26 +200,26 @@ public:
         }
 
         T* getPtr() const { return ptr; }
-        NvpDrawCommand getCmd() const { return cmd; }
+        NvpDrawData::Command getCmd() const { return cmd; }
 
     private:
         T* ptr;
-        NvpDrawCommand cmd;
+        NvpDrawData::Command cmd;
 
         friend class NvpDrawCache;
     };
 
     union
     {
-        draw_safe<NvpDrawData::Null_Data, Draw_Null> null_data;
+        draw_safe<NvpDrawData::Null_Data_, NvpDrawData::Null_Data> null_data;
 
-        draw_safe<NvpDrawData::One_Line, Draw_One_Line> const one_line;
+        draw_safe<NvpDrawData::One_Line_, NvpDrawData::One_Line> const one_line;
         
-        draw_safe<NvpDrawData::Rect_Same_Elem, Draw_Rect_Same_Elem> const rect_same_elem;
+        draw_safe<NvpDrawData::Rect_Same_Elem_, NvpDrawData::Rect_Same_Elem> const rect_same_elem;
         
-        draw_safe<NvpDrawData::Text_Left_Right, Draw_Text_Left_Right> const text_left_right;
+        draw_safe<NvpDrawData::Text_Left_Right_, NvpDrawData::Text_Left_Right> const text_left_right;
 
-        draw_safe<NvpDrawData::Four_Rect_Percent, Draw_Four_Rect_Percent> const four_rect_percent;
+        draw_safe<NvpDrawData::Four_Rect_Percent_, NvpDrawData::Four_Rect_Percent> const four_rect_percent;
 
     };
 
