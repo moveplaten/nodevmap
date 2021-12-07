@@ -169,14 +169,16 @@ public:
     NvpDrawCache(const NvpDrawData::Command command);
     ~NvpDrawCache();
 
+    static void commandString(const NvpDrawData::Command command, char* const str);
+
     void colorBright();
     void colorDarker();
 
     void setColor(NvpColor color);
-    NvpColor getColor();
+    NvpColor getColor() const;
 
     void setStyle(NvpStyle::Style style);
-    NvpStyle::Style getStyle();
+    NvpStyle::Style getStyle() const;
 
     template<typename T, NvpDrawData::Command D>
     class draw_safe
@@ -224,7 +226,7 @@ public:
     };
 
 private:
-    enum Opt { NEW, DELE, DRAW };
+    enum Opt { NUL, NEW, DELE, DRAW };
     
     void OptByPush(const Opt opt);
 
@@ -235,7 +237,7 @@ private:
         const BaseElement& base_elem;
     };
 
-    void OptSwitch(const Opt opt, const Param* const param = nullptr);
+    void OptSwitch(const Opt opt, const Param* const param = nullptr, char* const str = nullptr);
 
     template<typename T>
     void NvpOptPush(const T* t, const Opt opt, const Param* const param)
@@ -250,7 +252,7 @@ private:
 
         case DELE:
         {
-            if (!this->is_push)
+            if (!this->is_push && t->getPtr() != nullptr)
             {
                 delete t->getPtr(); //from draw_safe;
             }

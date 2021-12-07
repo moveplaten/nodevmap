@@ -117,19 +117,106 @@ class TopMenuStat : public NvpEvent
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static void nodeInit(BaseElement* base, const BaseRect& rect, const NvpColor& colo, float font_size)
+#define INIT_STRING(x) #x;
+
+static const char* node_1_init_str = INIT_STRING
+(
+    @Rect_Same_Elem
+    @150 150 250
+
+    @Text_Left_Right
+    @240 240 240
+    @end
+)
+
+static const char* node_2_init_str = INIT_STRING
+(
+    @Rect_Same_Elem
+    @250 150 150
+
+    @Text_Left_Right
+    @240 240 240
+    @end
+)
+
+static NvpColor toColor(const char* col)
+{
+    std::string col_str(col);
+    char red[10] = { 0 };
+    char green[10] = { 0 };
+    char blue[10] = { 0 };
+    
+    col_str.copy(red, 3, 0);
+    col_str.copy(green, 3, 4);
+    col_str.copy(blue, 3, 8);
+    
+    auto _red = atoi(red);
+    auto _green = atoi(green);
+    auto _blue = atoi(blue);
+    
+    NvpColor colo{ 0 };
+    colo.Red = _red;
+    colo.Green = _green;
+    colo.Blue = _blue;
+    
+    return colo;
+}
+
+static void initCmdColStr(NvpDraw* draw, const char* cmd, const char* col, float font_size)
+{
+    char rect_same_elem[30] = { 0 };
+    NvpDrawCache::commandString(NvpDrawData::Rect_Same_Elem, rect_same_elem);
+    char text_left_right[30] = { 0 };
+    NvpDrawCache::commandString(NvpDrawData::Text_Left_Right, text_left_right);
+
+    NvpColor colo = toColor(col);
+
+    if (strcmp(cmd, rect_same_elem) == 0)
+    {
+        NvpDrawCache rect_elem(NvpDrawData::Rect_Same_Elem);
+        rect_elem.setColor(colo);
+        draw->pushDraw(rect_elem);
+    }
+    
+    if (strcmp(cmd, text_left_right) == 0)
+    {
+        NvpDrawCache font(NvpDrawData::Text_Left_Right);
+        font.setColor(colo);
+        font.text_left_right->setFontSize(font_size);
+        draw->pushDraw(font);
+    }
+}
+
+static void initFromStr(NvpDraw* draw, const char* str, float font_size)
+{
+    std::string init_str(str);
+
+    auto col1 = init_str.find("@", 1);
+    char cmd_str1[30] = { 0 };
+    init_str.copy(cmd_str1, col1 - 2, 1);
+    
+    auto cmd2 = init_str.find("@", col1 + 1);
+    char col_str1[30] = { 0 };
+    init_str.copy(col_str1, cmd2 - col1 - 2, col1 + 1);
+    
+    auto col2 = init_str.find("@", cmd2 + 1);
+    char cmd_str2[30] = { 0 };
+    init_str.copy(cmd_str2, col2 - cmd2 - 2, cmd2 + 1);
+
+    auto end = init_str.find("@", col2 + 1);
+    char col_str2[30] = { 0 };
+    init_str.copy(col_str2, end - col2 - 2, col2 + 1);
+
+    initCmdColStr(draw, cmd_str1, col_str1, font_size);
+    initCmdColStr(draw, cmd_str2, col_str2, font_size);
+}
+
+static void nodeInit(BaseElement* base, const BaseRect& rect, const char* colo, float font_size)
 {
     auto draw = base->getSelfDraw();
     NvpLayout::setBaseRect(base, rect);
-    
-    NvpDrawCache rect_elem(NvpDrawData::Rect_Same_Elem);
-    rect_elem.setColor(colo);
-    draw->pushDraw(rect_elem);
 
-    NvpDrawCache font(NvpDrawData::Text_Left_Right);
-    font.setColor({ 240, 240, 240 });
-    font.text_left_right->setFontSize(font_size);
-    draw->pushDraw(font);
+    initFromStr(draw, colo, font_size);
 }
 
 static void nodeText(BaseElement* base, NvpEventParam& param)
@@ -152,8 +239,7 @@ class TempNode1 : public NvpEvent
         rect.left = rect.top = 30;
         rect.right = rect.bottom = 150;
         
-        NvpColor col = { 150, 150, 250 };
-        nodeInit(base, rect, col, 15);
+        nodeInit(base, rect, node_1_init_str, 15);
     }
 
     void mouseMove(BaseElement* base, NvpEventParam& param) override
@@ -170,8 +256,7 @@ class TempNode2 : public NvpEvent
         rect.left = rect.top = 30;
         rect.right = rect.bottom = 100;
         
-        NvpColor col = { 250, 150, 150 };
-        nodeInit(base, rect, col, 12);
+        nodeInit(base, rect, node_2_init_str, 12);
     }
 
     void mouseMove(BaseElement* base, NvpEventParam& param) override
