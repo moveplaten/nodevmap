@@ -5,12 +5,8 @@
 
 @class WndDelegate, MainView;
 
-void initFirst();
-
-int main(int argc, const char * argv[])
+int nvp_entry_main(int argc, const char * argv[])
 {
-    initFirst();
-    
     [NSApplication sharedApplication];
     
     //no dock icon, no menu bar;

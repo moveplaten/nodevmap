@@ -3,20 +3,10 @@
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-void initFirst();
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
+int nvp_entry_main(HINSTANCE hInstance)
 {
-#define MAINWNDCLASS TEXT("MainWindow")
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
-
-
-    initFirst();
-
+    const CHAR MAINWNDCLASS[] = "MainWindow";
+    
     WNDCLASS wc;
     ZeroMemory(&wc, sizeof(wc));
     wc.hInstance = hInstance;

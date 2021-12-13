@@ -30,7 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable:4996)
@@ -38,7 +38,7 @@
 #endif
 
 #ifdef WIN32
-  #define PLIST_API __declspec( dllexport )
+  #define PLIST_API //__declspec( dllexport )
 #else
   #ifdef HAVE_FVISIBILITY
     #define PLIST_API __attribute__((visibility("default")))

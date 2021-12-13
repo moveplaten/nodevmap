@@ -52,13 +52,13 @@ extern void plist_bin_deinit(void);
 
 static void internal_plist_init(void)
 {
-    plist_bin_init();
+    //plist_bin_init(); PLIST_BIN_REMOVE_TAG;
     plist_xml_init();
 }
 
 static void internal_plist_deinit(void)
 {
-    plist_bin_deinit();
+    //plist_bin_deinit(); PLIST_BIN_REMOVE_TAG;
     plist_xml_deinit();
 }
 
@@ -191,7 +191,7 @@ PLIST_API void plist_from_memory(const char *plist_data, uint32_t length, plist_
     }
 
     if (plist_is_binary(plist_data, length)) {
-        plist_from_bin(plist_data, length, plist);
+        //plist_from_bin(plist_data, length, plist); PLIST_BIN_REMOVE_TAG;
     } else {
         plist_from_xml(plist_data, length, plist);
     }
