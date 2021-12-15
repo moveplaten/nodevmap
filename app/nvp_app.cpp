@@ -1,6 +1,6 @@
 #include "base/base.h"
 #include "draw/draw_priv.h"
-#include "plist/plist.h"
+#include "nvp-io/nvp_plist.h"
 
 class TopNodeView : public NvpEvent
 {
@@ -288,6 +288,66 @@ static const char* plist_init_str = INIT_STRING
 
 )
 
+static void nvp_plist_test()
+{
+    NvpPlistPort root_node(plist_init_str);
+    auto xml_out = root_node.writeToXml();
+    xml_out = root_node.writeToXml();
+
+    auto type = root_node.getType();
+    auto dict_size = root_node.getDictSize();
+
+    auto dict_string = root_node.queryDictKey("String");
+    type = dict_string.getType();
+    auto key_string = dict_string.getKeyString();
+    auto val_string = dict_string.getValString();
+
+    auto dict_bool = root_node.queryDictKey("Boolean");
+    type = dict_bool.getType();
+    key_string = dict_bool.getKeyString();
+    auto val_bool = dict_bool.getValBool();
+
+    auto dict_real = root_node.queryDictKey("Number");
+    type = dict_real.getType();
+    key_string = dict_real.getKeyString();
+    auto val_real = dict_real.getValReal();
+
+    auto dict_data = root_node.queryDictKey("Data");
+    type = dict_data.getType();
+    key_string = dict_data.getKeyString();
+    auto val_data = dict_data.getValData();
+
+    auto dict_wrong = root_node.queryDictKey("None");
+
+    auto new_str = NvpPlistPort::newString("NEW STRING");
+    auto new_bool = NvpPlistPort::newBool(false);
+    auto new_real = NvpPlistPort::newReal(2.222);
+    NvpPlistPort::ValData data("NEW DATA", 8);
+    auto new_data = NvpPlistPort::newData(data);
+
+    root_node.insertDictKey(new_str, "New String");
+    root_node.insertDictKey(new_bool, "New Boolean");
+    root_node.insertDictKey(new_real, "New Real");
+    root_node.insertDictKey(new_data, "New Data");
+
+    auto dict_string2 = root_node.queryDictKey("New String");
+    val_string = dict_string2.getValString();
+    auto dict_bool2 = root_node.queryDictKey("New Boolean");
+    val_bool = dict_bool2.getValBool();
+    auto dict_real2 = root_node.queryDictKey("New Real");
+    val_real = dict_real2.getValReal();
+    auto dict_data2 = root_node.queryDictKey("New Data");
+    val_data = dict_data2.getValData();
+
+    xml_out = root_node.writeToXml();
+
+    auto empty_dict = NvpPlistPort::newEmptyDict();
+    empty_dict.insertDictKey(root_node, "root");
+
+    xml_out = empty_dict.writeToXml();
+
+}
+
 static void libplist_str_test()
 {
     char(*p_str_init)[1000][20] = (char(*)[1000][20])(plist_init_str);
@@ -348,7 +408,9 @@ static void libplist_str_test()
 void nvp_app_init()
 {
     libplist_str_test();
-    
+
+    nvp_plist_test();
+
     NvpLayout::subElemGen("top_node_view", new TopNodeView, NvpLayout::getTopLayout());
     NvpLayout::subElemGen("top_menu_stat", new TopMenuStat, NvpLayout::getTopLayout());
     NvpLayout::subElemGen("node_view_select", new NodeViewSelect, NvpLayout::getTopLayout());
