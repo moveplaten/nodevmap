@@ -1,5 +1,5 @@
 #import "qtz_common.h"
-#include "util/util.h"
+#include "util/nvp_util.h"
 
 NSWindow* g_main_wnd;
 CGContextRef g_cg_ref;

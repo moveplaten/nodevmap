@@ -1,4 +1,4 @@
-#include "util.h"
+#include "nvp_util.h"
 
 #ifdef _WIN32
 std::string NvpUtil::getExeFilePath()

@@ -1,7 +1,7 @@
 #include "base/base.h"
 #include "draw/draw_priv.h"
 #include "nvp-io/nvp_plist.h"
-#include "util/util.h"
+#include "util/nvp_util.h"
 
 class TopNodeView : public NvpEvent
 {

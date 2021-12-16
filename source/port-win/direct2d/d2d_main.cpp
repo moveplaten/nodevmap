@@ -1,5 +1,5 @@
 #include "d2d_common.h"
-#include "util/util.h"
+#include "util/nvp_util.h"
 #include <stdio.h>
 
 D2dUtil* D2dUtil::g_d2dutil = nullptr;
