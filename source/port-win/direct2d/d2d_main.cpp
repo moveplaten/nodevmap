@@ -127,7 +127,7 @@ void NvpDrawPort::beginDraw()
 
     target->EndDraw();
     
-    D2dUtil::g_d2dutil->draw_fps = nvpUtil->getFpsByChannel(0);
+    D2dUtil::g_d2dutil->draw_fps = NvpUtil::getFpsByChannel(0);
     char tempc[30] = { 0 };
     sprintf(tempc, "draw fps : %f", D2dUtil::g_d2dutil->draw_fps);
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
@@ -137,7 +137,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
     ptSize size_font, NvpColor colo)
 {
     auto str_size = str.size();
-    auto u32_str = nvpUtil->utf8_to_utf32(str);
+    auto u32_str = NvpUtil::utf8_to_utf32(str);
     float font_size = size_font;
     
     DWRITE_GLYPH_RUN glyph_run;

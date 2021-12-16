@@ -154,7 +154,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    auto fps = nvpUtil->getFpsByChannel(0);
+    auto fps = NvpUtil::getFpsByChannel(0);
     NSLog(@"Drawing FPS %f", fps);
     g_cg_ref = [[NSGraphicsContext currentContext] CGContext];
     

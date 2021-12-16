@@ -1,6 +1,7 @@
 #include "base/base.h"
 #include "draw/draw_priv.h"
 #include "nvp-io/nvp_plist.h"
+#include "util/util.h"
 
 class TopNodeView : public NvpEvent
 {
@@ -344,6 +345,14 @@ static void nvp_plist_test()
 
     xml_out = empty_dict.writeToXml();
 
+    auto exe_path = NvpUtil::getExeFilePath();
+    NvpUtil::writeExePath(xml_out.xml_str, xml_out.xml_len, "test01.plist", "wb");
+
+    auto file_read = NvpUtil::readExePath("test01.plist", "rb");
+
+    auto temp_ = NvpPlistPort(file_read.buf);
+    xml_out = temp_.writeToXml();
+    
 }
 
 static void libplist_str_test()

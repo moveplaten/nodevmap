@@ -43,7 +43,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
     CGContextSetTextMatrix(g_cg_ref, font_ctm);
     
     auto str_size = str.size();
-    auto u16_str = nvpUtil->utf8_to_utf16(str);
+    auto u16_str = NvpUtil::utf8_to_utf16(str);
     CGGlyph* glyphs = new CGGlyph[str_size];
     CGRect* boundings = new CGRect[str_size];
     CGPoint* points = new CGPoint[str_size];
