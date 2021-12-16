@@ -72,6 +72,7 @@ namespace NvpDrawData
     class Text_Left_Right_
     {
     public:
+        Text_Left_Right_() : text("?"), start{ 0 }, font_size(12) {}
         void setText(const std::string& str) { text = str; }
         void setStart(NvpXyCoord xy) { start = xy; }
 
@@ -82,9 +83,9 @@ namespace NvpDrawData
         void setFontSize(ptSize size) { assert(size > 0); font_size = size; }
 
     private:
-        std::string text = "?";
-        NvpXyCoord start = { 0, 0 };
-        ptSize font_size = 12.0f;
+        std::string text;
+        NvpXyCoord start;
+        ptSize font_size;
 
         NVP_DRAW_PRIVATE
         (
@@ -97,6 +98,7 @@ namespace NvpDrawData
     class One_Line_
     {
     public:
+        One_Line_() : p1{ 0 }, p2{ 0 } {}
         void setPoint1(NvpXyCoord pt1) { p1 = pt1; }
         void setPoint2(NvpXyCoord pt2) { p2 = pt2; }
 
@@ -104,8 +106,8 @@ namespace NvpDrawData
         NvpXyCoord getPoint2() { return p2; }
 
     private:
-        NvpXyCoord p1 = { 0 };
-        NvpXyCoord p2 = { 0 };
+        NvpXyCoord p1;
+        NvpXyCoord p2;
 
         NVP_DRAW_PRIVATE
         (
@@ -118,6 +120,7 @@ namespace NvpDrawData
     class Four_Rect_Percent_
     {
     public:
+        Four_Rect_Percent_() : percent(0) {}
         void setPercent(int per /*1~50*/) { percent = per; }
         int getPercent() { return percent; }
 
@@ -169,7 +172,11 @@ public:
     NvpDrawCache(const NvpDrawData::Command command);
     ~NvpDrawCache();
 
-    static void commandString(const NvpDrawData::Command command, char* const str);
+    NvpDrawCache(const NvpDrawCache& cache) = delete;
+    NvpDrawCache& operator=(const NvpDrawCache& cache) = delete;
+    NvpDrawCache(NvpDrawCache&& cache) = default;
+
+    static const char* commandString(const NvpDrawData::Command command);
 
     void colorBright();
     void colorDarker();
@@ -237,7 +244,7 @@ private:
         const BaseElement& base_elem;
     };
 
-    void OptSwitch(const Opt opt, const Param* const param = nullptr, char* const str = nullptr);
+    void OptSwitch(const Opt opt, const Param* const param = nullptr, const char** str = nullptr);
 
     template<typename T>
     void NvpOptPush(const T* t, const Opt opt, const Param* const param)

@@ -101,15 +101,17 @@ void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
     const_cast<NvpDrawCache&>(cache).OptSwitch(NvpDrawCache::DRAW, &param);
 }
 
-void NvpDrawCache::commandString(const NvpDrawData::Command command, char* const str)
+const char* NvpDrawCache::commandString(const NvpDrawData::Command command)
 {
     NvpDrawCache temp(NvpDrawData::Null_Data);
     temp.null_data.cmd = command;
 
-    temp.OptSwitch(NvpDrawCache::NUL, nullptr, str);
+    const char* str = nullptr;
+    temp.OptSwitch(NvpDrawCache::NUL, nullptr, &str);
+    return str;
 }
 
-void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, char* const str)
+void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, const char** str)
 {
     auto command = null_data.getCmd();
 
@@ -118,28 +120,28 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, char* cons
     case NvpDrawData::One_Line:
     {
         NvpOptPush(&one_line, opt, param);
-        if (str) { strcat(str, "One_Line"); }
+        if (str) *str = "One_Line";
     }
     break;
 
     case NvpDrawData::Rect_Same_Elem:
     {
         NvpOptPush(&rect_same_elem, opt, param);
-        if (str) { strcat(str, "Rect_Same_Elem"); }
+        if (str) *str = "Rect_Same_Elem";
     }
     break;
 
     case NvpDrawData::Text_Left_Right:
     {
         NvpOptPush(&text_left_right, opt, param);
-        if (str) { strcat(str, "Text_Left_Right"); }
+        if (str) *str = "Text_Left_Right";
     }
     break;
 
     case NvpDrawData::Four_Rect_Percent:
     {
         NvpOptPush(&four_rect_percent, opt, param);
-        if (str) { strcat(str, "Four_Rect_Percent"); }
+        if (str) *str = "Four_Rect_Percent";
     }
     break;
 
@@ -206,8 +208,9 @@ NvpDrawCache::~NvpDrawCache()
 
 void NvpDraw::pushDraw(NvpDrawCache& cache)
 {
+    assert(cache.is_push == false);
     cache.is_push = true;
-    draw_cache.push_back(cache);
+    draw_cache.push_back(std::move(cache));
 }
 
 NvpDrawCache* NvpDraw::getDraw(size_t order)

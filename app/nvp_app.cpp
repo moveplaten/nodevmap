@@ -165,10 +165,8 @@ static NvpColor toColor(const char* col)
 
 static void initCmdColStr(NvpDraw* draw, const char* cmd, const char* col, float font_size)
 {
-    char rect_same_elem[30] = { 0 };
-    NvpDrawCache::commandString(NvpDrawData::Rect_Same_Elem, rect_same_elem);
-    char text_left_right[30] = { 0 };
-    NvpDrawCache::commandString(NvpDrawData::Text_Left_Right, text_left_right);
+    auto rect_same_elem = NvpDrawCache::commandString(NvpDrawData::Rect_Same_Elem);
+    auto text_left_right = NvpDrawCache::commandString(NvpDrawData::Text_Left_Right);
 
     NvpColor colo = toColor(col);
 
