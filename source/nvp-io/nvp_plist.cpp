@@ -12,6 +12,19 @@ NvpPlistPort::NvpPlistPort(const char* xml_in) :
     if (one_plist) initVal();
 }
 
+NvpPlistPort::NvpPlistPort(const NvpPlistPort& plist) :
+    one_plist(nullptr), key_string(nullptr), one_type(PLIST_NONE),
+    gen_by_query(false), is_freed(false)
+{
+    auto copy = plist_copy(plist.one_plist);
+
+    if (copy)
+    {
+        this->one_plist = copy;
+        initVal();
+    }
+}
+
 NvpPlistPort::NvpPlistPort(plist_t plist, bool by_query) :
     one_plist(plist), key_string(nullptr), one_type(PLIST_NONE),
     gen_by_query(by_query), is_freed(false)
@@ -45,7 +58,9 @@ void NvpPlistPort::switchType()
 
     case PLIST_UINT:
     {
-
+        uint64_t value = 0;
+        plist_get_uint_val(one_plist, &value);
+        one_value.val_uint = value;
     }
     break;
 
@@ -175,6 +190,12 @@ double NvpPlistPort::getValReal() const
     return one_value.val_real;
 }
 
+uint64_t NvpPlistPort::getValUint() const
+{
+    assert(one_type == PLIST_UINT);
+    return one_value.val_uint;
+}
+
 NvpPlistPort::ValData NvpPlistPort::getValData() const
 {
     assert(one_type == PLIST_DATA);
@@ -203,6 +224,12 @@ NvpPlistPort NvpPlistPort::newReal(double val)
 {
     auto item_real = plist_new_real(val);
     return NvpPlistPort(item_real, false);
+}
+
+NvpPlistPort NvpPlistPort::newUint(uint64_t val)
+{
+    auto item_uint = plist_new_uint(val);
+    return NvpPlistPort(item_uint, false);
 }
 
 NvpPlistPort NvpPlistPort::newData(const ValData& data)

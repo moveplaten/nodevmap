@@ -323,11 +323,13 @@ static void nvp_plist_test()
     auto new_real = NvpPlistPort::newReal(2.222);
     NvpPlistPort::ValData data("NEW DATA", 8);
     auto new_data = NvpPlistPort::newData(data);
+    auto new_uint = NvpPlistPort::newUint(10000000);
 
     root_node.insertDictKey(new_str, "New String");
     root_node.insertDictKey(new_bool, "New Boolean");
     root_node.insertDictKey(new_real, "New Real");
     root_node.insertDictKey(new_data, "New Data");
+    root_node.insertDictKey(new_uint, "New Uint");
 
     auto dict_string2 = root_node.queryDictKey("New String");
     val_string = dict_string2.getValString();
@@ -337,6 +339,8 @@ static void nvp_plist_test()
     val_real = dict_real2.getValReal();
     auto dict_data2 = root_node.queryDictKey("New Data");
     val_data = dict_data2.getValData();
+    auto dict_uint2 = root_node.queryDictKey("New Uint");
+    auto val_uint = dict_uint2.getValUint();
 
     xml_out = root_node.writeToXml();
 
@@ -352,7 +356,14 @@ static void nvp_plist_test()
 
     auto temp_ = NvpPlistPort(file_read.buf);
     xml_out = temp_.writeToXml();
-    
+
+    auto copy1 = empty_dict;
+    auto copy2 = new_str;
+    auto copy3 = copy2;
+    auto copy4 = dict_string2;
+    auto copy5 = dict_data;
+    auto copy6 = root_node;
+    auto copy7 = new_data;
 }
 
 static void libplist_str_test()
