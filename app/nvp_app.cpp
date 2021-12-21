@@ -349,6 +349,41 @@ static void nvp_plist_test()
 
     xml_out = empty_dict.writeToXml();
 
+    auto array_0 = NvpPlistPort::newEmptyArray();
+    auto str_copy = new_str;
+    auto bool_copy = new_bool;
+    auto real_copy = new_real;
+    auto data_copy = new_data;
+    auto uint_copy = new_uint;
+
+    array_0.pushArrayItem(str_copy);
+    array_0.pushArrayItem(bool_copy);
+    array_0.pushArrayItem(real_copy);
+    array_0.pushArrayItem(data_copy);
+    array_0.pushArrayItem(uint_copy);
+    xml_out = array_0.writeToXml();
+
+    auto array_1 = array_0;
+    auto array_2 = array_0;
+
+    array_2.pushArrayItem(array_0);
+    array_2.pushArrayItem(array_1);
+    auto index = array_0.getArrayIndex();
+    index = array_1.getArrayIndex();
+    index = array_2.getArrayIndex();
+
+    auto arr_size = array_0.getArraySize();
+    arr_size = array_1.getArraySize();
+    arr_size = array_2.getArraySize();
+
+    auto arr_item_1 = array_2.queryArray(0);
+    auto arr_item_2 = array_2.queryArray(1);
+    auto arr_item_3 = array_2.queryArray(6);
+    auto arr_item_4 = array_2.queryArray(7);
+
+    empty_dict.insertDictKey(array_2, "New Array");
+    xml_out = empty_dict.writeToXml();
+
     auto exe_path = NvpUtil::getExeFilePath();
     NvpUtil::writeExePath(xml_out.xml_str, xml_out.xml_len, "test01.plist", "wb");
 

@@ -36,9 +36,17 @@ public:
 
     NvpPlistPort queryDictKey(const char* key_str) const;
 
+    NvpPlistPort queryArray(uint32_t order) const; //order from 0;
+
     uint32_t getDictSize() const;
 
+    uint32_t getArraySize() const;
+
+    uint32_t getArrayIndex() const;
+
     void insertDictKey(NvpPlistPort& plist, const char* key_str);
+
+    void pushArrayItem(NvpPlistPort& plist);
 
     const char* getKeyString() const;
 
@@ -69,6 +77,8 @@ public:
 
     static NvpPlistPort newEmptyDict();
 
+    static NvpPlistPort newEmptyArray();
+
     static NvpPlistPort newString(const char* str);
 
     static NvpPlistPort newBool(bool bool_t);
@@ -84,7 +94,7 @@ public:
     ~NvpPlistPort();
 
 private:
-    NvpPlistPort(plist_t plist, bool by_query);
+    NvpPlistPort(plist_t plist, bool by_query, bool freed = false);
 
     void initVal();
     void switchType();

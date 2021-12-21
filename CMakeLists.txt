@@ -32,7 +32,6 @@ endif()
 
 target_include_directories(nodevmap PRIVATE
     "${CMAKE_SOURCE_DIR}/source"
-    "${CMAKE_SOURCE_DIR}/third-party/libplist/include"
 
 )
 

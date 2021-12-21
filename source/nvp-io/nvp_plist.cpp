@@ -25,9 +25,9 @@ NvpPlistPort::NvpPlistPort(const NvpPlistPort& plist) :
     }
 }
 
-NvpPlistPort::NvpPlistPort(plist_t plist, bool by_query) :
+NvpPlistPort::NvpPlistPort(plist_t plist, bool by_query, bool freed) :
     one_plist(plist), key_string(nullptr), one_type(PLIST_NONE),
-    gen_by_query(by_query), is_freed(false)
+    gen_by_query(by_query), is_freed(freed)
 {
     if (one_plist) initVal();
 }
@@ -151,7 +151,14 @@ NvpPlistPort NvpPlistPort::queryDictKey(const char* key_str) const
 {
     assert(one_type == PLIST_DICT);
     auto item = plist_dict_get_item(one_plist, key_str);
-    return NvpPlistPort(item, true);
+    return NvpPlistPort(item, true, true);
+}
+
+NvpPlistPort NvpPlistPort::queryArray(uint32_t order) const
+{
+    assert(one_type == PLIST_ARRAY);
+    auto item = plist_array_get_item(one_plist, order);
+    return NvpPlistPort(item, true, true);
 }
 
 uint32_t NvpPlistPort::getDictSize() const
@@ -160,10 +167,28 @@ uint32_t NvpPlistPort::getDictSize() const
     return plist_dict_get_size(one_plist);
 }
 
+uint32_t NvpPlistPort::getArraySize() const
+{
+    assert(one_type == PLIST_ARRAY);
+    return plist_array_get_size(one_plist);
+}
+
+uint32_t NvpPlistPort::getArrayIndex() const
+{
+    return plist_array_get_item_index(one_plist);
+}
+
 void NvpPlistPort::insertDictKey(NvpPlistPort& plist, const char* key_str)
 {
     assert(plist.is_freed == false && one_type == PLIST_DICT);
     plist_dict_set_item(one_plist, key_str, plist.one_plist);
+    plist.is_freed = true;
+}
+
+void NvpPlistPort::pushArrayItem(NvpPlistPort& plist)
+{
+    assert(plist.is_freed == false && one_type == PLIST_ARRAY);
+    plist_array_append_item(one_plist, plist.one_plist);
     plist.is_freed = true;
 }
 
@@ -205,6 +230,12 @@ NvpPlistPort::ValData NvpPlistPort::getValData() const
 NvpPlistPort NvpPlistPort::newEmptyDict()
 {
     auto empty = plist_new_dict();
+    return NvpPlistPort(empty, false);
+}
+
+NvpPlistPort NvpPlistPort::newEmptyArray()
+{
+    auto empty = plist_new_array();
     return NvpPlistPort(empty, false);
 }
 
