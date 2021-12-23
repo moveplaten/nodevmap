@@ -90,6 +90,11 @@ public:
         return self_draw;
     }
 
+    void setSelfDraw(NvpDraw* draw)
+    {
+        self_draw = draw;
+    }
+
     NvpEvent* getSelfEvent()
     {
         return self_event;

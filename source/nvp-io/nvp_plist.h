@@ -15,7 +15,7 @@ public:
     NvpPlistPort(const char* xml_in);
 
     NvpPlistPort(const NvpPlistPort& plist);
-    NvpPlistPort& operator=(const NvpPlistPort& plist) = delete;
+    NvpPlistPort& operator=(const NvpPlistPort& plist);
 
     struct XmlPtr
     {
@@ -33,6 +33,8 @@ public:
     XmlPtr writeToXml();
 
     PlistType getType() const;
+
+    NvpPlistPort getParent() const;
 
     NvpPlistPort queryDictKey(const char* key_str) const;
 
@@ -91,6 +93,14 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////
 
+    static NvpPlistPort getSubFirst(const NvpPlistPort& array);
+
+    static NvpPlistPort getNext(const NvpPlistPort& array);
+
+    static NvpPlistPort getSubLast(const NvpPlistPort& array);
+
+    static NvpPlistPort getNextReverse(const NvpPlistPort& array);
+
     ~NvpPlistPort();
 
 private:
@@ -98,6 +108,7 @@ private:
 
     void initVal();
     void switchType();
+    void Delete();
 
     union Value
     {

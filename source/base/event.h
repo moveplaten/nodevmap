@@ -83,10 +83,10 @@ public:
 
     static BaseElement* hitLayout(const mousePt world_pt, BaseElement* base);
 
+    static void initAll(BaseElement* base, NvpEventParam& param);
+
 private:
     static void fromUserEvent(NvpUserEventType type, NvpEventParam& param);
-
-    static void initAll(BaseElement* base, NvpEventParam& param);
 
     static void hitLayoutR(const mousePt world_pt, BaseElement* base, BaseElement** result);
 };

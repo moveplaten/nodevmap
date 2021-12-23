@@ -33,6 +33,16 @@ void NvpLayout::setBaseRect(BaseElement* base, const BaseRect& rect)
     }
 }
 
+bool NvpLayout::ptInRect(mousePt pt, BaseRect rect)
+{
+    if (rect.left <= pt.x && rect.right > pt.x &&
+        rect.top <= pt.y && rect.bottom > pt.y)
+    {
+        return true;
+    }
+    return false;
+}
+
 BaseRect& NvpLayout::rectCorrect(BaseRect& rect)
 {
     float temp;

@@ -25,6 +25,25 @@ NvpPlistPort::NvpPlistPort(const NvpPlistPort& plist) :
     }
 }
 
+NvpPlistPort& NvpPlistPort::operator=(const NvpPlistPort& plist)
+{
+    if (this == &plist)
+    {
+        return *this;
+    }
+
+    Delete();
+
+    memcpy(this, &plist, sizeof(NvpPlistPort));
+    this->is_freed = true;
+    this->xml_out = XmlPtr();
+    char* temp = nullptr;
+    plist_dict_get_item_key(one_plist, &temp);
+    key_string = temp;
+
+    return *this;
+}
+
 NvpPlistPort::NvpPlistPort(plist_t plist, bool by_query, bool freed) :
     one_plist(plist), key_string(nullptr), one_type(PLIST_NONE),
     gen_by_query(by_query), is_freed(freed)
@@ -145,6 +164,12 @@ NvpPlistPort::XmlPtr NvpPlistPort::writeToXml()
 NvpPlistPort::PlistType NvpPlistPort::getType() const
 {
     return one_type;
+}
+
+NvpPlistPort NvpPlistPort::getParent() const
+{
+    auto parent = plist_get_parent(one_plist);
+    return NvpPlistPort(parent, false, true);
 }
 
 NvpPlistPort NvpPlistPort::queryDictKey(const char* key_str) const
@@ -269,7 +294,60 @@ NvpPlistPort NvpPlistPort::newData(const ValData& data)
     return NvpPlistPort(item_data, false);
 }
 
-NvpPlistPort::~NvpPlistPort()
+NvpPlistPort NvpPlistPort::getSubFirst(const NvpPlistPort& array)
+{
+    if (array.getType() == PLIST_ARRAY)
+    {
+        return array.queryArray(0);
+    }
+    else
+    {
+        return NvpPlistPort(nullptr);
+    }
+}
+
+NvpPlistPort NvpPlistPort::getNext(const NvpPlistPort& array)
+{
+    auto index = array.getArrayIndex();
+    auto parent = array.getParent();
+    if (parent.getType() == PLIST_ARRAY)
+    {
+        return parent.queryArray(++index);
+    }
+    else
+    {
+        return NvpPlistPort(nullptr);
+    }
+}
+
+NvpPlistPort NvpPlistPort::getSubLast(const NvpPlistPort& array)
+{
+    if (array.getType() == PLIST_ARRAY)
+    {
+        auto size = array.getArraySize();
+        return array.queryArray(--size);
+    }
+    else
+    {
+        return NvpPlistPort(nullptr);
+    }
+}
+
+NvpPlistPort NvpPlistPort::getNextReverse(const NvpPlistPort& array)
+{
+    auto index = array.getArrayIndex();
+    auto parent = array.getParent();
+    if (parent.getType() == PLIST_ARRAY)
+    {
+        return parent.queryArray(--index);
+    }
+    else
+    {
+        return NvpPlistPort(nullptr);
+    }
+}
+
+void NvpPlistPort::Delete()
 {
     if (!gen_by_query && !is_freed)
     {
@@ -285,4 +363,9 @@ NvpPlistPort::~NvpPlistPort()
     {
         free(key_string);
     }
+}
+
+NvpPlistPort::~NvpPlistPort()
+{
+    Delete();
 }

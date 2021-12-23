@@ -83,9 +83,11 @@ void NvpEvent::initAll(BaseElement* base, NvpEventParam& param)
     {
         if (base)
         {
-            auto draw = new NvpDraw(base);
-            base->self_draw = draw;
-
+            if (!base->self_draw)
+            {
+                auto draw = new NvpDraw(base);
+                base->self_draw = draw;
+            }
             base->self_event->userInit(base, param);
         }
 

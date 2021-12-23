@@ -25,6 +25,8 @@ public:
 
     static void setBaseRect(BaseElement* base, const BaseRect& rect);
 
+    static bool ptInRect(mousePt pt, BaseRect rect);
+
     static BaseRect& rectCorrect(BaseRect& rect);
 
     const BaseRect& getRectRefUp() const { return layout_body.ref_up; }
@@ -53,6 +55,8 @@ public:
     static BaseElement* getTopNodeView() { return g_top_node_view; }
 
     static BaseElement* getTopMenuStat() { return g_top_menu_stat; }
+
+    static ElemIDStorage* getIDStorage() { return g_all_id_store; }
 
 private:
     union NvpLayoutUnit;

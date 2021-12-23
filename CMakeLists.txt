@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(nodevmap_app_SOURCES
     app/entry_main.cpp
-    app/nvp_app.cpp
-    
+    app/test/TEST_01.cpp
+
 )
 
 ################################################################################

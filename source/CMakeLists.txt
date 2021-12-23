@@ -14,6 +14,7 @@ set(nodevmap_SOURCES
     draw/draw_rect.cpp
     draw/draw_line.cpp
     nvp-io/nvp_plist.cpp
+    nvp-io/plist_io.cpp
     util/nvp_util.cpp
 
 )
