@@ -10,19 +10,24 @@ public:
 
 protected:
     virtual NvpPlistSeq* createNewSeq() = 0;
-    virtual void signalSeqEnd() = 0;
+    virtual BaseElement* signalSeqEnd(BaseElement* base) = 0;
     virtual void readSeq(const NvpPlistPort& plist, uint32_t offset) = 0;
     virtual void writeSeq(BaseElement* base, NvpPlistPort& plist) = 0;
 
     friend class NvpPlistIO;
 };
 
+constexpr int MAX_STACK_LEVEL = 100;
+
 class NvpPlistIO
 {
 public:
-    NvpPlistIO(NvpPlistSeq* seq) : io_seq(seq), io_offset(0) {}
+    NvpPlistIO(NvpPlistSeq* seq) : io_seq(seq), stack_level(-1), stack_prev{ nullptr } {}
 
-    void inputAll(const NvpPlistPort& plist);
+    NvpPlistIO(const NvpPlistIO& io) = delete;
+    NvpPlistIO& operator=(const NvpPlistIO& io) = delete;
+
+    BaseElement* inputAll(const NvpPlistPort& plist, BaseElement* base = nullptr);
 
     NvpPlistPort outputAll(BaseElement* base);
 
@@ -32,6 +37,7 @@ private:
     void prepareNewSeq();
     void outputAllR(BaseElement* base, NvpPlistPort& plist);
 
-    uint32_t io_offset;
+    int stack_level;
     NvpPlistSeq* io_seq;
+    BaseElement* stack_prev[MAX_STACK_LEVEL];
 };

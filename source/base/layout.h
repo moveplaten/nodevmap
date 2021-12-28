@@ -35,6 +35,8 @@ public:
 
     static BaseElement* findSameLevel(const std::string& str, BaseElement* base);
 
+    static BaseElement* getUpElem(BaseElement* base);
+
     static BaseElement* getSubFirst(BaseElement* base);
 
     static BaseElement* getNext(BaseElement* base);

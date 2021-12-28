@@ -78,6 +78,12 @@ BaseElement* NvpLayout::findSameLevel(const std::string& str, BaseElement* base)
     }
 }
 
+BaseElement* NvpLayout::getUpElem(BaseElement* base)
+{
+    auto head = getLayoutHead(base);
+    return head->up_elem;
+}
+
 BaseElement* NvpLayout::getSubFirst(BaseElement* base)
 {
     if (!base)
@@ -254,6 +260,11 @@ BaseElement* NvpLayout::elemGen(const std::string& str,
             auto& str_ref = content->first;
 
             auto id = NvpLayout::g_all_id_store->storeOneElem();
+            
+            if (str.size() == 0)
+            {
+                const_cast<std::string&>(str_ref) = std::to_string(id);
+            }
 
             BaseElement* base = new BaseElement(id, str_ref, layout, event, be_top);
 
@@ -363,9 +374,9 @@ NvpLayout::~NvpLayout()
 {
     if (layout_iter != layout_level.end())
     {
-        layout_level.erase(layout_iter);
-
         auto content = *layout_iter;
         g_all_id_store->deleteOneElem(content.elem->self_id);
+
+        layout_level.erase(layout_iter);
     }
 }
