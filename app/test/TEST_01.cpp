@@ -127,40 +127,69 @@ protected:
         return node;
     }
 
-    void readSeq(const NvpPlistPort& plist, uint32_t offset) override
+    template<typename T>
+    void procSeqT(T &t, NvpPlistPort::PlistType type)
+    {
+        if (getType() == READ)
+        {
+            if (type == PLIST_UINT)
+            {
+                t = getRead()->plist.getValUint();
+            }
+            else if (type == PLIST_REAL)
+            {
+                t = getRead()->plist.getValReal();
+            }
+        }
+        else
+        {
+            if (type == PLIST_UINT)
+            {
+                auto temp = NvpPlistPort::newUint(t);
+                getWrite()->plist.pushArrayItem(temp);
+            }
+            else if (type == PLIST_REAL)
+            {
+                auto temp = NvpPlistPort::newReal(t);
+                getWrite()->plist.pushArrayItem(temp);
+            }
+        }
+    }
+
+    void switchOffset(int offset)
     {
         switch (offset)
         {
         case 0:
-            rect.left = plist.getValReal();
+            procSeqT(rect.left, PLIST_REAL);
             break;
 
         case 1:
-            rect.top = plist.getValReal();
+            procSeqT(rect.top, PLIST_REAL);
             break;
 
         case 2:
-            rect.right = plist.getValReal();
+            procSeqT(rect.right, PLIST_REAL);
             break;
 
         case 3:
-            rect.bottom = plist.getValReal();
+            procSeqT(rect.bottom, PLIST_REAL);
             break;
 
         case 4:
-            colo.Red = plist.getValUint();
+            procSeqT(colo.Red, PLIST_UINT);
             break;
 
         case 5:
-            colo.Green = plist.getValUint();
+            procSeqT(colo.Green, PLIST_UINT);
             break;
 
         case 6:
-            colo.Blue = plist.getValUint();
+            procSeqT(colo.Blue, PLIST_UINT);
             break;
 
         case 7:
-            colo.Alpha = plist.getValUint();
+            procSeqT(colo.Alpha, PLIST_UINT);
             break;
 
         default:
@@ -168,40 +197,33 @@ protected:
         }
     }
 
-    void writeSeq(BaseElement* base, NvpPlistPort& plist) override
+    void procSeq() override
     {
-        auto array = NvpPlistPort::newEmptyArray();
-        auto rect = base->getRectRefUp();
-        auto colo = base->getSelfDraw()->getDraw(0)->getColor();
-        auto rect_l = NvpPlistPort::newReal(rect.left);
-        auto rect_t = NvpPlistPort::newReal(rect.top);
-        auto rect_r = NvpPlistPort::newReal(rect.right);
-        auto rect_b = NvpPlistPort::newReal(rect.bottom);
-        auto colo_r = NvpPlistPort::newUint(colo.Red);
-        auto colo_g = NvpPlistPort::newUint(colo.Green);
-        auto colo_b = NvpPlistPort::newUint(colo.Blue);
-        auto colo_a = NvpPlistPort::newUint(colo.Alpha);
-        array.pushArrayItem(rect_l);
-        array.pushArrayItem(rect_t);
-        array.pushArrayItem(rect_r);
-        array.pushArrayItem(rect_b);
-        array.pushArrayItem(colo_r);
-        array.pushArrayItem(colo_g);
-        array.pushArrayItem(colo_b);
-        array.pushArrayItem(colo_a);
-        plist.pushArrayItem(array);
+        if (getType() == READ)
+        {
+            switchOffset(getRead()->offset);
+        }
+        else
+        {
+            rect = getWrite()->base->getRectRefUp();
+            colo = getWrite()->base->getSelfDraw()->getDraw(0)->getColor();
+            for (int i = 0; i < offset_count; ++i)
+            {
+                switchOffset(i);
+            }
+        }
     }
 
 private:
+    const int offset_count = 8;
     BaseRect rect{ 0 };
     NvpColor colo{ 0 };
 };
 
 static void saveAllNode()
 {
-    NvpPlistIO io(new PlistSeqRecColo);
     auto node1 = NvpLayout::getSubFirst(NvpLayout::getTopNodeView());
-    auto out = io.outputAll(node1);
+    auto out = NvpPlistIO::outputAll(node1, new PlistSeqRecColo);
     auto xml = out.writeToXml();
     NvpUtil::writeExePath(xml.xml_str, xml.xml_len, io_file_name, "wb");
 }
@@ -219,9 +241,7 @@ static void initAllNode()
         xml_in = read.buf;
     }
     NvpPlistPort root(xml_in);
-
-    NvpPlistIO io(new PlistSeqRecColo);
-    io.inputAll(root);
+    NvpPlistIO::inputAll(root, new PlistSeqRecColo);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

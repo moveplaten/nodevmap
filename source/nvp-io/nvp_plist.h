@@ -46,9 +46,9 @@ public:
 
     uint32_t getArrayIndex() const;
 
-    void insertDictKey(NvpPlistPort& plist, const char* key_str);
+    void insertDictKey(NvpPlistPort& plist, const char* key_str) const;
 
-    void pushArrayItem(NvpPlistPort& plist);
+    void pushArrayItem(NvpPlistPort& plist) const;
 
     const char* getKeyString() const;
 

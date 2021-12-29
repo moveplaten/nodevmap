@@ -203,14 +203,14 @@ uint32_t NvpPlistPort::getArrayIndex() const
     return plist_array_get_item_index(one_plist);
 }
 
-void NvpPlistPort::insertDictKey(NvpPlistPort& plist, const char* key_str)
+void NvpPlistPort::insertDictKey(NvpPlistPort& plist, const char* key_str) const
 {
     assert(plist.is_freed == false && one_type == PLIST_DICT);
     plist_dict_set_item(one_plist, key_str, plist.one_plist);
     plist.is_freed = true;
 }
 
-void NvpPlistPort::pushArrayItem(NvpPlistPort& plist)
+void NvpPlistPort::pushArrayItem(NvpPlistPort& plist) const
 {
     assert(plist.is_freed == false && one_type == PLIST_ARRAY);
     plist_array_append_item(one_plist, plist.one_plist);
