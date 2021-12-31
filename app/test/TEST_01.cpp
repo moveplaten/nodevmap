@@ -1,4 +1,4 @@
-#include "test_plist_02.h"
+#include "test_plist_03.h"
 
 class TopNodeView : public NvpEvent
 {
@@ -127,32 +127,43 @@ protected:
         return node;
     }
 
+    void encode32Bit(char dst[4], const uint32_t& bit_32)
+    {
+        uint8_t* const rep = reinterpret_cast<uint8_t*>(dst);
+
+        rep[0] = static_cast<uint8_t>(bit_32);
+        rep[1] = static_cast<uint8_t>(bit_32 >> 8);
+        rep[2] = static_cast<uint8_t>(bit_32 >> 16);
+        rep[3] = static_cast<uint8_t>(bit_32 >> 24);
+    }
+
+    void decode32Bit(const char src[4], uint32_t& bit_32)
+    {
+        const uint8_t* const rep = reinterpret_cast<const uint8_t*>(src);
+
+        bit_32 = (static_cast<uint32_t>(rep[0])) |
+            (static_cast<uint32_t>(rep[1]) << 8) |
+            (static_cast<uint32_t>(rep[2]) << 16) |
+            (static_cast<uint32_t>(rep[3]) << 24);
+    }
+
     template<typename T>
-    void procSeqT(T &t, NvpPlistPort::PlistType type)
+    void procSeqT(T& t, NvpPlistPort::PlistType type)
     {
         if (getType() == READ)
         {
-            if (type == PLIST_UINT)
-            {
-                t = getRead()->plist.getValUint();
-            }
-            else if (type == PLIST_REAL)
-            {
-                t = getRead()->plist.getValReal();
-            }
+            auto data = getRead()->plist.getValData();
+            T temp;
+            decode32Bit(data.data_ptr, reinterpret_cast<uint32_t&>(temp));
+            t = temp;
         }
         else
         {
-            if (type == PLIST_UINT)
-            {
-                auto temp = NvpPlistPort::newUint(t);
-                getWrite()->plist.pushArrayItem(temp);
-            }
-            else if (type == PLIST_REAL)
-            {
-                auto temp = NvpPlistPort::newReal(t);
-                getWrite()->plist.pushArrayItem(temp);
-            }
+            char c[4] = { 0 };
+            encode32Bit(c, reinterpret_cast<const uint32_t&>(t));
+            NvpPlistPort::ValData dat(c, 4);
+            auto data = NvpPlistPort::newData(dat);
+            getWrite()->plist.pushArrayItem(data);
         }
     }
 
@@ -177,19 +188,7 @@ protected:
             break;
 
         case 4:
-            procSeqT(colo.Red, PLIST_UINT);
-            break;
-
-        case 5:
-            procSeqT(colo.Green, PLIST_UINT);
-            break;
-
-        case 6:
-            procSeqT(colo.Blue, PLIST_UINT);
-            break;
-
-        case 7:
-            procSeqT(colo.Alpha, PLIST_UINT);
+            procSeqT(colo, PLIST_UINT);
             break;
 
         default:
@@ -215,7 +214,7 @@ protected:
     }
 
 private:
-    const int offset_count = 8;
+    const int offset_count = 5;
     BaseRect rect{ 0 };
     NvpColor colo{ 0 };
 };
@@ -234,7 +233,7 @@ static void initAllNode()
     auto read = NvpUtil::readExePath(io_file_name, "rb");
     if (read.buf == nullptr)
     {
-        xml_in = plist_array_02;
+        xml_in = plist_array_03;
     }
     else
     {

@@ -8,7 +8,7 @@ void NvpPlistIO::inputAll(NvpPlistPort& plist, NvpPlistSeq* seq)
 
 BaseElement* NvpPlistIO::inputAllR(NvpPlistPort& plist, BaseElement* base)
 {
-    int io_offset = 0;
+    uint32_t io_offset = 0;
 
     ++stack_level;
     assert(stack_level < MAX_STACK_LEVEL);
