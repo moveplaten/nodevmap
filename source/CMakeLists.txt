@@ -22,6 +22,7 @@ set(nodevmap_SOURCES
 ################################################################################
 
 set(nodevmap_WIN_SOURCES
+    port-win/win_sys.cpp
     port-win/win_main.cpp
     port-win/win_message.cpp
     port-win/direct2d/d2d_main.cpp
@@ -42,6 +43,7 @@ endif()
 ################################################################################
 
 set(nodevmap_OSX_SOURCES
+    port-osx/osx_sys.mm
     port-osx/osx_main.mm
     port-osx/osx_message.mm
     port-osx/quartz/qtz_main.mm

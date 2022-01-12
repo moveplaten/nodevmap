@@ -1,6 +1,6 @@
 #include "nvp_util.h"
 
-#ifdef _WIN32
+#if 0
 std::string NvpUtil::getExeFilePath()
 {
     WCHAR path_u16[MAX_PATH] = { 0 };
@@ -35,9 +35,7 @@ std::string NvpUtil::getExeFilePath()
         return path_u8;
     }
 }
-#endif
 
-#ifdef __APPLE__
 std::string NvpUtil::getExeFilePath()
 {
     char path[PATH_MAX] = { 0 };
@@ -69,43 +67,9 @@ std::string NvpUtil::getExeFilePath()
 }
 #endif
 
-void NvpUtil::writeExePath(const char* buf, uint64_t len, const char* name, const char* mode)
+NvpSysPort::File* NvpUtil::fileInExePath(const char* file_name)
 {
-    auto path = getExeFilePath();
-    if (path.size() == 0) return;
-
-    path.append("/");
-    path.append(name);
-
-    FILE* file = nullptr;
-    file = fopen(path.c_str(), mode);
-    if (file)
-    {
-        fwrite(buf, len, sizeof(char), file);
-        fclose(file);
-    }
-}
-
-NvpUtil::FileRead NvpUtil::readExePath(const char* name, const char* mode)
-{
-    auto path = getExeFilePath();
-    if (path.size() == 0) return FileRead();
-
-    path.append("/");
-    path.append(name);
-
-    FILE* file = nullptr;
-    file = fopen(path.c_str(), mode);
-    if (file)
-    {
-        struct stat filestat = { 0 };
-        stat(path.c_str(), &filestat);
-        auto buf = new char[filestat.st_size];
-        fread(buf, sizeof(char), filestat.st_size, file);
-        fclose(file);
-        return FileRead(buf, filestat.st_size);
-    }
-    return FileRead();
+    return NvpSysPort::fileInExePath(file_name);
 }
 
 std::u16string NvpUtil::utf8_to_utf16(const std::string& str)
@@ -132,30 +96,22 @@ std::string NvpUtil::utf32_to_utf8(const std::u32string& str)
     return conversion.to_bytes(str);
 }
 
-NvpUtil::SysClockTick NvpUtil::getSystemClockTick()
+NvpSysPort::SysClockTick NvpUtil::getSystemClockTick()
 {
-#ifdef _WIN32
-    LARGE_INTEGER QPC;
-    QueryPerformanceCounter(&QPC);
-    return QPC.QuadPart;
-#endif
-
-#ifdef __APPLE__
-    return clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW);
-#endif
+    return NvpSysPort::getSystemClockTick();
 }
 
 static const int MAX_QPC_CHANNEL = 100;
 
-NvpUtil::SysClockTick NvpUtil::getSysTickInterval(int channel)
+NvpSysPort::SysClockTick NvpUtil::getSysTickInterval(int channel)
 {
     if (channel >= MAX_QPC_CHANNEL || channel < 0)
     {
         return -1;
     }
-    
+
     auto now = getSystemClockTick();
-    static SysClockTick prev[MAX_QPC_CHANNEL] = { 0 };
+    static NvpSysPort::SysClockTick prev[MAX_QPC_CHANNEL] = { 0 };
     auto QPCInterval = now - prev[channel];
     prev[channel] = now;
     return QPCInterval;
@@ -163,18 +119,7 @@ NvpUtil::SysClockTick NvpUtil::getSysTickInterval(int channel)
 
 double NvpUtil::getFpsByChannel(int channel)
 {
-    SysClockTick frequency;
-    
-#ifdef _WIN32
-    LARGE_INTEGER Frequency;
-    QueryPerformanceFrequency(&Frequency);
-    frequency = Frequency.QuadPart;
-#endif
-
-#ifdef __APPLE__
-    frequency = 1000000000;
-#endif
-    
+    auto frequency = NvpSysPort::getSystemClockFreq();
     double interval_sec = (double)getSysTickInterval(channel) / (double)frequency;
     double fps = (double)1.0 / interval_sec;
     return fps;

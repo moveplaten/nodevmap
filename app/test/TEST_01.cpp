@@ -224,13 +224,19 @@ static void saveAllNode()
     auto node1 = NvpLayout::getSubFirst(NvpLayout::getTopNodeView());
     auto out = NvpPlistIO::outputAll(node1, new PlistSeqRecColo);
     auto xml = out.writeToXml();
-    NvpUtil::writeExePath(xml.xml_str, xml.xml_len, io_file_name, "wb");
+    auto file = NvpUtil::fileInExePath(io_file_name);
+    file->Write(xml.xml_str, xml.xml_len);
+    file->Close();
+    delete file;
 }
 
 static void initAllNode()
 {
+    auto file = NvpUtil::fileInExePath(io_file_name);
+    auto read = file->Read();
+    file->Close();
+    delete file;
     const char* xml_in = nullptr;
-    auto read = NvpUtil::readExePath(io_file_name, "rb");
     if (read.buf == nullptr)
     {
         xml_in = plist_array_03;
