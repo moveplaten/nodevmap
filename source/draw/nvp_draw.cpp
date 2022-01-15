@@ -100,7 +100,7 @@ void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
     
     const_cast<NvpDrawCache&>(cache).OptSwitch(NvpDrawCache::DRAW, &param);
 }
-
+/*
 const char* NvpDrawCache::commandString(const NvpDrawData::Command command)
 {
     NvpDrawCache temp(NvpDrawData::Null_Data);
@@ -110,8 +110,8 @@ const char* NvpDrawCache::commandString(const NvpDrawData::Command command)
     temp.OptSwitch(NvpDrawCache::NUL, nullptr, &str);
     return str;
 }
-
-void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, const char** str)
+*/
+void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, std::string* dst, const char* src)
 {
     auto command = null_data.getCmd();
 
@@ -119,29 +119,25 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, const char
     {
     case NvpDrawData::One_Line:
     {
-        NvpOptPush(&one_line, opt, param);
-        if (str) *str = "One_Line";
+        NvpOptPush(&one_line, opt, param, dst, src);
     }
     break;
 
     case NvpDrawData::Rect_Same_Elem:
     {
-        NvpOptPush(&rect_same_elem, opt, param);
-        if (str) *str = "Rect_Same_Elem";
+        NvpOptPush(&rect_same_elem, opt, param, dst, src);
     }
     break;
 
     case NvpDrawData::Text_Left_Right:
     {
-        NvpOptPush(&text_left_right, opt, param);
-        if (str) *str = "Text_Left_Right";
+        NvpOptPush(&text_left_right, opt, param, dst, src);
     }
     break;
 
     case NvpDrawData::Four_Rect_Percent:
     {
-        NvpOptPush(&four_rect_percent, opt, param);
-        if (str) *str = "Four_Rect_Percent";
+        NvpOptPush(&four_rect_percent, opt, param, dst, src);
     }
     break;
 
@@ -185,12 +181,26 @@ NvpStyle::Style NvpDrawCache::getStyle() const
     return a_style.getStyle();
 }
 
+NvpDrawData::Command NvpDrawCache::getCommand() const
+{
+    return null_data.getCmd();
+}
+
 NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command)
     :a_style(style), is_push(false)
 {
     null_data.cmd = command;
     null_data.ptr = nullptr;
     OptByPush(NEW);
+}
+
+NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command, const char* src)
+    :a_style(style), is_push(false)
+{
+    null_data.cmd = command;
+    null_data.ptr = nullptr;
+    OptByPush(NEW);
+    OptSwitch(CODING, nullptr, nullptr, src);
 }
 
 NvpDrawCache::NvpDrawCache(const NvpDrawData::Command command)

@@ -13,6 +13,7 @@ set(nodevmap_SOURCES
     draw/draw_text.cpp
     draw/draw_rect.cpp
     draw/draw_line.cpp
+    draw/draw_coding.cpp
     nvp-io/nvp_plist.cpp
     nvp-io/plist_io.cpp
     util/nvp_util.cpp

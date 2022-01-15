@@ -87,8 +87,8 @@ void NvpEvent::initAll(BaseElement* base, NvpEventParam& param)
             {
                 auto draw = new NvpDraw(base);
                 base->self_draw = draw;
+                base->self_event->userInit(base, param);
             }
-            base->self_event->userInit(base, param);
         }
 
         auto sub = NvpLayout::getSubFirst(base);

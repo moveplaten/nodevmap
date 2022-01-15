@@ -1,6 +1,7 @@
 #pragma once
 
 #include "draw.h"
+#include "util/nvp_util.h"
 
 class NvpStyle;
 
@@ -30,15 +31,15 @@ namespace NvpDrawData
     
     enum Command : uint8_t
     {
-        Null_Data,
+        Null_Data = 0U,
 
-        One_Line,
+        One_Line = 1U,
 
-        Rect_Same_Elem,
+        Rect_Same_Elem = 2U,
 
-        Text_Left_Right,
+        Text_Left_Right = 3U,
 
-        Four_Rect_Percent,
+        Four_Rect_Percent = 4U,
     };
     
     ////////////////////////////////////////////////////////////////////////////
@@ -50,13 +51,20 @@ namespace NvpDrawData
         V                                                           \
     }                                                               \
 
+    #define NVP_DRAW_CODING(V)                                      \
+    public:                                                         \
+    void drawCoding(std::string* dst, const char* src)              \
+    {                                                               \
+        V                                                           \
+    }                                                               \
+
     ////////////////////////////////////////////////////////////////////////////
 
     class Null_Data_
     {
 
     };
-
+    static Null_Data_ null_data;
     ////////////////////////////////////////////////////////////////////////////
 
     class Rect_Same_Elem_
@@ -64,6 +72,10 @@ namespace NvpDrawData
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Rect_Same_Elem(base, style);
+        )
+        NVP_DRAW_CODING
+        (
+            NvpCoding::codingSeq(dst, src, &null_data);
         )
     };
 
@@ -76,10 +88,10 @@ namespace NvpDrawData
         void setText(const std::string& str) { text = str; }
         void setStart(NvpXyCoord xy) { start = xy; }
 
-        const std::string& getText() { return text; }
-        NvpXyCoord getStart() { return start; }
+        const std::string& getText() const { return text; }
+        NvpXyCoord getStart() const { return start; }
 
-        ptSize getFontSize() { return font_size; }
+        ptSize getFontSize() const { return font_size; }
         void setFontSize(ptSize size) { assert(size > 0); font_size = size; }
 
     private:
@@ -90,6 +102,10 @@ namespace NvpDrawData
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Text_Left_Right(base, style, start, text, font_size);
+        )
+        NVP_DRAW_CODING
+        (
+            NvpCoding::codingSeq(dst, src, &text, &start.x, &start.y, &font_size);
         )
     };
 
@@ -102,8 +118,8 @@ namespace NvpDrawData
         void setPoint1(NvpXyCoord pt1) { p1 = pt1; }
         void setPoint2(NvpXyCoord pt2) { p2 = pt2; }
 
-        NvpXyCoord getPoint1() { return p1; }
-        NvpXyCoord getPoint2() { return p2; }
+        NvpXyCoord getPoint1() const { return p1; }
+        NvpXyCoord getPoint2() const { return p2; }
 
     private:
         NvpXyCoord p1;
@@ -113,6 +129,10 @@ namespace NvpDrawData
         (
             NvpDrawReal::Draw_One_Line(base, style, p1, p2);
         )
+        NVP_DRAW_CODING
+        (
+            NvpCoding::codingSeq(dst, src, &p1.x, &p1.y, &p2.x, &p2.y);
+        )
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -121,15 +141,19 @@ namespace NvpDrawData
     {
     public:
         Four_Rect_Percent_() : percent(0) {}
-        void setPercent(int per /*1~50*/) { percent = per; }
-        int getPercent() { return percent; }
+        void setPercent(uint32_t per /*1~50*/) { percent = per; }
+        uint32_t getPercent() const { return percent; }
 
     private:
-        int percent;
+        uint32_t percent;
 
         NVP_DRAW_PRIVATE
         (
             NvpDrawReal::Draw_Four_Rect_Percent(base, style, percent);
+        )
+        NVP_DRAW_CODING
+        (
+            NvpCoding::codingSeq(dst, src, &percent);
         )
     };
 
@@ -163,12 +187,19 @@ private:
     
     NvpColor color;
     Style style;
+    
+    NVP_DRAW_CODING
+    (
+        NvpCoding::codingSeq(dst, src, &color.Red, &color.Green, &color.Blue,
+            &color.Alpha, reinterpret_cast<uint8_t*>(&style));
+    )
 };
 
 class NvpDrawCache
 {
 public:
     NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command);
+    NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command command, const char* src);
     NvpDrawCache(const NvpDrawData::Command command);
     ~NvpDrawCache();
 
@@ -176,7 +207,7 @@ public:
     NvpDrawCache& operator=(const NvpDrawCache& cache) = delete;
     NvpDrawCache(NvpDrawCache&& cache) = default;
 
-    static const char* commandString(const NvpDrawData::Command command);
+    //static const char* commandString(const NvpDrawData::Command command);
 
     void colorBright();
     void colorDarker();
@@ -186,6 +217,10 @@ public:
 
     void setStyle(NvpStyle::Style style);
     NvpStyle::Style getStyle() const;
+
+    NvpDrawData::Command getCommand() const;
+    void encodeSeq(std::string* dst);
+    static NvpDrawCache decodeSeq(const char* src);
 
     template<typename T, NvpDrawData::Command D>
     class draw_safe
@@ -233,7 +268,7 @@ public:
     };
 
 private:
-    enum Opt { NUL, NEW, DELE, DRAW };
+    enum Opt { NUL, NEW, DELE, DRAW, CODING };
     
     void OptByPush(const Opt opt);
 
@@ -244,10 +279,12 @@ private:
         const BaseElement& base_elem;
     };
 
-    void OptSwitch(const Opt opt, const Param* const param = nullptr, const char** str = nullptr);
+    void OptSwitch(const Opt opt, const Param* const param = nullptr,
+        std::string* dst = nullptr, const char* src = nullptr);
 
     template<typename T>
-    void NvpOptPush(const T* t, const Opt opt, const Param* const param)
+    void NvpOptPush(const T* t, const Opt opt, const Param* const param,
+        std::string* dst, const char* src)
     {
         switch (opt)
         {
@@ -269,6 +306,12 @@ private:
         case DRAW:
         {
             t->getPtr()->drawPrivate(param->base_elem, this->a_style); //from NvpDrawData;
+        }
+        break;
+
+        case CODING:
+        {
+            t->getPtr()->drawCoding(dst, src);
         }
         break;
 

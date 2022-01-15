@@ -2,6 +2,7 @@
 
 #include "base/base.h"
 #include "draw/draw_priv.h"
+#include "draw/draw_coding.h"
 #include "nvp-io/nvp_plist.h"
 #include "nvp-io/plist_io.h"
 #include "util/nvp_util.h"

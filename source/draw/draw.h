@@ -67,4 +67,6 @@ private:
     BaseElement* base_elem;
 
     std::vector<NvpDrawCache> draw_cache;
+
+    friend class NvpDrawSeq;
 };

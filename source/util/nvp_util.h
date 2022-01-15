@@ -5,6 +5,8 @@
 #include <string>
 #include <codecvt>
 
+#include "nvp_coding.h"
+
 namespace NvpSysPort
 {
     class File

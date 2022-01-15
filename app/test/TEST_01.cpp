@@ -1,4 +1,5 @@
-#include "test_plist_03.h"
+#include "test_plist_04.h"
+#include <math.h>
 
 class TopNodeView : public NvpEvent
 {
@@ -64,6 +65,64 @@ class RandomColorNode : public NvpEvent
         }
 
         NvpLayout::setBaseRect(base, rect);
+
+        static int random = -1; ++random;
+        random %= 4;
+        switch (random)
+        {
+        case 0:
+        {
+            NvpDrawCache text(NvpDrawData::Text_Left_Right);
+            text.setColor(col);
+            text.text_left_right->setText("github");
+            text.text_left_right->setStart({ 0, 0 });
+            text.text_left_right->setFontSize(15);
+            base->getSelfDraw()->pushDraw(text);
+            NvpDrawCache line(NvpDrawData::One_Line);
+            line.setColor({ 220, 220, 220 });
+            line.one_line->setPoint1({ 0, 0 });
+            line.one_line->setPoint2({ rect.right - rect.left, rect.bottom - rect.top });
+            base->getSelfDraw()->pushDraw(line);
+        }
+        break;
+        case 1:
+        {
+            NvpDrawCache text(NvpDrawData::Text_Left_Right);
+            text.setColor(col);
+            text.text_left_right->setText("com");
+            text.text_left_right->setStart({ 0, 0 });
+            text.text_left_right->setFontSize(15);
+            base->getSelfDraw()->pushDraw(text);
+        }
+        break;
+        case 2:
+        {
+            NvpDrawCache text(NvpDrawData::Text_Left_Right);
+            text.setColor(col);
+            text.text_left_right->setText("moveplaten");
+            text.text_left_right->setStart({ 0, 0 });
+            text.text_left_right->setFontSize(15);
+            base->getSelfDraw()->pushDraw(text);
+            NvpDrawCache line(NvpDrawData::One_Line);
+            line.setColor({ 220, 220, 220 });
+            line.one_line->setPoint1({ 0, 0 });
+            line.one_line->setPoint2({ rect.right - rect.left, rect.bottom - rect.top });
+            base->getSelfDraw()->pushDraw(line);
+        }
+        break;
+        case 3:
+        {
+            NvpDrawCache text(NvpDrawData::Text_Left_Right);
+            text.setColor(col);
+            text.text_left_right->setText("nodevmap");
+            text.text_left_right->setStart({ 0, 0 });
+            text.text_left_right->setFontSize(15);
+            base->getSelfDraw()->pushDraw(text);
+        }
+        break;
+        default:
+            break;
+        }
     }
 
     void mouseRDown(BaseElement* base, NvpEventParam& param) override
@@ -219,10 +278,22 @@ private:
     NvpColor colo{ 0 };
 };
 
+class PlistSeqCache : public NvpDrawSeq
+{
+    NvpEvent* createNewEvent()
+    {
+        return new RandomColorNode;
+    }
+    NvpPlistSeq* createNewSeq()
+    {
+        return new PlistSeqCache;
+    }
+};
+
 static void saveAllNode()
 {
     auto node1 = NvpLayout::getSubFirst(NvpLayout::getTopNodeView());
-    auto out = NvpPlistIO::outputAll(node1, new PlistSeqRecColo);
+    auto out = NvpPlistIO::outputAll(node1, new PlistSeqCache);
     auto xml = out.writeToXml();
     auto file = NvpUtil::fileInExePath(io_file_name);
     file->Write(xml.xml_str, xml.xml_len);
@@ -239,14 +310,14 @@ static void initAllNode()
     const char* xml_in = nullptr;
     if (read.buf == nullptr)
     {
-        xml_in = plist_array_03;
+        xml_in = plist_array_04;
     }
     else
     {
         xml_in = read.buf;
     }
     NvpPlistPort root(xml_in);
-    NvpPlistIO::inputAll(root, new PlistSeqRecColo);
+    NvpPlistIO::inputAll(root, new PlistSeqCache);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -382,8 +453,124 @@ class RightMouseMenu : public NvpEvent
 
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace test
+{
+    struct TestBase
+    {
+        TestBase(void* ptr, size_t size)
+        {
+            memset(ptr, 0, size);
+        }
+    };
+
+    struct TestNoPtr : TestBase
+    {
+        TestNoPtr(bool empty = false) : TestBase(this, sizeof(TestNoPtr))
+        {
+            if (empty)
+            {
+                memset(this, 0, sizeof(TestNoPtr));
+            }
+        }
+        void coding(std::string* dst, const char* src)
+        {
+            NvpCoding::codingSeq(dst, src, &_1, &_2, &_3, &_4, &_5, &_6, &_7, &_8,
+                &_9, &_10, &rect.left, &rect.top, &rect.right, &rect.bottom, reinterpret_cast<char*>(&opt));
+        }
+        float _1 = 1.11;
+        double _2 = 2.222;
+        uint32_t _3 = 33333;
+        bool _4 = true;
+        int64_t _5 = 5555555;
+        int32_t _6 = -666666;
+        char _7 = 'A';
+        uint8_t _8 = 250;
+        char _9 = 'B';
+        float _10 = -10.10;
+        BaseRect rect = { 12.2, -13.3, 14.4, -15.5 };
+        enum Opt : uint8_t { Opt1, Opt2 };
+        Opt opt = Opt2;
+    };
+
+    struct TestPtr : TestBase
+    {
+        TestPtr(bool empty = false) : TestBase(this, sizeof(TestPtr))
+        {
+            if (empty)
+            {
+                memset(this, 0, sizeof(TestPtr));
+            }
+        }
+        void coding(std::string* dst, const char* src)
+        {
+            NvpCoding::codingSeq(dst, src, &_1, &_2, &_3, &_4, &_5, &_6, &_7, &_8,
+                &_9, &_10, &rect.left, &rect.top, &rect.right, &rect.bottom, reinterpret_cast<char*>(&opt));
+        }
+        float _1 = 1.11;
+        double _2 = 2.222;
+        uint32_t _3 = 33333;
+        bool _4 = true;
+        std::string _5 = " Test Test Test Test Test Test Test Test 5555 ";
+        int32_t _6 = -666666;
+        char _7 = 'A';
+        uint8_t _8 = 250;
+        char _9 = 'B';
+        std::string _10 = "Test Test Test Test Test Test Test Test 10101010101010";
+        BaseRect rect = { 12.22, -13.33, 14.44, -15.55 };
+        enum Opt : uint8_t { Opt1, Opt2 };
+        Opt opt = Opt2;
+    };
+
+    static void codingTest()
+    {
+        {
+            TestNoPtr a;
+            std::string dst;
+            a.coding(&dst, nullptr);
+            TestNoPtr b(true);
+            b.coding(nullptr, dst.c_str());
+            assert(memcmp(&a, &b, sizeof(TestNoPtr)) == 0);
+        }
+
+        {
+            TestPtr a;
+            std::string dst;
+            a.coding(&dst, nullptr);
+            TestPtr b(true);
+            b.coding(nullptr, dst.c_str());
+            assert(memcmp(a._5.c_str(), b._5.c_str(), a._5.size()) == 0);
+            assert(memcmp(a._10.c_str(), b._10.c_str(), a._10.size()) == 0);
+        }
+    }
+
+    static void cacheTest()
+    {
+        NvpDrawCache cache_text(NvpDrawData::Text_Left_Right);
+        cache_text.setColor({ 222, 200, 200, 100 });
+        cache_text.setStyle(NvpStyle::Frame);
+        cache_text.text_left_right->setText(" Test Test Test Test Test Test Test Test 10101010101010");
+        cache_text.text_left_right->setStart({ 22.222, -11.111 });
+        cache_text.text_left_right->setFontSize(13.333);
+        std::string cache_text_str;
+        cache_text.encodeSeq(&cache_text_str);
+
+        auto cache_text_new = NvpDrawCache::decodeSeq(cache_text_str.c_str());
+        auto text_size = cache_text.text_left_right->getText().size();
+        auto text_ptr = cache_text.text_left_right->getText().c_str();
+        auto text_ptr2 = cache_text_new.text_left_right->getText().c_str();
+        assert(memcmp(text_ptr, text_ptr2, text_size) == 0);
+
+        NvpDrawData::Rect_Same_Elem_ r;
+        std::string dst;
+        r.drawCoding(&dst, nullptr);
+    }
+}
+
 void nvp_app_init()
 {
+    test::codingTest();
+    test::cacheTest();
+
     NvpLayout::subElemGen("top_node_view", new TopNodeView, NvpLayout::getTopLayout());
     NvpLayout::subElemGen("RightMouseMenu", new RightMouseMenu, NvpLayout::getTopLayout());
     initAllNode();
