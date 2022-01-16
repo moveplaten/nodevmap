@@ -1,3 +1,11 @@
+/*
+ * This file is part of nodevmap open source project.
+ *
+ * For conditions of distribution and use, see copyright notice in LICENSE file.
+ *
+ * For more detailed information : https://github.com/moveplaten
+ */
+
 #include "d2d_common.h"
 #include "util/nvp_util.h"
 #include <stdio.h>
