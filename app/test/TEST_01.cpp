@@ -302,12 +302,8 @@ class PlistSeqCache : public NvpDrawSeq
 static void saveAllNode()
 {
     auto node1 = NvpLayout::getSubFirst(NvpLayout::getTopNodeView());
-    auto out = NvpPlistIO::outputAll(node1, new PlistSeqCache);
-    auto xml = out.writeToXml();
     auto file = NvpUtil::fileInExePath(io_file_name);
-    file->Write(xml.xml_str, xml.xml_len);
-    file->Close();
-    delete file;
+    NvpPlistIO::outputAll(node1, new PlistSeqCache, file);
 
     NvpImageIO::outputAll(io_png_name);
 }
@@ -315,20 +311,7 @@ static void saveAllNode()
 static void initAllNode()
 {
     auto file = NvpUtil::fileInExePath(io_file_name);
-    auto read = file->Read();
-    file->Close();
-    delete file;
-    const char* xml_in = nullptr;
-    if (read.buf == nullptr)
-    {
-        xml_in = plist_array_04;
-    }
-    else
-    {
-        xml_in = read.buf;
-    }
-    NvpPlistPort root(xml_in);
-    NvpPlistIO::inputAll(root, new PlistSeqCache);
+    NvpPlistIO::inputAll(new PlistSeqCache, file, plist_array_04);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

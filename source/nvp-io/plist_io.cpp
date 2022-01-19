@@ -8,10 +8,24 @@
 
 #include "plist_io.h"
 
-void NvpPlistIO::inputAll(NvpPlistPort& plist, NvpPlistSeq* seq)
+void NvpPlistIO::inputAll(NvpPlistSeq* seq, NvpSysPort::File* file, const char* fallback)
 {
+    auto read = file->Read();
+    file->Close();
+    delete file;
+    const char* xml_in = nullptr;
+    if (read.buf == nullptr)
+    {
+        xml_in = fallback;
+    }
+    else
+    {
+        xml_in = read.buf;
+    }
+    NvpPlistPort root(xml_in);
+
     NvpPlistIO io(seq);
-    io.inputAllR(plist);
+    io.inputAllR(root);
 }
 
 BaseElement* NvpPlistIO::inputAllR(NvpPlistPort& plist, BaseElement* base)
@@ -70,13 +84,16 @@ void NvpPlistIO::prepareNewSeq()
     io_seq = seq_new;
 }
 
-NvpPlistPort NvpPlistIO::outputAll(BaseElement* base, NvpPlistSeq* seq)
+void NvpPlistIO::outputAll(BaseElement* base, NvpPlistSeq* seq, NvpSysPort::File* file)
 {
     auto root = NvpPlistPort::newEmptyArray();
     NvpPlistIO io(seq);
     io.outputAllR(base, root);
 
-    return root;
+    auto xml = root.writeToXml();
+    file->Write(xml.xml_str, xml.xml_len);
+    file->Close();
+    delete file;
 }
 
 void NvpPlistIO::outputAllR(BaseElement* base, NvpPlistPort& plist)

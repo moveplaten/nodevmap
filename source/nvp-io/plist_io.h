@@ -10,6 +10,7 @@
 
 #include "nvp_plist.h"
 #include "base/base.h"
+#include "util/nvp_util.h"
 
 class NvpPlistSeq
 {
@@ -69,9 +70,9 @@ public:
     NvpPlistIO(const NvpPlistIO& io) = delete;
     NvpPlistIO& operator=(const NvpPlistIO& io) = delete;
 
-    static void inputAll(NvpPlistPort& plist, NvpPlistSeq* seq);
+    static void inputAll(NvpPlistSeq* seq, NvpSysPort::File* file, const char* fallback);
 
-    static NvpPlistPort outputAll(BaseElement* base, NvpPlistSeq* seq);
+    static void outputAll(BaseElement* base, NvpPlistSeq* seq, NvpSysPort::File* file);
 
     ~NvpPlistIO();
 
