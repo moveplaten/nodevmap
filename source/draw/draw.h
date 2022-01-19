@@ -48,10 +48,13 @@ private:
     static void fillRect(const BaseRect& rect, NvpColor colo);
     static void frameRect(const BaseRect& rect, NvpColor colo); //only border;
 
+    static void inputImage(const char* file_name);
+    static void outputImage(const char* file_name);
 
     friend class NvpDrawReal;
     friend class NvpEvent;
     friend class D2dUtil;
+    friend class NvpImageIO;
 };
 
 class NvpDrawCache;

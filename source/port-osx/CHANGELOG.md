@@ -7,3 +7,6 @@ nodevmap
 
 `2021-10-15`
 * Core Text is first choice to support basic text rendering
+
+`2022-01-19`
+* add bitmap render target for final image format output

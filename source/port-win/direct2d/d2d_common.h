@@ -12,11 +12,12 @@
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
+#include <wincodec.h>
 
 #include "draw/draw.h"
 #include "base/base.h"
 
-bool initD2dDevice(HWND hwnd);
+#define SAFE_RELEASE_PTR(x) if (x) { x->Release(); x = nullptr; }
 
 class D2dUtil
 {
@@ -26,6 +27,8 @@ public:
         if (!g_d2dutil)
         return new D2dUtil(hwnd);
     }
+
+    static bool initD2dDevice(HWND hwnd);
 
     static D2dUtil* g_d2dutil;
 
@@ -87,18 +90,19 @@ public:
 
     //void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
 
-    D2dUtil::D2dUtil(HWND hwnd):m_hwnd(hwnd),
-                                m_pD2DFactory(nullptr),
-                                m_pRT(nullptr),
-                                m_pDWriteFactory(nullptr),
-                                m_pFontCollection(nullptr),
-                                m_pDWriteFontFace(nullptr),
-                                m_pDWriteFont(nullptr),
-                                draw_fps(0)
+    D2dUtil(HWND hwnd) : m_hwnd(hwnd),
+                         m_pD2DFactory(nullptr),
+                         m_pRT(nullptr),
+                         m_pDWriteFactory(nullptr),
+                         m_pFontCollection(nullptr),
+                         m_pDWriteFontFace(nullptr),
+                         m_pDWriteFont(nullptr),
+                         m_pWICImagingFactory(nullptr),
+                         draw_fps(0)
     {
     }
 
-    D2dUtil::~D2dUtil()
+    ~D2dUtil()
     {
     }
 
@@ -112,6 +116,8 @@ private:
     
     IDWriteFontFace* m_pDWriteFontFace;
     IDWriteFont* m_pDWriteFont;
+
+    IWICImagingFactory* m_pWICImagingFactory;
 
     double draw_fps;
     friend class NvpDrawPort;

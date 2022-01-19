@@ -16,6 +16,7 @@ set(nodevmap_SOURCES
     draw/draw_coding.cpp
     nvp-io/nvp_plist.cpp
     nvp-io/plist_io.cpp
+    nvp-io/image_io.cpp
     util/nvp_util.cpp
 
 )

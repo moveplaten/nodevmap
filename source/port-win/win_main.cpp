@@ -45,7 +45,7 @@ int nvp_entry_main(HINSTANCE hInstance)
         WS_OVERLAPPED | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN,
         x, y, width, height, NULL, NULL, hInstance, NULL);
 
-    if (!initD2dDevice(hwndMain)) //give control to access to d2d;
+    if (!D2dUtil::initD2dDevice(hwndMain)) //give control to access to d2d;
     {
         MessageBox(nullptr, "Init Direct2d Failed", NULL, MB_OK);
         return false;

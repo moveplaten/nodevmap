@@ -14,7 +14,7 @@ D2dUtil* D2dUtil::g_d2dutil = nullptr;
 float D2dUtil::g_dpi_scale_X = 0.0f;
 float D2dUtil::g_dpi_scale_Y = 0.0f;
 
-bool initD2dDevice(HWND hwnd)
+bool D2dUtil::initD2dDevice(HWND hwnd)
 {
     HRESULT hr;
     hr = CoInitialize(NULL);
@@ -234,4 +234,109 @@ void NvpDrawPort::drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo)
     if (!brush) return;
 
     target->DrawLine(pt1, pt2, brush);
+}
+
+void NvpDrawPort::outputImage(const char* file_name)
+{
+    IWICBitmap* p_WICBitmap = nullptr;
+    ID2D1RenderTarget* p_WicRT = nullptr;
+    IWICStream* p_WICStream = nullptr;
+    IWICBitmapEncoder* p_WICBitmapEncoder = nullptr;
+    IWICBitmapFrameEncode* p_WICBitmapFrameEncode = nullptr;
+
+    do
+    {
+        HRESULT hr;
+        if (!D2dUtil::g_d2dutil->m_pWICImagingFactory)
+        {
+            hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                IID_PPV_ARGS(&D2dUtil::g_d2dutil->m_pWICImagingFactory));
+
+            if (FAILED(hr)) break;
+        }
+
+        hr = D2dUtil::g_d2dutil->m_pWICImagingFactory->CreateBitmap(1000, 1000, //origin size;
+            GUID_WICPixelFormat32bppBGR, WICBitmapCacheOnLoad, &p_WICBitmap);
+
+        if (FAILED(hr)) break;
+
+        hr = D2dUtil::g_d2dutil->m_pD2DFactory->CreateWicBitmapRenderTarget(p_WICBitmap,
+            D2D1::RenderTargetProperties(), &p_WicRT);
+
+        if (FAILED(hr)) break;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        p_WicRT->SetDpi(D2dUtil::g_dpi_scale_X * 96, D2dUtil::g_dpi_scale_Y * 96);
+        p_WicRT->BeginDraw();
+
+        ID2D1HwndRenderTarget* tempRT;
+        tempRT = D2dUtil::g_d2dutil->m_pRT;
+        D2dUtil::g_d2dutil->m_pRT = reinterpret_cast<ID2D1HwndRenderTarget*>(p_WicRT);
+
+        if (NvpLayout::getTopLayout())
+        {
+            auto top_elem = NvpLayout::getTopLayout();
+            NvpDraw::drawAll(top_elem);
+        }
+
+        p_WicRT->EndDraw();
+        D2dUtil::g_d2dutil->m_pRT = tempRT;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        hr = D2dUtil::g_d2dutil->m_pWICImagingFactory->CreateStream(&p_WICStream);
+
+        if (FAILED(hr)) break;
+
+        std::string path_u8(file_name);
+        auto path_u16 = NvpUtil::utf8_to_utf16(path_u8);
+
+        hr = p_WICStream->InitializeFromFilename((LPCWSTR)path_u16.c_str(), GENERIC_WRITE);
+
+        if (FAILED(hr)) break;
+
+        hr = D2dUtil::g_d2dutil->m_pWICImagingFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &p_WICBitmapEncoder);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapEncoder->Initialize(p_WICStream, WICBitmapEncoderNoCache);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapEncoder->CreateNewFrame(&p_WICBitmapFrameEncode, NULL);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapFrameEncode->Initialize(NULL);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapFrameEncode->SetSize(1000, 1000); //clip size for output;
+
+        if (FAILED(hr)) break;
+
+        WICPixelFormatGUID format = GUID_WICPixelFormatDontCare;
+        hr = p_WICBitmapFrameEncode->SetPixelFormat(&format);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapFrameEncode->WriteSource(p_WICBitmap, NULL);
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapFrameEncode->Commit();
+
+        if (FAILED(hr)) break;
+
+        hr = p_WICBitmapEncoder->Commit();
+
+        if (FAILED(hr)) break;
+    } while (0);
+
+    SAFE_RELEASE_PTR(p_WICBitmap);
+    SAFE_RELEASE_PTR(p_WicRT);
+    SAFE_RELEASE_PTR(p_WICStream);
+    SAFE_RELEASE_PTR(p_WICBitmapEncoder);
+    SAFE_RELEASE_PTR(p_WICBitmapFrameEncode);
 }

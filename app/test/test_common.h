@@ -13,6 +13,7 @@
 #include "draw/draw_coding.h"
 #include "nvp-io/nvp_plist.h"
 #include "nvp-io/plist_io.h"
+#include "nvp-io/image_io.h"
 #include "util/nvp_util.h"
 
 #ifndef INIT_STRING

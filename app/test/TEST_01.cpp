@@ -174,6 +174,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 static const char* io_file_name = "test_01.plist";
+static const char* io_png_name = "test_01.png";
 
 class PlistSeqRecColo : public NvpPlistSeq
 {
@@ -307,6 +308,8 @@ static void saveAllNode()
     file->Write(xml.xml_str, xml.xml_len);
     file->Close();
     delete file;
+
+    NvpImageIO::outputAll(io_png_name);
 }
 
 static void initAllNode()

@@ -13,12 +13,17 @@ NSWindow* g_main_wnd;
 CGContextRef g_cg_ref;
 CTFontRef g_ct_font_ref = nil;
 
-static NSColor* toColorNS(NvpColor color)
+static void toColorNS(NvpColor color)
 {
-    return [NSColor colorWithCalibratedRed:(CGFloat)color.Red / 255
-                                     green:(CGFloat)color.Green / 255
-                                      blue:(CGFloat)color.Blue / 255
-                                     alpha:(CGFloat)color.Alpha / 255];
+    CGContextSetRGBFillColor(g_cg_ref, (CGFloat)color.Red / 255,
+                                       (CGFloat)color.Green / 255,
+                                       (CGFloat)color.Blue / 255,
+                                       (CGFloat)color.Alpha / 255);
+
+    CGContextSetRGBStrokeColor(g_cg_ref, (CGFloat)color.Red / 255,
+                                         (CGFloat)color.Green / 255,
+                                         (CGFloat)color.Blue / 255,
+                                         (CGFloat)color.Alpha / 255);
 }
 
 static NSRect toRectNS(const BaseRect& rect)
@@ -39,8 +44,7 @@ void NvpDrawPort::beginDraw()
 void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
                                    ptSize font_size, NvpColor colo)
 {
-    NSColor* ns_col = toColorNS(colo);
-    [ns_col set];
+    toColorNS(colo);
     
     CGContextSetTextPosition(g_cg_ref, start.x, start.y);
     CGAffineTransform font_ctm;
@@ -75,8 +79,7 @@ void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
 
 void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
 {
-    NSColor* ns_col = toColorNS(colo);
-    [ns_col set];
+    toColorNS(colo);
     
     NSRect ns_rec = toRectNS(rect);
     
@@ -85,8 +88,7 @@ void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
 
 void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
 {
-    NSColor* ns_col = toColorNS(colo);
-    [ns_col set];
+    toColorNS(colo);
     
     NSRect ns_rec = toRectNS(rect);
     
@@ -95,8 +97,7 @@ void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
 
 void NvpDrawPort::drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo)
 {
-    NSColor* ns_col = toColorNS(colo);
-    [ns_col set];
+    toColorNS(colo);
     
     CGPoint pt1, pt2;
     pt1.x = p1.x; pt1.y = p1.y;
@@ -105,4 +106,53 @@ void NvpDrawPort::drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo)
     
     CGPoint points[] = { pt1, pt2 };
     CGContextStrokeLineSegments(g_cg_ref, points, 2);
+}
+
+void NvpDrawPort::outputImage(const char* file_name)
+{
+    //CGImageRef img_ref = CGBitmapContextCreateImage(g_cg_ref);
+    //ColorSyncProfileRef profile_ref = ColorSyncProfileCreateWithDisplayID(0);
+    //CGColorSpaceRef color_space = CGColorSpaceCreateWithPlatformColorSpace(profile_ref);
+    const CGColorSpaceRef color_space = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    const uint32_t bitmap_info = kCGImageAlphaPremultipliedLast;
+    const size_t bit_per = 8;
+    const size_t width = 1000;
+    const size_t height = 1000;
+    CGContextRef cg_ref = CGBitmapContextCreate(NULL, width, height, bit_per, 0, color_space, bitmap_info);
+    
+    auto device_desc = [g_main_wnd deviceDescription];
+    auto wnd_dpi = [[device_desc objectForKey:NSDeviceResolution] sizeValue];
+    
+    const CGFloat dpi_scale_x = wnd_dpi.width / 72.0f;
+    const CGFloat dpi_scale_y = wnd_dpi.height / 72.0f;
+    
+    CGAffineTransform ctm = { 0 };
+    ctm.a = dpi_scale_x; ctm.d = -dpi_scale_y; //flipped;
+    CGContextConcatCTM(cg_ref, ctm);
+    CGContextTranslateCTM(cg_ref, 0, (CGFloat)(height / ctm.d));
+    ctm = CGContextGetCTM(cg_ref);
+    //NSGraphicsContext* ns_graphic = [NSGraphicsContext graphicsContextWithCGContext:g_cg_ref flipped:YES];
+    //[NSGraphicsContext setCurrentContext:ns_graphic];
+
+    g_cg_ref = cg_ref;
+    if (NvpLayout::getTopLayout())
+    {
+        auto top_elem = NvpLayout::getTopLayout();
+        NvpDraw::drawAll(top_elem);
+    }
+    
+    CGImageRef img_ref = CGBitmapContextCreateImage(cg_ref);
+    NSString* file = [[NSString alloc] initWithUTF8String:file_name];
+    NSBitmapImageRep* img_rep = [[NSBitmapImageRep alloc] initWithCGImage:img_ref];
+    //[img_rep setPixelsHigh:1000];
+    //[img_rep setPixelsWide:1000];
+    NSDictionary* img_prop = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:1.0] forKey:NSImageCompressionFactor];
+    NSData* png_data = [img_rep representationUsingType:NSBitmapImageFileTypePNG properties:img_prop];
+    auto OK = [png_data writeToFile:file atomically:NO];
+    [img_rep release];
+    [file release];
+    //[png_data release];
+    CGColorSpaceRelease(color_space);
+    CGImageRelease(img_ref);
+    CGContextRelease(cg_ref);
 }
