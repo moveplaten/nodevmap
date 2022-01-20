@@ -27,7 +27,10 @@ void NvpDrawCache::encodeSeq(std::string* dst)
     const char draw_cmd = getCommand();
     dst->append(&draw_cmd, 1);
     a_style.drawCoding(dst, nullptr);
-    OptSwitch(CODING, nullptr, dst);
+    Param param;
+    param.opt = CODING;
+    param.dst = dst;
+    OptSwitch(param);
 }
 
 NvpDrawCache NvpDrawCache::decodeSeq(const char* src)

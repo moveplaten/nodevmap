@@ -7,7 +7,7 @@
  */
 
 #include "base.h"
-#include "draw/draw.h"
+#include "draw/nvp_draw.h"
 
 void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
 {

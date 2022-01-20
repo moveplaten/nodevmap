@@ -9,6 +9,16 @@
 #include "draw_priv.h"
 #include "base/base.h"
 
+NvpColor NvpColor::randomColor()
+{
+    srand(static_cast<unsigned int>(NvpUtil::getSystemClockTick()));
+    NvpColor color = { 0 };
+    color.Red = rand() % 256;
+    color.Green = rand() % 256;
+    color.Blue = rand() % 256;
+    return color;
+}
+
 void NvpStyle::colorBright()
 {
     color.Red = bright(color.Red);
@@ -104,9 +114,11 @@ void NvpDraw::drawAll(BaseElement* base)
 
 void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
 {
-    NvpDrawCache::Param param(base);
-    
-    const_cast<NvpDrawCache&>(cache).OptSwitch(NvpDrawCache::DRAW, &param);
+    NvpDrawCache::Param param;
+    param.base = &base;
+    param.opt = NvpDrawCache::DRAW;
+
+    const_cast<NvpDrawCache&>(cache).OptSwitch(param);
 }
 /*
 const char* NvpDrawCache::commandString(const NvpDrawData::Command command)
@@ -119,7 +131,7 @@ const char* NvpDrawCache::commandString(const NvpDrawData::Command command)
     return str;
 }
 */
-void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, std::string* dst, const char* src)
+void NvpDrawCache::OptSwitch(const Param& param)
 {
     auto command = null_data.getCmd();
 
@@ -127,25 +139,25 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, std::strin
     {
     case NvpDrawData::One_Line:
     {
-        NvpOptPush(&one_line, opt, param, dst, src);
+        NvpOptPush(one_line, param);
     }
     break;
 
     case NvpDrawData::Rect_Same_Elem:
     {
-        NvpOptPush(&rect_same_elem, opt, param, dst, src);
+        NvpOptPush(rect_same_elem, param);
     }
     break;
 
     case NvpDrawData::Text_Left_Right:
     {
-        NvpOptPush(&text_left_right, opt, param, dst, src);
+        NvpOptPush(text_left_right, param);
     }
     break;
 
     case NvpDrawData::Four_Rect_Percent:
     {
-        NvpOptPush(&four_rect_percent, opt, param, dst, src);
+        NvpOptPush(four_rect_percent, param);
     }
     break;
 
@@ -156,7 +168,9 @@ void NvpDrawCache::OptSwitch(const Opt opt, const Param* const param, std::strin
 
 void NvpDrawCache::OptByPush(const Opt opt)
 {
-    OptSwitch(opt);
+    Param param;
+    param.opt = opt;
+    OptSwitch(param);
 }
 
 void NvpDrawCache::colorBright()
@@ -208,7 +222,10 @@ NvpDrawCache::NvpDrawCache(const NvpStyle& style, const NvpDrawData::Command com
     null_data.cmd = command;
     null_data.ptr = nullptr;
     OptByPush(NEW);
-    OptSwitch(CODING, nullptr, nullptr, src);
+    Param param;
+    param.opt = CODING;
+    param.src = src;
+    OptSwitch(param);
 }
 
 NvpDrawCache::NvpDrawCache(const NvpDrawData::Command command)

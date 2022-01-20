@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "draw.h"
+#include "nvp_draw.h"
 #include "util/nvp_util.h"
 
 class NvpStyle;
@@ -265,13 +265,13 @@ public:
     {
         draw_safe<NvpDrawData::Null_Data_, NvpDrawData::Null_Data> null_data;
 
-        draw_safe<NvpDrawData::One_Line_, NvpDrawData::One_Line> const one_line;
-        
-        draw_safe<NvpDrawData::Rect_Same_Elem_, NvpDrawData::Rect_Same_Elem> const rect_same_elem;
-        
-        draw_safe<NvpDrawData::Text_Left_Right_, NvpDrawData::Text_Left_Right> const text_left_right;
+        draw_safe<NvpDrawData::One_Line_, NvpDrawData::One_Line> one_line;
 
-        draw_safe<NvpDrawData::Four_Rect_Percent_, NvpDrawData::Four_Rect_Percent> const four_rect_percent;
+        draw_safe<NvpDrawData::Rect_Same_Elem_, NvpDrawData::Rect_Same_Elem> rect_same_elem;
+
+        draw_safe<NvpDrawData::Text_Left_Right_, NvpDrawData::Text_Left_Right> text_left_right;
+
+        draw_safe<NvpDrawData::Four_Rect_Percent_, NvpDrawData::Four_Rect_Percent> four_rect_percent;
 
     };
 
@@ -282,44 +282,46 @@ private:
 
     struct Param
     {
-        Param(const BaseElement& base) : base_elem(base) {};
-        
-        const BaseElement& base_elem;
+        Param() : base(nullptr), opt(NUL), dst(nullptr), src(nullptr) {}
+        const BaseElement& getBase() const { return *base; }
+
+        const BaseElement* base;
+        Opt opt;
+        std::string* dst;
+        const char* src;
     };
 
-    void OptSwitch(const Opt opt, const Param* const param = nullptr,
-        std::string* dst = nullptr, const char* src = nullptr);
+    void OptSwitch(const Param& param);
 
     template<typename T>
-    void NvpOptPush(const T* t, const Opt opt, const Param* const param,
-        std::string* dst, const char* src)
+    void NvpOptPush(T& t, const Param& param)
     {
-        switch (opt)
+        switch (param.opt)
         {
         case NEW:
         {
-            *(const_cast<T*>(t)) = T(this->null_data.cmd);
+            t = T(this->null_data.cmd);
         }
         break;
 
         case DELE:
         {
-            if (!this->is_push && t->getPtr() != nullptr)
+            if (!this->is_push && t.getPtr() != nullptr)
             {
-                delete t->getPtr(); //from draw_safe;
+                delete t.getPtr(); //from draw_safe;
             }
         }
         break;
 
         case DRAW:
         {
-            t->getPtr()->drawPrivate(param->base_elem, this->a_style); //from NvpDrawData;
+            t.getPtr()->drawPrivate(param.getBase(), this->a_style); //from NvpDrawData;
         }
         break;
 
         case CODING:
         {
-            t->getPtr()->drawCoding(dst, src);
+            t.getPtr()->drawCoding(param.dst, param.src);
         }
         break;
 

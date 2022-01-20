@@ -7,7 +7,7 @@
  */
 
 #include "base.h"
-#include "draw/draw.h"
+#include "draw/nvp_draw.h"
 
 #if 0
 #ifdef TEMP_TEST_0

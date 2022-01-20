@@ -41,12 +41,7 @@ class RandomColorNode : public NvpEvent
 {
     void userInit(BaseElement* base, NvpEventParam& param) override
     {
-        static double tr, tg, tb;
-        tr += 0.3; tg += 0.2, tb += 0.1;
-        int r = 255 * sin(tr + rand() / 1000);
-        int g = 255 * cos(tg + rand() / 1000);
-        int b = 255 * sin(tb + rand() / 1000);
-        NvpColor col = { static_cast<uint8_t>(abs(r)), static_cast<uint8_t>(abs(g)), static_cast<uint8_t>(abs(b)) };
+        NvpColor col = NvpColor::randomColor();
 
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(col);

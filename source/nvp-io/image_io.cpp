@@ -7,7 +7,7 @@
  */
 
 #include "image_io.h"
-#include "draw/draw.h"
+#include "draw/nvp_draw.h"
 
 void NvpImageIO::outputAll(const char* file_name)
 {

@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "draw/draw.h"
+#include "draw/nvp_draw.h"
 #include "base/base.h"
 
 extern NSWindow* g_main_wnd;
