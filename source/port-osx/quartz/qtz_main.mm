@@ -156,3 +156,42 @@ void NvpDrawPort::outputImage(const char* file_name)
     CGImageRelease(img_ref);
     CGContextRelease(cg_ref);
 }
+
+void NvpDrawPort::outputPDF(const char* file_name)
+{
+    CFStringRef path = CFStringCreateWithCString(NULL, file_name, kCFStringEncodingUTF8);
+    CFURLRef url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
+    const CGFloat width = 1000;
+    const CGFloat height = 1000;
+    const CGRect rect = CGRectMake(0, 0, width, height);
+    CGContextRef pdf_ref = CGPDFContextCreateWithURL(url, &rect, NULL);
+    
+    CFMutableDictionaryRef page_info = CFDictionaryCreateMutable(NULL,
+                                                                 0,
+                                                                 &kCFTypeDictionaryKeyCallBacks,
+                                                                 &kCFTypeDictionaryValueCallBacks);
+    CFDataRef box_data = CFDataCreate(NULL, (const UInt8*)&rect, sizeof(CGRect));
+    CFDictionarySetValue(page_info, kCGPDFContextMediaBox, box_data);
+    
+    CGPDFContextBeginPage(pdf_ref, page_info);
+    CGAffineTransform ctm = { 0 };
+    ctm = CGContextGetCTM(pdf_ref);
+    ctm.a = 1; ctm.d = -1; //flipped;
+    CGContextConcatCTM(pdf_ref, ctm);
+    CGContextTranslateCTM(pdf_ref, 0, (CGFloat)(height / ctm.d));
+    ctm = CGContextGetCTM(pdf_ref);
+    
+    g_cg_ref = pdf_ref;
+    if (NvpLayout::getTopLayout())
+    {
+        auto top_elem = NvpLayout::getTopLayout();
+        NvpDraw::drawAll(top_elem);
+    }
+    CGPDFContextEndPage(pdf_ref);
+    
+    CFRelease(box_data);
+    CFRelease(page_info);
+    CGContextRelease(pdf_ref);
+    CFRelease(url);
+    CFRelease(path);
+}

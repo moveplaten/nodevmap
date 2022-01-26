@@ -53,10 +53,13 @@ private:
     static void inputImage(const char* file_name);
     static void outputImage(const char* file_name);
 
+    static void outputPDF(const char* file_name);
+
     friend class NvpDrawReal;
     friend class NvpEvent;
     friend class D2dUtil;
     friend class NvpImageIO;
+    friend class NvpPdfIO;
 };
 
 class NvpDrawCache;

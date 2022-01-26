@@ -340,3 +340,8 @@ void NvpDrawPort::outputImage(const char* file_name)
     SAFE_RELEASE_PTR(p_WICBitmapEncoder);
     SAFE_RELEASE_PTR(p_WICBitmapFrameEncode);
 }
+
+void NvpDrawPort::outputPDF(const char* file_name)
+{
+    //TODO:
+}

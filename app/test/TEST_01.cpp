@@ -170,6 +170,7 @@ public:
 
 static const char* io_file_name = "test_01.plist";
 static const char* io_png_name = "test_01.png";
+static const char* io_pdf_name = "test_01.pdf";
 
 class PlistSeqRecColo : public NvpPlistSeq
 {
@@ -301,6 +302,7 @@ static void saveAllNode()
     NvpPlistIO::outputAll(node1, new PlistSeqCache, file);
 
     NvpImageIO::outputAll(io_png_name);
+    NvpPdfIO::outputAll(io_pdf_name);
 }
 
 static void initAllNode()

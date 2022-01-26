@@ -17,6 +17,7 @@ set(nodevmap_SOURCES
     nvp-io/nvp_plist.cpp
     nvp-io/plist_io.cpp
     nvp-io/image_io.cpp
+    nvp-io/pdf_io.cpp
     util/nvp_util.cpp
 
 )
