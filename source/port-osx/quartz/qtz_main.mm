@@ -41,7 +41,7 @@ void NvpDrawPort::beginDraw()
     [g_main_wnd.contentView setNeedsDisplay:YES];
 }
 
-void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
+void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
                                    ptSize font_size, NvpColor colo)
 {
     toColorNS(colo);

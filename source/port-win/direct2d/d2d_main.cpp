@@ -141,7 +141,7 @@ void NvpDrawPort::beginDraw()
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
 }
 
-void NvpDrawPort::drawTextFromLToR(NvpXyCoord start, const std::string& str,
+void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
     ptSize size_font, NvpColor colo)
 {
     auto str_size = str.size();

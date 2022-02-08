@@ -36,7 +36,7 @@ void NvpDrawReal::Draw_Text_Left_Right(const BaseElement& base, const NvpStyle& 
 
     default:
     {
-        NvpDrawPort::drawTextFromLToR(start, str, font_size, style.getColor());
+        NvpDrawPort::drawTextLeftRight(start, str, font_size, style.getColor());
     }
     break;
     }
