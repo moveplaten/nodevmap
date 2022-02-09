@@ -41,7 +41,7 @@ void NvpLayout::setBaseRect(NvpBaseObj* base, const NvpRect& rect)
     }
 }
 
-bool NvpLayout::ptInRect(mousePt pt, NvpRect rect)
+bool NvpLayout::ptInRect(NvpPoint pt, NvpRect rect)
 {
     if (rect.left <= pt.x && rect.right > pt.x &&
         rect.top <= pt.y && rect.bottom > pt.y)

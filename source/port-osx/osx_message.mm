@@ -102,11 +102,11 @@
     return YES;
 }
 
-- (mousePt)convertPt:(NSEvent *)event
+- (NvpPoint)convertPt:(NSEvent *)event
 {
     NSPoint ns_pt = [event locationInWindow];
     NSRect wnd_rect = [g_main_wnd.contentView frame];
-    mousePt pt;
+    NvpPoint pt;
     pt.x = ns_pt.x;
     pt.y = wnd_rect.size.height - ns_pt.y;
     return pt;
@@ -115,7 +115,7 @@
 - (void)mouseMoved:(NSEvent *)event
 {
     //NSLog(@"mouse move");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseMove, param);
 }
@@ -123,7 +123,7 @@
 - (void)mouseDragged:(NSEvent *)event
 {
     NSLog(@"mouse drag");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseLDrag, param);
 }
@@ -131,7 +131,7 @@
 - (void)mouseDown:(NSEvent *)event
 {
     NSLog(@"LButton Down");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseLDown, param);
 }
@@ -139,7 +139,7 @@
 - (void)mouseUp:(NSEvent *)event
 {
     NSLog(@"LButton UP");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseLUp, param);
 }
@@ -147,7 +147,7 @@
 - (void)rightMouseDown:(NSEvent *)event
 {
     NSLog(@"RButton Down");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseRDown, param);
 }
@@ -155,7 +155,7 @@
 - (void)rightMouseUp:(NSEvent *)event
 {
     NSLog(@"RButton UP");
-    mousePt pt = [self convertPt:event];
+    NvpPoint pt = [self convertPt:event];
     NvpEventParam param(pt);
     NvpEvent::fromSysEvent(MouseRUp, param);
 }

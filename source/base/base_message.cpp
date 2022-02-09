@@ -14,9 +14,9 @@ BaseMessage* const baseMsg = nullptr;
 NvpBaseObj* BaseMessage::g_now_hit_id = nullptr;
 NvpBaseObj* BaseMessage::g_mouse_drag_id = nullptr;
 NvpBaseObj* BaseMessage::g_before_leave_id = nullptr;
-mousePt BaseMessage::g_last_downL_pt = { 0 };
+NvpPoint BaseMessage::g_last_downL_pt = { 0 };
 
-void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
+void BaseMessage::hitTest(MsgBaseType msg_type, NvpPoint* pt)
 {
     static uint8_t hit_test_depth = 0;
 
@@ -85,7 +85,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-void BaseMessage::mousePtToLocal(NvpBaseObj* base, mousePt* pt)
+void BaseMessage::mousePtToLocal(NvpBaseObj* base, NvpPoint* pt)
 {
     g_last_downL_pt.x = pt->x - base->getRectRefTop().left;
     g_last_downL_pt.y = pt->y - base->getRectRefTop().top;
@@ -135,7 +135,7 @@ bool BaseMessage::checkLeave()
     }
 }
 
-NvpBaseObj* BaseMessage::inRange(mousePt* pt, NvpBaseObj* base)
+NvpBaseObj* BaseMessage::inRange(NvpPoint* pt, NvpBaseObj* base)
 {
     for (;;)
     {

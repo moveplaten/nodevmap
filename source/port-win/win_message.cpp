@@ -13,7 +13,7 @@
 
 LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    mousePt pt;
+    NvpPoint pt;
     pt.x = LOWORD(lParam);
     pt.y = HIWORD(lParam);
     pt.x = pt.x / D2dUtil::g_dpi_scale_X;

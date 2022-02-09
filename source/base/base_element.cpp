@@ -37,7 +37,7 @@ void NvpBaseObj::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
     }
 }
 
-void NvpBaseObj::msgRoute(MsgBaseType msg_type, mousePt* pt)
+void NvpBaseObj::msgRoute(MsgBaseType msg_type, NvpPoint* pt)
 {
     if (self_id > BaseMessage::g_store_shapes->getTotalMax())
     {
@@ -91,7 +91,7 @@ void NvpBaseObj::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
     }
 }
 
-void NvpBaseObj::msgRoute(MsgBaseType msg_type, mousePt* pt)
+void NvpBaseObj::msgRoute(MsgBaseType msg_type, NvpPoint* pt)
 {
     auto ret = msg_act_map.find(msg_type);
     if (ret == msg_act_map.end())
@@ -127,7 +127,7 @@ void BaseAction::prepareDraw(NvpBaseObj* base, MsgBaseType type)
     this->nvp_draw = base->self_draw;
 }
 
-void BaseAction::mousePtToLocal(NvpBaseObj* base, mousePt* pt)
+void BaseAction::mousePtToLocal(NvpBaseObj* base, NvpPoint* pt)
 {
     world_pt = *pt;
 

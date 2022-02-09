@@ -29,7 +29,7 @@ void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
         return;
     }
 
-    mousePt local_pt = worldToLocal(param.getWorldPt(), base);
+    NvpPoint local_pt = worldToLocal(param.getWorldPt(), base);
     param.setLocalPt(local_pt);
 
     switch (type)
@@ -115,9 +115,9 @@ void NvpEvent::initAll(NvpBaseObj* base, NvpEventParam& param)
     }
 }
 
-mousePt NvpEvent::worldToLocal(const mousePt world_pt, NvpBaseObj *base)
+NvpPoint NvpEvent::worldToLocal(const NvpPoint world_pt, NvpBaseObj *base)
 {
-    mousePt local_pt;
+    NvpPoint local_pt;
     
     local_pt.x = world_pt.x - base->getRectRefTop().left;
     local_pt.y = world_pt.y - base->getRectRefTop().top;
@@ -125,7 +125,7 @@ mousePt NvpEvent::worldToLocal(const mousePt world_pt, NvpBaseObj *base)
     return local_pt;
 }
 
-NvpBaseObj* NvpEvent::hitLayout(const mousePt world_pt, NvpBaseObj* base)
+NvpBaseObj* NvpEvent::hitLayout(const NvpPoint world_pt, NvpBaseObj* base)
 {
     NvpBaseObj* result = nullptr;
     
@@ -133,7 +133,7 @@ NvpBaseObj* NvpEvent::hitLayout(const mousePt world_pt, NvpBaseObj* base)
     return result;
 }
 
-void NvpEvent::hitLayoutR(const mousePt world_pt, NvpBaseObj* base, NvpBaseObj** result)
+void NvpEvent::hitLayoutR(const NvpPoint world_pt, NvpBaseObj* base, NvpBaseObj** result)
 {
     for (;;)
     {

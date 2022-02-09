@@ -28,7 +28,7 @@ struct NvpColor
     uint8_t Alpha;
 };
 
-typedef mousePt NvpXyCoord;
+typedef NvpPoint NvpXyCoord;
 
 class NvpDrawPort
 {

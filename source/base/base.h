@@ -17,25 +17,25 @@ class NvpDraw;
 class BaseMessage
 {
 public:
-    void hitTest(MsgBaseType msg_type, mousePt* pt);
+    void hitTest(MsgBaseType msg_type, NvpPoint* pt);
     
-    mousePt getLastMouseLDown() { return g_last_downL_pt; }
+    NvpPoint getLastMouseLDown() { return g_last_downL_pt; }
 
 protected:
-    //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
+    //virtual void msgRoute(MsgBaseType msg_type, NvpPoint* pt) = 0;
 
 private:
     static NvpBaseObj* g_now_hit_id;
     static NvpBaseObj* g_mouse_drag_id;
     static NvpBaseObj* g_before_leave_id;
     
-    static mousePt g_last_downL_pt; //local space;
+    static NvpPoint g_last_downL_pt; //local space;
 
     void initAll(NvpBaseObj* base);
     bool checkLeave();
-    NvpBaseObj* inRange(mousePt* pt, NvpBaseObj* base);
+    NvpBaseObj* inRange(NvpPoint* pt, NvpBaseObj* base);
 
-    void mousePtToLocal(NvpBaseObj* base, mousePt* pt);
+    void mousePtToLocal(NvpBaseObj* base, NvpPoint* pt);
 
     friend class NvpBaseObj;
 };
@@ -48,8 +48,8 @@ extern BaseMessage* const baseMsg;
 class BaseAction
 {
 public:
-    mousePt local_pt;
-    mousePt world_pt;
+    NvpPoint local_pt;
+    NvpPoint world_pt;
 
     virtual void realAction(NvpBaseObj* base) = 0;
 
@@ -66,7 +66,7 @@ protected:
     NvpDraw* nvp_draw;
 
 private:
-    void mousePtToLocal(NvpBaseObj* base, mousePt* pt);
+    void mousePtToLocal(NvpBaseObj* base, NvpPoint* pt);
 
     void prepareDraw(NvpBaseObj* base, MsgBaseType type);
 

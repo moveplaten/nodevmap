@@ -10,7 +10,7 @@
 
 typedef float ptSize;
 
-struct mousePt
+struct NvpPoint
 {
     float x;
     float y;
@@ -43,21 +43,21 @@ class NvpEventParam
 {
 public:
     NvpEventParam() : world_pt({ 0 }), local_pt({ 0 }) {}
-    NvpEventParam(mousePt world) : world_pt(world), local_pt({ 0 }) {}
-    NvpEventParam(mousePt world, mousePt local) : world_pt(world), local_pt(local) {}
+    NvpEventParam(NvpPoint world) : world_pt(world), local_pt({ 0 }) {}
+    NvpEventParam(NvpPoint world, NvpPoint local) : world_pt(world), local_pt(local) {}
 
-    void setLocalPt(mousePt local) { local_pt = local; }
+    void setLocalPt(NvpPoint local) { local_pt = local; }
 
-    mousePt getLocalPt() { return local_pt; }
-    mousePt getWorldPt() { return world_pt; }
+    NvpPoint getLocalPt() { return local_pt; }
+    NvpPoint getWorldPt() { return world_pt; }
 
     void wantCaptureMouse(NvpBaseObj* base) { capture_mouse = base; }
     void freeCaptureMouse() { capture_mouse = nullptr; }
     NvpBaseObj* getMouseCapture() { return capture_mouse; }
 
 private:
-    mousePt local_pt;
-    mousePt world_pt;
+    NvpPoint local_pt;
+    NvpPoint world_pt;
 
     NvpBaseObj* capture_mouse = nullptr;
 };
@@ -87,14 +87,14 @@ class NvpEvent : public NvpSysEvent, public NvpUserEvent
 public:
     static void fromSysEvent(NvpSysEventType type, NvpEventParam& param);
 
-    static mousePt worldToLocal(const mousePt world_pt, NvpBaseObj* base);
+    static NvpPoint worldToLocal(const NvpPoint world_pt, NvpBaseObj* base);
 
-    static NvpBaseObj* hitLayout(const mousePt world_pt, NvpBaseObj* base);
+    static NvpBaseObj* hitLayout(const NvpPoint world_pt, NvpBaseObj* base);
 
     static void initAll(NvpBaseObj* base, NvpEventParam& param);
 
 private:
     static void fromUserEvent(NvpUserEventType type, NvpEventParam& param);
 
-    static void hitLayoutR(const mousePt world_pt, NvpBaseObj* base, NvpBaseObj** result);
+    static void hitLayoutR(const NvpPoint world_pt, NvpBaseObj* base, NvpBaseObj** result);
 };

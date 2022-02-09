@@ -33,7 +33,7 @@ public:
 
     static void setBaseRect(NvpBaseObj* base, const NvpRect& rect);
 
-    static bool ptInRect(mousePt pt, NvpRect rect);
+    static bool ptInRect(NvpPoint pt, NvpRect rect);
 
     static NvpRect& rectCorrect(NvpRect& rect);
 

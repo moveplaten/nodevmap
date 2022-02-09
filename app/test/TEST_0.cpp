@@ -79,7 +79,7 @@ class NodeViewSelect : public NvpEvent
 
     void mouseLDrag(NvpBaseObj* base, NvpEventParam& param) override
     {
-        mousePt now_pt = param.getLocalPt();
+        NvpPoint now_pt = param.getLocalPt();
         NvpRect select;
         select.left = down_pt.x;
         select.top = down_pt.y;
@@ -98,7 +98,7 @@ class NodeViewSelect : public NvpEvent
         one_line->one_line->setPoint2(p2);
     }
 
-    mousePt down_pt;
+    NvpPoint down_pt;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ static void nodeInit(NvpBaseObj* base, const NvpRect& rect, const char* colo, fl
 
 static void nodeText(NvpBaseObj* base, NvpEventParam& param)
 {
-    mousePt local_pt = param.getLocalPt();
+    NvpPoint local_pt = param.getLocalPt();
     auto font = base->getSelfDraw()->getDraw(1);
     font->text_left_right->setStart({ local_pt.x, local_pt.y });
     

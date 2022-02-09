@@ -146,7 +146,7 @@ class Act1MouseDrag : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        mousePt last_pt = baseMsg->getLastMouseLDown();
+        NvpPoint last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
         const NvpRect& old_rect = base->getRectRefUp();
@@ -167,7 +167,7 @@ class Act2MouseDrag : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        mousePt last_pt = baseMsg->getLastMouseLDown();
+        NvpPoint last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
         const NvpRect& old_rect = base->getRectRefUp();
@@ -483,7 +483,7 @@ class Act3MouseLButtonDown : public BaseAction
             auto elem_top = NvpLayout::getTopNodeView();
 
             auto elem = NvpLayout::subElemGen(number_str, MsgInit, &ActRandomInit, elem_top);
-            mousePt pt;
+            NvpPoint pt;
             elem->msgRoute(MsgInit, &pt);
             // same act as v1 except init position;
             NvpLayout::subElemGen(number_str, MouseEnter, &ActMouseEnter, elem_top);
