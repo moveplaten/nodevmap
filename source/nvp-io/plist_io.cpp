@@ -28,7 +28,7 @@ void NvpPlistIO::inputAll(NvpPlistSeq* seq, NvpSysPort::File* file, const char* 
     io.inputAllR(root);
 }
 
-BaseElement* NvpPlistIO::inputAllR(NvpPlistPort& plist, BaseElement* base)
+NvpBaseObj* NvpPlistIO::inputAllR(NvpPlistPort& plist, NvpBaseObj* base)
 {
     uint32_t io_offset = 0;
 
@@ -84,7 +84,7 @@ void NvpPlistIO::prepareNewSeq()
     io_seq = seq_new;
 }
 
-void NvpPlistIO::outputAll(BaseElement* base, NvpPlistSeq* seq, NvpSysPort::File* file)
+void NvpPlistIO::outputAll(NvpBaseObj* base, NvpPlistSeq* seq, NvpSysPort::File* file)
 {
     auto root = NvpPlistPort::newEmptyArray();
     NvpPlistIO io(seq);
@@ -96,7 +96,7 @@ void NvpPlistIO::outputAll(BaseElement* base, NvpPlistSeq* seq, NvpSysPort::File
     delete file;
 }
 
-void NvpPlistIO::outputAllR(BaseElement* base, NvpPlistPort& plist)
+void NvpPlistIO::outputAllR(NvpBaseObj* base, NvpPlistPort& plist)
 {
     for (;;)
     {

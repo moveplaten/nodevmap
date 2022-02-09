@@ -74,7 +74,7 @@ void NvpDrawSeq::procSeq()
 </array>
 ------------------------------------------------------------------------------*/
 
-BaseElement* NvpDrawSeq::signalSeqEnd(BaseElement* base)
+NvpBaseObj* NvpDrawSeq::signalSeqEnd(NvpBaseObj* base)
 {
     if (base == nullptr)
     {
@@ -84,7 +84,7 @@ BaseElement* NvpDrawSeq::signalSeqEnd(BaseElement* base)
     auto node = NvpLayout::subElemGen("", createNewEvent(), base);
     NvpLayout::setBaseRect(node, rect);
 
-    draw_seq->base_elem = node;
+    draw_seq->base_obj = node;
     node->setSelfDraw(draw_seq);
 
     return node;

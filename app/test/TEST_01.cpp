@@ -11,7 +11,7 @@
 
 class TopNodeView : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpColor col = { 40, 40, 45 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -19,13 +19,13 @@ class TopNodeView : public NvpEvent
         base->getSelfDraw()->pushDraw(one_rect);
     }
 
-    void mouseLDown(BaseElement* base, NvpEventParam& param) override
+    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("RightMouseMenu", base);
         elem->getSelfEvent()->mouseLDown(elem, param);
     }
 
-    void mouseRDown(BaseElement* base, NvpEventParam& param) override
+    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("RightMouseMenu", base);
         elem->getSelfEvent()->mouseRDown(elem, param);
@@ -35,11 +35,11 @@ class TopNodeView : public NvpEvent
 ////////////////////////////////////////////////////////////////////////////////
 
 static bool hit_node = false;
-static BaseElement* hit_elem = nullptr;
+static NvpBaseObj* hit_elem = nullptr;
 
 class RandomColorNode : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpColor col = NvpColor::randomColor();
 
@@ -128,7 +128,7 @@ class RandomColorNode : public NvpEvent
         }
     }
 
-    void mouseRDown(BaseElement* base, NvpEventParam& param) override
+    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto right_menu = NvpLayout::findSameLevel("RightMouseMenu", NvpLayout::getTopNodeView());
         if (right_menu)
@@ -144,7 +144,7 @@ class RandomColorNode : public NvpEvent
 class RandomColorNode2 : public NvpEvent
 {
 public:
-    static void userInit2(BaseElement* base, BaseRect rect, NvpColor colo)
+    static void userInit2(NvpBaseObj* base, BaseRect rect, NvpColor colo)
     {
         base->setSelfDraw(new NvpDraw(base));
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -153,7 +153,7 @@ public:
         NvpLayout::setBaseRect(base, rect);
     }
 
-    void mouseRDown(BaseElement* base, NvpEventParam& param) override
+    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto right_menu = NvpLayout::findSameLevel("RightMouseMenu", NvpLayout::getTopNodeView());
         if (right_menu)
@@ -180,7 +180,7 @@ protected:
         return new PlistSeqRecColo;
     }
 
-    BaseElement* signalSeqEnd(BaseElement* base) override
+    NvpBaseObj* signalSeqEnd(NvpBaseObj* base) override
     {
         if (base == nullptr)
         {
@@ -315,7 +315,7 @@ static void initAllNode()
 
 class RightMouseMenu : public NvpEvent
 {
-    void clearMenu(BaseElement* base)
+    void clearMenu(NvpBaseObj* base)
     {
         auto font = base->getSelfDraw()->getDraw(1);
         font->text_left_right->setStart({ 0, 0 });
@@ -332,7 +332,7 @@ class RightMouseMenu : public NvpEvent
         NvpLayout::setBaseRect(base, { 0 });
     }
 
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpColor col = { 120, 120, 120 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -353,13 +353,13 @@ class RightMouseMenu : public NvpEvent
         base->getSelfDraw()->pushDraw(font3);
     }
 
-    void mouseLDown(BaseElement* base, NvpEventParam& param) override
+    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto world_pt = param.getWorldPt();
         if (NvpLayout::ptInRect(world_pt, rect_new))
         {
             clearMenu(base);
-            BaseElement* node = nullptr;
+            NvpBaseObj* node = nullptr;
             if (hit_elem->getSelfName() != "RightMouseMenu")
             {
                 node = NvpLayout::subElemGen("", new RandomColorNode, hit_elem);
@@ -391,7 +391,7 @@ class RightMouseMenu : public NvpEvent
         }
     }
 
-    void mouseRDown(BaseElement* base, NvpEventParam& param) override
+    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         hit_elem = base;
         auto world_pt = param.getWorldPt();

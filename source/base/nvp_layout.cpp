@@ -8,12 +8,12 @@
 
 #include "base.h"
 
-BaseElement* NvpLayout::g_top_layout = nullptr;
-BaseElement* NvpLayout::g_top_node_view = nullptr;
-BaseElement* NvpLayout::g_top_menu_stat = nullptr;
+NvpBaseObj* NvpLayout::g_top_layout = nullptr;
+NvpBaseObj* NvpLayout::g_top_node_view = nullptr;
+NvpBaseObj* NvpLayout::g_top_menu_stat = nullptr;
 ElemIDStorage* NvpLayout::g_all_id_store = nullptr;
 
-void NvpLayout::setBaseRect(BaseElement* base, const BaseRect& rect)
+void NvpLayout::setBaseRect(NvpBaseObj* base, const BaseRect& rect)
 {
     //ref_up is input from user;
     base->self_layout.layout_body.ref_up = rectCorrect(const_cast<BaseRect&>(rect));
@@ -68,7 +68,7 @@ BaseRect& NvpLayout::rectCorrect(BaseRect& rect)
     return rect;
 }
 
-BaseElement* NvpLayout::findSameLevel(const std::string& str, BaseElement* base)
+NvpBaseObj* NvpLayout::findSameLevel(const std::string& str, NvpBaseObj* base)
 {
     auto head = *(base->self_layout.layout_level.begin());
     auto elem_map = head.head->cur_map;
@@ -81,18 +81,18 @@ BaseElement* NvpLayout::findSameLevel(const std::string& str, BaseElement* base)
     else
     {
         auto elem = *ret;
-        BaseElement* base = elem.second;
+        NvpBaseObj* base = elem.second;
         return base;
     }
 }
 
-BaseElement* NvpLayout::getUpElem(BaseElement* base)
+NvpBaseObj* NvpLayout::getUpElem(NvpBaseObj* base)
 {
     auto head = getLayoutHead(base);
     return head->up_elem;
 }
 
-BaseElement* NvpLayout::getSubFirst(BaseElement* base)
+NvpBaseObj* NvpLayout::getSubFirst(NvpBaseObj* base)
 {
     if (!base)
     {
@@ -114,7 +114,7 @@ BaseElement* NvpLayout::getSubFirst(BaseElement* base)
     return (*iter).elem;
 }
 
-BaseElement* NvpLayout::getNext(BaseElement* base)
+NvpBaseObj* NvpLayout::getNext(NvpBaseObj* base)
 {
     if (!base)
     {
@@ -131,7 +131,7 @@ BaseElement* NvpLayout::getNext(BaseElement* base)
     return (*iter).elem;
 }
 
-BaseElement* NvpLayout::getSubLast(BaseElement* base)
+NvpBaseObj* NvpLayout::getSubLast(NvpBaseObj* base)
 {
     if (!base)
     {
@@ -153,7 +153,7 @@ BaseElement* NvpLayout::getSubLast(BaseElement* base)
     return (*iter).elem;
 }
 
-BaseElement* NvpLayout::getNextReverse(BaseElement* base)
+NvpBaseObj* NvpLayout::getNextReverse(NvpBaseObj* base)
 {
     if (!base)
     {
@@ -170,8 +170,8 @@ BaseElement* NvpLayout::getNextReverse(BaseElement* base)
     return (*iter).elem;
 }
 
-BaseElement* NvpLayout::subElemGen(const std::string& str,
-    NvpEvent* event, BaseElement* up, bool be_top)
+NvpBaseObj* NvpLayout::subElemGen(const std::string& str,
+    NvpEvent* event, NvpBaseObj* up, bool be_top)
 {
     if (!g_top_layout)
     {
@@ -183,7 +183,7 @@ BaseElement* NvpLayout::subElemGen(const std::string& str,
     return elemGen(str, event, level, be_top);
 }
 
-void NvpLayout::subElemDel(BaseElement* elem)
+void NvpLayout::subElemDel(NvpBaseObj* elem)
 {
     if (!elem)
     {
@@ -216,7 +216,7 @@ void NvpLayout::subElemDel(BaseElement* elem)
     delete sub_level;
 }
 
-void NvpLayout::moveToAllTop(BaseElement* elem)
+void NvpLayout::moveToAllTop(NvpBaseObj* elem)
 {
     elem->self_layout.layout_level.erase(elem->self_layout.layout_iter);
 
@@ -227,7 +227,7 @@ void NvpLayout::moveToAllTop(BaseElement* elem)
     elem->self_layout.layout_iter = ret_iter;
 }
 
-NvpLayout::NvpLayoutHead* NvpLayout::getLayoutHead(BaseElement* elem)
+NvpLayout::NvpLayoutHead* NvpLayout::getLayoutHead(NvpBaseObj* elem)
 {
     if (!elem)
     {
@@ -240,7 +240,7 @@ NvpLayout::NvpLayoutHead* NvpLayout::getLayoutHead(BaseElement* elem)
     return head_layout.head;
 }
 
-BaseElement* NvpLayout::elemGen(const std::string& str,
+NvpBaseObj* NvpLayout::elemGen(const std::string& str,
     NvpEvent* event, NvpLevel* level, bool be_top)
 {
     if (!g_top_layout)
@@ -274,7 +274,7 @@ BaseElement* NvpLayout::elemGen(const std::string& str,
                 const_cast<std::string&>(str_ref) = std::to_string(id);
             }
 
-            BaseElement* base = new BaseElement(id, str_ref, layout, event, be_top);
+            NvpBaseObj* base = new NvpBaseObj(id, str_ref, layout, event, be_top);
 
             NvpLayoutUnit unit(base);
 
@@ -289,7 +289,7 @@ BaseElement* NvpLayout::elemGen(const std::string& str,
         else
         {
             auto elem = *ret;
-            BaseElement* base = elem.second;
+            NvpBaseObj* base = elem.second;
 
             base->self_event = event;
             return base;
@@ -311,14 +311,14 @@ bool NvpLayout::elemDel(const std::string& str, NvpLevel* level)
     else
     {
         auto elem = *ret;
-        BaseElement* base = elem.second;
+        NvpBaseObj* base = elem.second;
         elem_map->erase(str);
         subElemDel(base);
         return true;
     }
 }
 
-NvpLayout::NvpLevel* NvpLayout::subLevelGen(BaseElement* elem)
+NvpLayout::NvpLevel* NvpLayout::subLevelGen(NvpBaseObj* elem)
 {
     if (!elem)
     {
@@ -358,7 +358,7 @@ void NvpLayout::initDefaultLayout()
         return;
     }
 
-    g_top_layout = (BaseElement*)0x1; //break loop;
+    g_top_layout = (NvpBaseObj*)0x1; //break loop;
 
     auto top_level = new NvpLevel;
 

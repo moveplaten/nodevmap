@@ -11,9 +11,9 @@
 #include <stdio.h>
 
 BaseMessage* const baseMsg = nullptr;
-BaseElement* BaseMessage::g_now_hit_id = nullptr;
-BaseElement* BaseMessage::g_mouse_drag_id = nullptr;
-BaseElement* BaseMessage::g_before_leave_id = nullptr;
+NvpBaseObj* BaseMessage::g_now_hit_id = nullptr;
+NvpBaseObj* BaseMessage::g_mouse_drag_id = nullptr;
+NvpBaseObj* BaseMessage::g_before_leave_id = nullptr;
 mousePt BaseMessage::g_last_downL_pt = { 0 };
 
 void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
@@ -56,7 +56,7 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
     else
     {
-        BaseElement* fetch = inRange(pt, NvpLayout::getTopLayout());
+        NvpBaseObj* fetch = inRange(pt, NvpLayout::getTopLayout());
 
         if (fetch)
         {
@@ -85,13 +85,13 @@ void BaseMessage::hitTest(MsgBaseType msg_type, mousePt* pt)
     }
 }
 
-void BaseMessage::mousePtToLocal(BaseElement* base, mousePt* pt)
+void BaseMessage::mousePtToLocal(NvpBaseObj* base, mousePt* pt)
 {
     g_last_downL_pt.x = pt->x - base->getRectRefTop().left;
     g_last_downL_pt.y = pt->y - base->getRectRefTop().top;
 }
 
-void BaseMessage::initAll(BaseElement* base)
+void BaseMessage::initAll(NvpBaseObj* base)
 {
     for (;;)
     {
@@ -118,8 +118,8 @@ void BaseMessage::initAll(BaseElement* base)
 
 bool BaseMessage::checkLeave()
 {
-    static BaseElement* prev_hit = nullptr;
-    BaseElement* now_hit = g_now_hit_id;
+    static NvpBaseObj* prev_hit = nullptr;
+    NvpBaseObj* now_hit = g_now_hit_id;
     size_t check_sub = prev_hit - now_hit;
 
     if (check_sub == 0)
@@ -135,7 +135,7 @@ bool BaseMessage::checkLeave()
     }
 }
 
-BaseElement* BaseMessage::inRange(mousePt* pt, BaseElement* base)
+NvpBaseObj* BaseMessage::inRange(mousePt* pt, NvpBaseObj* base)
 {
     for (;;)
     {

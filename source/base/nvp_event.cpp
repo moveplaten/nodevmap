@@ -11,9 +11,9 @@
 
 void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
 {
-    static BaseElement* mouse_capture = nullptr;
+    static NvpBaseObj* mouse_capture = nullptr;
 
-    BaseElement* base;
+    NvpBaseObj* base;
 
     if (mouse_capture)
     {
@@ -85,7 +85,7 @@ void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
     NvpDrawPort::beginDraw();
 }
 
-void NvpEvent::initAll(BaseElement* base, NvpEventParam& param)
+void NvpEvent::initAll(NvpBaseObj* base, NvpEventParam& param)
 {
     for (;;)
     {
@@ -115,7 +115,7 @@ void NvpEvent::initAll(BaseElement* base, NvpEventParam& param)
     }
 }
 
-mousePt NvpEvent::worldToLocal(const mousePt world_pt, BaseElement *base)
+mousePt NvpEvent::worldToLocal(const mousePt world_pt, NvpBaseObj *base)
 {
     mousePt local_pt;
     
@@ -125,15 +125,15 @@ mousePt NvpEvent::worldToLocal(const mousePt world_pt, BaseElement *base)
     return local_pt;
 }
 
-BaseElement* NvpEvent::hitLayout(const mousePt world_pt, BaseElement* base)
+NvpBaseObj* NvpEvent::hitLayout(const mousePt world_pt, NvpBaseObj* base)
 {
-    BaseElement* result = nullptr;
+    NvpBaseObj* result = nullptr;
     
     hitLayoutR(world_pt, base, &result);
     return result;
 }
 
-void NvpEvent::hitLayoutR(const mousePt world_pt, BaseElement* base, BaseElement** result)
+void NvpEvent::hitLayoutR(const mousePt world_pt, NvpBaseObj* base, NvpBaseObj** result)
 {
     for (;;)
     {

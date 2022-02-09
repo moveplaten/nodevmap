@@ -13,7 +13,7 @@
 
 class TopNodeView : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpColor col = { 40, 40, 45 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -21,20 +21,20 @@ class TopNodeView : public NvpEvent
         base->getSelfDraw()->pushDraw(one_rect);
     }
 
-    void mouseLDown(BaseElement* base, NvpEventParam& param) override
+    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("node_view_select", base);
         elem->getSelfEvent()->mouseLDown(elem, param);
     }
 
-    void mouseLUp(BaseElement* base, NvpEventParam& param) override
+    void mouseLUp(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("node_view_select", base);
         elem->getSelfEvent()->mouseLUp(elem, param);
         param.freeCaptureMouse();
     }
 
-    void mouseLDrag(BaseElement* base, NvpEventParam& param) override
+    void mouseLDrag(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto elem = NvpLayout::findSameLevel("node_view_select", base);
         elem->getSelfEvent()->mouseLDrag(elem, param);
@@ -46,7 +46,7 @@ class TopNodeView : public NvpEvent
 
 class NodeViewSelect : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpColor col = { 200, 200, 200, 50 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -65,12 +65,12 @@ class NodeViewSelect : public NvpEvent
         base->getSelfDraw()->pushDraw(one_line);
     }
 
-    void mouseLDown(BaseElement* base, NvpEventParam& param) override
+    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         down_pt = param.getLocalPt();
     }
 
-    void mouseLUp(BaseElement* base, NvpEventParam& param) override
+    void mouseLUp(NvpBaseObj* base, NvpEventParam& param) override
     {
         NvpLayout::setBaseRect(base, { 0, 0, 0, 0 });
         down_pt = { 0 };
@@ -79,7 +79,7 @@ class NodeViewSelect : public NvpEvent
         one_line->one_line->setPoint2({ 0 });
     }
 
-    void mouseLDrag(BaseElement* base, NvpEventParam& param) override
+    void mouseLDrag(NvpBaseObj* base, NvpEventParam& param) override
     {
         mousePt now_pt = param.getLocalPt();
         BaseRect select;
@@ -107,7 +107,7 @@ class NodeViewSelect : public NvpEvent
 
 class TopMenuStat : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto draw = base->getSelfDraw();
         NvpColor col = { 100, 200, 255 };
@@ -219,7 +219,7 @@ static void initFromStr(NvpDraw* draw, const char* str, float font_size)
     initCmdColStr(draw, cmd_str2, col_str2, font_size);
 }
 
-static void nodeInit(BaseElement* base, const BaseRect& rect, const char* colo, float font_size)
+static void nodeInit(NvpBaseObj* base, const BaseRect& rect, const char* colo, float font_size)
 {
     auto draw = base->getSelfDraw();
     NvpLayout::setBaseRect(base, rect);
@@ -227,7 +227,7 @@ static void nodeInit(BaseElement* base, const BaseRect& rect, const char* colo, 
     initFromStr(draw, colo, font_size);
 }
 
-static void nodeText(BaseElement* base, NvpEventParam& param)
+static void nodeText(NvpBaseObj* base, NvpEventParam& param)
 {
     mousePt local_pt = param.getLocalPt();
     auto font = base->getSelfDraw()->getDraw(1);
@@ -241,7 +241,7 @@ static void nodeText(BaseElement* base, NvpEventParam& param)
 
 class TempNode1 : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         BaseRect rect;
         rect.left = rect.top = 30;
@@ -250,7 +250,7 @@ class TempNode1 : public NvpEvent
         nodeInit(base, rect, node_1_init_str, 15);
     }
 
-    void mouseMove(BaseElement* base, NvpEventParam& param) override
+    void mouseMove(NvpBaseObj* base, NvpEventParam& param) override
     {
         nodeText(base, param);
     }
@@ -258,7 +258,7 @@ class TempNode1 : public NvpEvent
 
 class TempNode2 : public NvpEvent
 {
-    void userInit(BaseElement* base, NvpEventParam& param) override
+    void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
         BaseRect rect;
         rect.left = rect.top = 30;
@@ -267,7 +267,7 @@ class TempNode2 : public NvpEvent
         nodeInit(base, rect, node_2_init_str, 12);
     }
 
-    void mouseMove(BaseElement* base, NvpEventParam& param) override
+    void mouseMove(NvpBaseObj* base, NvpEventParam& param) override
     {
         nodeText(base, param);
     }

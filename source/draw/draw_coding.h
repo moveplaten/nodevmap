@@ -21,7 +21,7 @@ protected:
     //virtual NvpPlistSeq* createNewSeq() = 0;
 
     virtual void procSeq() override;
-    virtual BaseElement* signalSeqEnd(BaseElement* base) override;
+    virtual NvpBaseObj* signalSeqEnd(NvpBaseObj* base) override;
 
 private:
     void readSeq();

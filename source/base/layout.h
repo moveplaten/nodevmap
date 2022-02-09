@@ -22,7 +22,7 @@ struct BaseRect
     float bottom;
 };
 
-class BaseElement;
+class NvpBaseObj;
 class NvpEvent;
 
 class NvpLayout
@@ -31,7 +31,7 @@ public:
     NvpLayout() = delete;
     ~NvpLayout();
 
-    static void setBaseRect(BaseElement* base, const BaseRect& rect);
+    static void setBaseRect(NvpBaseObj* base, const BaseRect& rect);
 
     static bool ptInRect(mousePt pt, BaseRect rect);
 
@@ -41,42 +41,42 @@ public:
     
     const BaseRect& getRectRefTop() const { return layout_body.ref_top; }
 
-    static BaseElement* findSameLevel(const std::string& str, BaseElement* base);
+    static NvpBaseObj* findSameLevel(const std::string& str, NvpBaseObj* base);
 
-    static BaseElement* getUpElem(BaseElement* base);
+    static NvpBaseObj* getUpElem(NvpBaseObj* base);
 
-    static BaseElement* getSubFirst(BaseElement* base);
+    static NvpBaseObj* getSubFirst(NvpBaseObj* base);
 
-    static BaseElement* getNext(BaseElement* base);
+    static NvpBaseObj* getNext(NvpBaseObj* base);
     
-    static BaseElement* getSubLast(BaseElement* base);
+    static NvpBaseObj* getSubLast(NvpBaseObj* base);
 
-    static BaseElement* getNextReverse(BaseElement* base);
+    static NvpBaseObj* getNextReverse(NvpBaseObj* base);
 
-    static BaseElement* subElemGen(const std::string& str, NvpEvent* event,
-        BaseElement* up, bool be_top = true);
+    static NvpBaseObj* subElemGen(const std::string& str, NvpEvent* event,
+        NvpBaseObj* up, bool be_top = true);
 
-    static void subElemDel(BaseElement* elem);
+    static void subElemDel(NvpBaseObj* elem);
 
-    static void moveToAllTop(BaseElement* elem);
+    static void moveToAllTop(NvpBaseObj* elem);
 
-    static BaseElement* getTopLayout() { return g_top_layout; }
+    static NvpBaseObj* getTopLayout() { return g_top_layout; }
 
-    static BaseElement* getTopNodeView() { return g_top_node_view; }
+    static NvpBaseObj* getTopNodeView() { return g_top_node_view; }
 
-    static BaseElement* getTopMenuStat() { return g_top_menu_stat; }
+    static NvpBaseObj* getTopMenuStat() { return g_top_menu_stat; }
 
     static ElemIDStorage* getIDStorage() { return g_all_id_store; }
 
 private:
     union NvpLayoutUnit;
 
-    typedef std::map<std::string, BaseElement*> ElemMap;
+    typedef std::map<std::string, NvpBaseObj*> ElemMap;
     typedef std::list<NvpLayoutUnit> NvpLevel;
 
-    static BaseElement* g_top_layout;    //0; the whole client area;
-    static BaseElement* g_top_node_view; //1;
-    static BaseElement* g_top_menu_stat; //1;
+    static NvpBaseObj* g_top_layout;    //0; the whole client area;
+    static NvpBaseObj* g_top_node_view; //1;
+    static NvpBaseObj* g_top_menu_stat; //1;
     
     static ElemIDStorage* g_all_id_store;
 
@@ -90,7 +90,7 @@ private:
 
     struct NvpLayoutHead
     {
-        BaseElement* up_elem;
+        NvpBaseObj* up_elem;
         NvpLevel* up_level;
 
         ElemMap* cur_map; //all elem name in this level;
@@ -100,22 +100,22 @@ private:
     union NvpLayoutUnit //only pointers;
     {
         NvpLayoutUnit(NvpLayoutHead* _head) { head = _head; }
-        NvpLayoutUnit(BaseElement* _elem) { elem = _elem; }
+        NvpLayoutUnit(NvpBaseObj* _elem) { elem = _elem; }
         
         NvpLayoutHead* head; //head is always first, only first one is valid;
-        BaseElement* elem;
+        NvpBaseObj* elem;
     };
 
-    static BaseElement* elemGen(const std::string& str, NvpEvent* event,
+    static NvpBaseObj* elemGen(const std::string& str, NvpEvent* event,
         NvpLevel* level, bool be_top = true);
 
     static bool elemDel(const std::string& str, NvpLevel* level);
 
-    static NvpLevel* subLevelGen(BaseElement* elem);
+    static NvpLevel* subLevelGen(NvpBaseObj* elem);
 
     static void initDefaultLayout();
 
-    static NvpLayoutHead* getLayoutHead(BaseElement* elem);
+    static NvpLayoutHead* getLayoutHead(NvpBaseObj* elem);
 
     NvpLayout(NvpLayoutBody& body, NvpLevel& level, NvpLevel::iterator iter)
         :layout_body(body), layout_level(level), layout_iter(iter) {}

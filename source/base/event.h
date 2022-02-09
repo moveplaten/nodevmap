@@ -37,7 +37,7 @@ enum NvpUserEventType
     
 };
 
-class BaseElement;
+class NvpBaseObj;
 
 class NvpEventParam
 {
@@ -51,33 +51,33 @@ public:
     mousePt getLocalPt() { return local_pt; }
     mousePt getWorldPt() { return world_pt; }
 
-    void wantCaptureMouse(BaseElement* base) { capture_mouse = base; }
+    void wantCaptureMouse(NvpBaseObj* base) { capture_mouse = base; }
     void freeCaptureMouse() { capture_mouse = nullptr; }
-    BaseElement* getMouseCapture() { return capture_mouse; }
+    NvpBaseObj* getMouseCapture() { return capture_mouse; }
 
 private:
     mousePt local_pt;
     mousePt world_pt;
 
-    BaseElement* capture_mouse = nullptr;
+    NvpBaseObj* capture_mouse = nullptr;
 };
 
 class NvpSysEvent
 {
 public:
-    virtual void mouseMove(BaseElement* base, NvpEventParam& param) {}
-    virtual void mouseLDown(BaseElement* base, NvpEventParam& param) {}
-    virtual void mouseLUp(BaseElement* base, NvpEventParam& param) {}
-    virtual void mouseRDown(BaseElement* base, NvpEventParam& param) {}
-    virtual void mouseRUp(BaseElement* base, NvpEventParam& param) {}
-    virtual void mouseLDrag(BaseElement* base, NvpEventParam& param) {}
+    virtual void mouseMove(NvpBaseObj* base, NvpEventParam& param) {}
+    virtual void mouseLDown(NvpBaseObj* base, NvpEventParam& param) {}
+    virtual void mouseLUp(NvpBaseObj* base, NvpEventParam& param) {}
+    virtual void mouseRDown(NvpBaseObj* base, NvpEventParam& param) {}
+    virtual void mouseRUp(NvpBaseObj* base, NvpEventParam& param) {}
+    virtual void mouseLDrag(NvpBaseObj* base, NvpEventParam& param) {}
 
     friend class NvpEvent;
 };
 
 class NvpUserEvent
 {
-    virtual void userInit(BaseElement* base, NvpEventParam& param) {}
+    virtual void userInit(NvpBaseObj* base, NvpEventParam& param) {}
 
     friend class NvpEvent;
 };
@@ -87,14 +87,14 @@ class NvpEvent : public NvpSysEvent, public NvpUserEvent
 public:
     static void fromSysEvent(NvpSysEventType type, NvpEventParam& param);
 
-    static mousePt worldToLocal(const mousePt world_pt, BaseElement* base);
+    static mousePt worldToLocal(const mousePt world_pt, NvpBaseObj* base);
 
-    static BaseElement* hitLayout(const mousePt world_pt, BaseElement* base);
+    static NvpBaseObj* hitLayout(const mousePt world_pt, NvpBaseObj* base);
 
-    static void initAll(BaseElement* base, NvpEventParam& param);
+    static void initAll(NvpBaseObj* base, NvpEventParam& param);
 
 private:
     static void fromUserEvent(NvpUserEventType type, NvpEventParam& param);
 
-    static void hitLayoutR(const mousePt world_pt, BaseElement* base, BaseElement** result);
+    static void hitLayoutR(const mousePt world_pt, NvpBaseObj* base, NvpBaseObj** result);
 };

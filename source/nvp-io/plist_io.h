@@ -28,10 +28,10 @@ public:
 
     struct Write
     {
-        Write(BaseElement* base_, const NvpPlistPort& plist_) :
+        Write(NvpBaseObj* base_, const NvpPlistPort& plist_) :
             base(base_), plist(plist_) {}
 
-        BaseElement* base;
+        NvpBaseObj* base;
         const NvpPlistPort& plist;
     };
 
@@ -43,9 +43,9 @@ public:
 
 protected:
     virtual NvpPlistSeq* createNewSeq() = 0;
-    virtual BaseElement* signalSeqEnd(BaseElement* base) = 0;
+    virtual NvpBaseObj* signalSeqEnd(NvpBaseObj* base) = 0;
     //virtual void readSeq(const NvpPlistPort& plist, uint32_t offset) = 0;
-    //virtual void writeSeq(BaseElement* base, NvpPlistPort& plist) = 0;
+    //virtual void writeSeq(NvpBaseObj* base, NvpPlistPort& plist) = 0;
     virtual void procSeq() = 0;
 
 private:
@@ -72,16 +72,16 @@ public:
 
     static void inputAll(NvpPlistSeq* seq, NvpSysPort::File* file, const char* fallback);
 
-    static void outputAll(BaseElement* base, NvpPlistSeq* seq, NvpSysPort::File* file);
+    static void outputAll(NvpBaseObj* base, NvpPlistSeq* seq, NvpSysPort::File* file);
 
     ~NvpPlistIO();
 
 private:
     void prepareNewSeq();
-    void outputAllR(BaseElement* base, NvpPlistPort& plist);
-    BaseElement* inputAllR(NvpPlistPort& plist, BaseElement* base = nullptr);
+    void outputAllR(NvpBaseObj* base, NvpPlistPort& plist);
+    NvpBaseObj* inputAllR(NvpPlistPort& plist, NvpBaseObj* base = nullptr);
 
     int stack_level;
     NvpPlistSeq* io_seq;
-    BaseElement* stack_prev[MAX_STACK_LEVEL];
+    NvpBaseObj* stack_prev[MAX_STACK_LEVEL];
 };

@@ -11,7 +11,7 @@
 
 class ActInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = rect.top = 10;
@@ -35,7 +35,7 @@ class ActInit : public BaseAction
 
 class ActMouseEnter : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto rect = nvp_draw->getDraw(0);
         rect->colorBright();
@@ -44,7 +44,7 @@ class ActMouseEnter : public BaseAction
 
 class ActMouseLeave : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto rect = nvp_draw->getDraw(0);
         rect->colorDarker();
@@ -53,7 +53,7 @@ class ActMouseLeave : public BaseAction
 
 class ActMouseLButtonDown : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         
     }
@@ -61,7 +61,7 @@ class ActMouseLButtonDown : public BaseAction
 
 class ActMouseLButtonUp : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
 
     }
@@ -70,7 +70,7 @@ class ActMouseLButtonUp : public BaseAction
 ////////////////////////////////////////////////////////////////////////
 class Act2Init : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = 50;
@@ -96,7 +96,7 @@ class Act2Init : public BaseAction
 
 class Act2MouseEnter : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto rect = nvp_draw->getDraw(0);
         rect->colorBright();
@@ -105,7 +105,7 @@ class Act2MouseEnter : public BaseAction
 
 class Act2MouseLeave : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto rect = nvp_draw->getDraw(0);
         rect->colorDarker();
@@ -113,7 +113,7 @@ class Act2MouseLeave : public BaseAction
 }Act2MouseLeave;
 /////////////////////////////////////////////////////////////////////////
 
-static void subLevelRecord(BaseElement* elem)
+static void subLevelRecord(NvpBaseObj* elem)
 {
     #if 0
     if (!elem)
@@ -144,7 +144,7 @@ static void subLevelRecord(BaseElement* elem)
 
 class Act1MouseDrag : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
@@ -165,7 +165,7 @@ class Act1MouseDrag : public BaseAction
 
 class Act2MouseDrag : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
@@ -185,7 +185,7 @@ class Act2MouseDrag : public BaseAction
 ////////////////////////////////////////////////////////////////////////
 class Act3Init : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = 110;
@@ -216,7 +216,7 @@ class Act3Init : public BaseAction
 
 class Act3MouseMove : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto four_rect = nvp_draw->getDraw(1);
         four_rect->four_rect_percent->setPercent(36);
@@ -225,7 +225,7 @@ class Act3MouseMove : public BaseAction
 
 class Act3MouseLeave : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         auto four_rect = nvp_draw->getDraw(1);
         four_rect->four_rect_percent->setPercent(40);
@@ -238,7 +238,7 @@ class Act3MouseLeave : public BaseAction
 
 class ActRandomInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = rect.top = 0;
@@ -274,7 +274,7 @@ class ActRandomInit : public BaseAction
 
 class ActSubInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = rect.top = 0;
@@ -310,7 +310,7 @@ class ActSubInit : public BaseAction
 
 class Act2SubInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = rect.top = 0;
@@ -346,7 +346,7 @@ class Act2SubInit : public BaseAction
 
 class Act3SubInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         BaseRect rect;
         rect.left = rect.top = 0;
@@ -380,7 +380,7 @@ class Act3SubInit : public BaseAction
     }
 }Act3SubInit;
 
-static void subLevelRemove(BaseElement* elem)
+static void subLevelRemove(NvpBaseObj* elem)
 {
     #if 0
     if (!elem)
@@ -411,7 +411,7 @@ static void subLevelRemove(BaseElement* elem)
 
 class ActMouseRButtonDown : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         NvpColor col = { 0, 0, 0 };
         //nvpDraw->Record(base, 0, &col);
@@ -426,7 +426,7 @@ class ActMouseRButtonDown : public BaseAction
 
 class Act3MouseRButtonDown : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         #if 0
         for (elemIDSize add_number = 0; add_number < MAX_TEST_ELEM; ++add_number)
@@ -472,7 +472,7 @@ class Act3MouseRButtonDown : public BaseAction
 
 class Act3MouseLButtonDown : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         for (elemIDSize add_number = 0; add_number < MAX_TEST_ELEM; ++add_number)
         {
@@ -590,7 +590,7 @@ ELEM_GEN(v3, MouseRButtonDown, Act3MouseRButtonDown) //delete
 
 class StatInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         NvpColor col = { 100, 200, 255 };
         NvpColor font_col = { 230, 230, 230 };
@@ -609,7 +609,7 @@ class StatInit : public BaseAction
 
 class StatMouseMove : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         NvpColor col = { 200, 200, 255 };
         auto one_rect = nvp_draw->getDraw(0);
@@ -619,7 +619,7 @@ class StatMouseMove : public BaseAction
 
 class StatMouseLeave : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         NvpColor col = { 100, 200, 255 };
         auto one_rect = nvp_draw->getDraw(0);
@@ -634,7 +634,7 @@ ELEM_GEN_FULL(top_menu_stat, MouseLeave, StatMouseLeave, NvpLayout::getTopLayout
 
 class NodeViewInit : public BaseAction
 {
-    virtual void realAction(BaseElement* base) override
+    virtual void realAction(NvpBaseObj* base) override
     {
         NvpColor col = { 40, 40, 45 };
         NvpDrawCache one_rect(Draw_Rect_Same_Elem);

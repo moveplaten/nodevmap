@@ -77,7 +77,7 @@ void NvpStyle::setColor(NvpColor colo)
     }
 }
 
-void NvpDraw::drawAll(BaseElement* base)
+void NvpDraw::drawAll(NvpBaseObj* base)
 {
     for (;;)
     {
@@ -112,7 +112,7 @@ void NvpDraw::drawAll(BaseElement* base)
     }
 }
 
-void NvpDraw::drawOneCache(const NvpDrawCache& cache, const BaseElement& base)
+void NvpDraw::drawOneCache(const NvpDrawCache& cache, const NvpBaseObj& base)
 {
     NvpDrawCache::Param param;
     param.base = &base;
@@ -253,7 +253,7 @@ NvpDrawCache* NvpDraw::getDraw(size_t order)
     return &draw_cache[order];
 }
 
-NvpDraw::NvpDraw(BaseElement* base) : base_elem(base)
+NvpDraw::NvpDraw(NvpBaseObj* base) : base_obj(base)
 {
     
 }

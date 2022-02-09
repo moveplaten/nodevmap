@@ -11,7 +11,7 @@
 
 #if 0
 #ifdef TEMP_TEST_0
-void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
+void NvpBaseObj::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
     if (linked_msg_size == 0)
     {
@@ -37,7 +37,7 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
     }
 }
 
-void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
+void NvpBaseObj::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
     if (self_id > BaseMessage::g_store_shapes->getTotalMax())
     {
@@ -78,7 +78,7 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 
 
 #ifndef TEMP_TEST_0
-void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
+void NvpBaseObj::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
 {
     auto ret = msg_act_map.find(msg_type);
     if (ret == msg_act_map.end())
@@ -91,7 +91,7 @@ void BaseElement::linkMsg(MsgBaseType msg_type, BaseAction* msg_act)
     }
 }
 
-void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
+void NvpBaseObj::msgRoute(MsgBaseType msg_type, mousePt* pt)
 {
     auto ret = msg_act_map.find(msg_type);
     if (ret == msg_act_map.end())
@@ -116,7 +116,7 @@ void BaseElement::msgRoute(MsgBaseType msg_type, mousePt* pt)
 #endif // !TEMP_TEST_0
 
 
-void BaseAction::prepareDraw(BaseElement* base, MsgBaseType type)
+void BaseAction::prepareDraw(NvpBaseObj* base, MsgBaseType type)
 {
     if (type == MsgInit)
     {
@@ -127,7 +127,7 @@ void BaseAction::prepareDraw(BaseElement* base, MsgBaseType type)
     this->nvp_draw = base->self_draw;
 }
 
-void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
+void BaseAction::mousePtToLocal(NvpBaseObj* base, mousePt* pt)
 {
     world_pt = *pt;
 
@@ -139,7 +139,7 @@ void BaseAction::mousePtToLocal(BaseElement* base, mousePt* pt)
 }
 #endif
 
-BaseElement::BaseElement(const elemIDSize id, const std::string& name,
+NvpBaseObj::NvpBaseObj(const elemIDSize id, const std::string& name,
     NvpLayout& layout, NvpEvent* event, const bool top)
     :self_id(id), self_name(name),
     self_event(event), self_layout(layout), self_top(top)
@@ -147,7 +147,7 @@ BaseElement::BaseElement(const elemIDSize id, const std::string& name,
 
 }
 
-BaseElement::~BaseElement()
+NvpBaseObj::~NvpBaseObj()
 {
     if (self_draw)
     {

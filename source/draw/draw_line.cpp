@@ -9,7 +9,7 @@
 #include "draw_priv.h"
 #include "base/base.h"
 
-void NvpDrawReal::Draw_One_Line(const BaseElement& base, const NvpStyle& style,
+void NvpDrawReal::Draw_One_Line(const NvpBaseObj& base, const NvpStyle& style,
     NvpXyCoord p1, NvpXyCoord p2)
 {
     auto main_rect = base.getRectRefTop();

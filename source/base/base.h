@@ -25,19 +25,19 @@ protected:
     //virtual void msgRoute(MsgBaseType msg_type, mousePt* pt) = 0;
 
 private:
-    static BaseElement* g_now_hit_id;
-    static BaseElement* g_mouse_drag_id;
-    static BaseElement* g_before_leave_id;
+    static NvpBaseObj* g_now_hit_id;
+    static NvpBaseObj* g_mouse_drag_id;
+    static NvpBaseObj* g_before_leave_id;
     
     static mousePt g_last_downL_pt; //local space;
 
-    void initAll(BaseElement* base);
+    void initAll(NvpBaseObj* base);
     bool checkLeave();
-    BaseElement* inRange(mousePt* pt, BaseElement* base);
+    NvpBaseObj* inRange(mousePt* pt, NvpBaseObj* base);
 
-    void mousePtToLocal(BaseElement* base, mousePt* pt);
+    void mousePtToLocal(NvpBaseObj* base, mousePt* pt);
 
-    friend class BaseElement;
+    friend class NvpBaseObj;
 };
 
 
@@ -51,7 +51,7 @@ public:
     mousePt local_pt;
     mousePt world_pt;
 
-    virtual void realAction(BaseElement* base) = 0;
+    virtual void realAction(NvpBaseObj* base) = 0;
 
     BaseAction()
     {
@@ -66,15 +66,15 @@ protected:
     NvpDraw* nvp_draw;
 
 private:
-    void mousePtToLocal(BaseElement* base, mousePt* pt);
+    void mousePtToLocal(NvpBaseObj* base, mousePt* pt);
 
-    void prepareDraw(BaseElement* base, MsgBaseType type);
+    void prepareDraw(NvpBaseObj* base, MsgBaseType type);
 
-    friend class BaseElement;
+    friend class NvpBaseObj;
 };
 #endif
 
-class BaseElement
+class NvpBaseObj
 {
 public:
     elemIDSize getSelfID() const { return self_id; }
@@ -116,17 +116,17 @@ public:
     //{
     //    return nvpBuild->g_all_elem_store->getTotalUsed();
     //}
-    //BaseElement* getElementByID(elemIDSize id)
+    //NvpBaseObj* getElementByID(elemIDSize id)
     //{
     //    BaseShape* content = base_shapes->readOneElem(id);
     //    return content->elem;
     //}
-    //static BaseElement* getNowHitID() { return g_now_hit_id; }
+    //static NvpBaseObj* getNowHitID() { return g_now_hit_id; }
 
-    BaseElement(const elemIDSize id, const std::string& name,
+    NvpBaseObj(const elemIDSize id, const std::string& name,
         NvpLayout& layout, NvpEvent* event, const bool top = true);
 
-    ~BaseElement();
+    ~NvpBaseObj();
 
 private:
     const elemIDSize self_id;

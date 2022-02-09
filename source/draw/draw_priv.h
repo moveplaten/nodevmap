@@ -20,15 +20,15 @@ public:
 
     static void Draw_One_Rect(const BaseRect& rect, const NvpStyle& style);
 
-    static void Draw_Text_Left_Right(const BaseElement& base, const NvpStyle& style,
+    static void Draw_Text_Left_Right(const NvpBaseObj& base, const NvpStyle& style,
         NvpXyCoord xy, const std::string& str, ptSize font_size);
 
-    static void Draw_One_Line(const BaseElement& base, const NvpStyle& style,
+    static void Draw_One_Line(const NvpBaseObj& base, const NvpStyle& style,
         NvpXyCoord p1, NvpXyCoord p2);
 
-    static void Draw_Rect_Same_Elem(const BaseElement& base, const NvpStyle& style);
+    static void Draw_Rect_Same_Elem(const NvpBaseObj& base, const NvpStyle& style);
 
-    static void Draw_Four_Rect_Percent(const BaseElement& base, const NvpStyle& style,
+    static void Draw_Four_Rect_Percent(const NvpBaseObj& base, const NvpStyle& style,
         int percent);
 
 };
@@ -54,7 +54,7 @@ namespace NvpDrawData
 
     #define NVP_DRAW_PRIVATE(V)                                     \
     public:                                                         \
-    void drawPrivate(const BaseElement& base, const NvpStyle& style)\
+    void drawPrivate(const NvpBaseObj& base, const NvpStyle& style) \
     {                                                               \
         V                                                           \
     }                                                               \
@@ -283,9 +283,9 @@ private:
     struct Param
     {
         Param() : base(nullptr), opt(NUL), dst(nullptr), src(nullptr) {}
-        const BaseElement& getBase() const { return *base; }
+        const NvpBaseObj& getBase() const { return *base; }
 
-        const BaseElement* base;
+        const NvpBaseObj* base;
         Opt opt;
         std::string* dst;
         const char* src;

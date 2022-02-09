@@ -32,14 +32,14 @@ void NvpDrawReal::Draw_One_Rect(const BaseRect& rect, const NvpStyle& style)
     }
 }
 
-void NvpDrawReal::Draw_Rect_Same_Elem(const BaseElement& base, const NvpStyle& style)
+void NvpDrawReal::Draw_Rect_Same_Elem(const NvpBaseObj& base, const NvpStyle& style)
 {
     auto& rect = base.getRectRefTop();
 
     NvpDrawReal::Draw_One_Rect(rect, style);
 }
 
-void NvpDrawReal::Draw_Four_Rect_Percent(const BaseElement& base, const NvpStyle& style, int percent)
+void NvpDrawReal::Draw_Four_Rect_Percent(const NvpBaseObj& base, const NvpStyle& style, int percent)
 {
     auto& main_rect = base.getRectRefTop();
 

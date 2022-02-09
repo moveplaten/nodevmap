@@ -16,7 +16,7 @@
 
 struct BaseRect;
 
-class BaseElement;
+class NvpBaseObj;
 
 struct NvpColor
 {
@@ -67,20 +67,20 @@ class NvpDrawCache;
 class NvpDraw
 {
 public:
-    static void drawAll(BaseElement* base);
+    static void drawAll(NvpBaseObj* base);
 
     void pushDraw(NvpDrawCache& cache);
 
     NvpDrawCache* getDraw(size_t order); //order from 0;
 
-    NvpDraw(BaseElement* base);
+    NvpDraw(NvpBaseObj* base);
 
     ~NvpDraw();
 
 private:
-    void drawOneCache(const NvpDrawCache& cache, const BaseElement& base);
+    void drawOneCache(const NvpDrawCache& cache, const NvpBaseObj& base);
     
-    BaseElement* base_elem;
+    NvpBaseObj* base_obj;
 
     std::vector<NvpDrawCache> draw_cache;
 
