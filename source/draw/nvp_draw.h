@@ -43,7 +43,7 @@ private:
     //draw all str from left to right just one line;
     //start from base rect left-top coord;
     static void drawTextLeftRight(NvpXyCoord start, const std::string& str,
-        ptSize font_size, NvpColor colo);
+        float font_size, NvpColor colo);
 
     static void drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo);
 

@@ -142,7 +142,7 @@ void NvpDrawPort::beginDraw()
 }
 
 void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
-    ptSize size_font, NvpColor colo)
+    float size_font, NvpColor colo)
 {
     auto str_size = str.size();
     auto u32_str = NvpUtil::utf8_to_utf32(str);

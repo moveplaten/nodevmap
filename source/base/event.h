@@ -8,8 +8,6 @@
 
 #pragma once
 
-typedef float ptSize;
-
 struct NvpPoint
 {
     float x;

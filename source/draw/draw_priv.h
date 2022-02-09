@@ -21,7 +21,7 @@ public:
     static void Draw_One_Rect(const NvpRect& rect, const NvpStyle& style);
 
     static void Draw_Text_Left_Right(const NvpBaseObj& base, const NvpStyle& style,
-        NvpXyCoord xy, const std::string& str, ptSize font_size);
+        NvpXyCoord xy, const std::string& str, float font_size);
 
     static void Draw_One_Line(const NvpBaseObj& base, const NvpStyle& style,
         NvpXyCoord p1, NvpXyCoord p2);
@@ -99,13 +99,13 @@ namespace NvpDrawData
         const std::string& getText() const { return text; }
         NvpXyCoord getStart() const { return start; }
 
-        ptSize getFontSize() const { return font_size; }
-        void setFontSize(ptSize size) { assert(size > 0); font_size = size; }
+        float getFontSize() const { return font_size; }
+        void setFontSize(float size) { assert(size > 0); font_size = size; }
 
     private:
         std::string text;
         NvpXyCoord start;
-        ptSize font_size;
+        float font_size;
 
         NVP_DRAW_PRIVATE
         (

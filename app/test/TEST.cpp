@@ -147,8 +147,8 @@ class Act1MouseDrag : public BaseAction
     virtual void realAction(NvpBaseObj* base) override
     {
         NvpPoint last_pt = baseMsg->getLastMouseLDown();
-        ptSize sub_x = local_pt.x - last_pt.x;
-        ptSize sub_y = local_pt.y - last_pt.y;
+        float sub_x = local_pt.x - last_pt.x;
+        float sub_y = local_pt.y - last_pt.y;
         const NvpRect& old_rect = base->getRectRefUp();
 
         NvpRect new_rect;
@@ -168,8 +168,8 @@ class Act2MouseDrag : public BaseAction
     virtual void realAction(NvpBaseObj* base) override
     {
         NvpPoint last_pt = baseMsg->getLastMouseLDown();
-        ptSize sub_x = local_pt.x - last_pt.x;
-        ptSize sub_y = local_pt.y - last_pt.y;
+        float sub_x = local_pt.x - last_pt.x;
+        float sub_y = local_pt.y - last_pt.y;
         const NvpRect& old_rect = base->getRectRefUp();
 
         NvpRect new_rect;

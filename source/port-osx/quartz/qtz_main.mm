@@ -42,7 +42,7 @@ void NvpDrawPort::beginDraw()
 }
 
 void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
-                                   ptSize font_size, NvpColor colo)
+                                   float font_size, NvpColor colo)
 {
     toColorNS(colo);
     

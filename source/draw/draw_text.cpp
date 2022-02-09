@@ -10,7 +10,7 @@
 #include "base/base.h"
 
 void NvpDrawReal::Draw_Text_Left_Right(const NvpBaseObj& base, const NvpStyle& style,
-    NvpXyCoord xy, const std::string& str, ptSize font_size)
+    NvpXyCoord xy, const std::string& str, float font_size)
 {
     auto& main_rect = base.getRectRefTop();
 
