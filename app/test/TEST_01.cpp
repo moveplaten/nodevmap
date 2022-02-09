@@ -52,7 +52,7 @@ class RandomColorNode : public NvpEvent
         auto rect_up = up->getRectRefTop();
         auto width = rect_up.right - rect_up.left;
         auto height = rect_up.bottom - rect_up.top;
-        BaseRect rect;
+        NvpRect rect;
         rect.left = world_pt.x - rect_up.left;
         rect.top = world_pt.y - rect_up.top;
         
@@ -144,7 +144,7 @@ class RandomColorNode : public NvpEvent
 class RandomColorNode2 : public NvpEvent
 {
 public:
-    static void userInit2(NvpBaseObj* base, BaseRect rect, NvpColor colo)
+    static void userInit2(NvpBaseObj* base, NvpRect rect, NvpColor colo)
     {
         base->setSelfDraw(new NvpDraw(base));
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -279,7 +279,7 @@ protected:
 
 private:
     const int offset_count = 5;
-    BaseRect rect{ 0 };
+    NvpRect rect{ 0 };
     NvpColor colo{ 0 };
 };
 
@@ -414,20 +414,20 @@ class RightMouseMenu : public NvpEvent
         font3->text_left_right->setStart({ 10, 43 });
         font3->text_left_right->setText("SAVE  ALL");
 
-        BaseRect rect1;
+        NvpRect rect1;
         rect1.left = world_pt.x;
         rect1.top = world_pt.y;
         rect1.right = rect1.left + 90;
         rect1.bottom = rect1.top + 15;
         rect_new = rect1;
-        BaseRect rect2;
+        NvpRect rect2;
         rect2.left = rect1.left;
         rect2.top = rect1.bottom;
         rect2.right = rect1.right;
         rect2.bottom = rect2.top + 15;
         rect_dele = rect2;
         rect1.bottom += 15;
-        BaseRect rect3;
+        NvpRect rect3;
         rect3.left = rect1.left;
         rect3.top = rect2.bottom;
         rect3.right = rect1.right;
@@ -437,9 +437,9 @@ class RightMouseMenu : public NvpEvent
         NvpLayout::setBaseRect(base, rect1);
     }
 
-    BaseRect rect_new;
-    BaseRect rect_dele;
-    BaseRect rect_save;
+    NvpRect rect_new;
+    NvpRect rect_dele;
+    NvpRect rect_save;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ namespace test
         uint8_t _8 = 250;
         char _9 = 'B';
         float _10 = -10.10;
-        BaseRect rect = { 12.2, -13.3, 14.4, -15.5 };
+        NvpRect rect = { 12.2, -13.3, 14.4, -15.5 };
         enum Opt : uint8_t { Opt1, Opt2 };
         Opt opt = Opt2;
     };
@@ -507,7 +507,7 @@ namespace test
         uint8_t _8 = 250;
         char _9 = 'B';
         std::string _10 = "Test Test Test Test Test Test Test Test 10101010101010";
-        BaseRect rect = { 12.22, -13.33, 14.44, -15.55 };
+        NvpRect rect = { 12.22, -13.33, 14.44, -15.55 };
         enum Opt : uint8_t { Opt1, Opt2 };
         Opt opt = Opt2;
     };

@@ -37,7 +37,7 @@
     
     if (NvpLayout::getTopLayout())
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;

@@ -10,7 +10,7 @@
 
 struct NvpCodingRect
 {
-    BaseRect rect;
+    NvpRect rect;
     NVP_DRAW_CODING
     (
         NvpCoding::codingSeq(dst, src, &rect.left, &rect.top, &rect.right, &rect.bottom);

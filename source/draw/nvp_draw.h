@@ -14,7 +14,7 @@
 
 #include "base/event.h"
 
-struct BaseRect;
+struct NvpRect;
 
 class NvpBaseObj;
 
@@ -47,8 +47,8 @@ private:
 
     static void drawOneLine(NvpXyCoord p1, NvpXyCoord p2, NvpColor colo);
 
-    static void fillRect(const BaseRect& rect, NvpColor colo);
-    static void frameRect(const BaseRect& rect, NvpColor colo); //only border;
+    static void fillRect(const NvpRect& rect, NvpColor colo);
+    static void frameRect(const NvpRect& rect, NvpColor colo); //only border;
 
     static void inputImage(const char* file_name);
     static void outputImage(const char* file_name);

@@ -83,12 +83,12 @@ public:
 
     bool canBeTop() { return self_top; }
 
-    const BaseRect& getRectRefUp() const
+    const NvpRect& getRectRefUp() const
     {
         return self_layout.getRectRefUp();
     }
     
-    const BaseRect& getRectRefTop() const
+    const NvpRect& getRectRefTop() const
     {
         return self_layout.getRectRefTop();
     }
@@ -107,7 +107,7 @@ public:
     {
         return self_event;
     }
-    //void setRect(const BaseRect* rect) //use NvpDraw::Record to set;
+    //void setRect(const NvpRect* rect) //use NvpDraw::Record to set;
     //{
     //    self_layout->ref_up = *rect;
     //}

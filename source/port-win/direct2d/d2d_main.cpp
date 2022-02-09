@@ -190,7 +190,7 @@ void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
     delete[](glyph_metric);
 }
 
-void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
+void NvpDrawPort::fillRect(const NvpRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 
@@ -205,7 +205,7 @@ void NvpDrawPort::fillRect(const BaseRect& rect, NvpColor colo)
     target->FillRectangle(recf, brush);
 }
 
-void NvpDrawPort::frameRect(const BaseRect& rect, NvpColor colo)
+void NvpDrawPort::frameRect(const NvpRect& rect, NvpColor colo)
 {
     auto target = D2dUtil::g_d2dutil->m_pRT;
 

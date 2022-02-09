@@ -14,7 +14,7 @@
 #include <map>
 #include "elem_storage.h"
 
-struct BaseRect
+struct NvpRect
 {
     float left;
     float top;
@@ -31,15 +31,15 @@ public:
     NvpLayout() = delete;
     ~NvpLayout();
 
-    static void setBaseRect(NvpBaseObj* base, const BaseRect& rect);
+    static void setBaseRect(NvpBaseObj* base, const NvpRect& rect);
 
-    static bool ptInRect(mousePt pt, BaseRect rect);
+    static bool ptInRect(mousePt pt, NvpRect rect);
 
-    static BaseRect& rectCorrect(BaseRect& rect);
+    static NvpRect& rectCorrect(NvpRect& rect);
 
-    const BaseRect& getRectRefUp() const { return layout_body.ref_up; }
+    const NvpRect& getRectRefUp() const { return layout_body.ref_up; }
     
-    const BaseRect& getRectRefTop() const { return layout_body.ref_top; }
+    const NvpRect& getRectRefTop() const { return layout_body.ref_top; }
 
     static NvpBaseObj* findSameLevel(const std::string& str, NvpBaseObj* base);
 
@@ -82,8 +82,8 @@ private:
 
     struct NvpLayoutBody
     {
-        BaseRect ref_up; //local space, ref to up level;
-        BaseRect ref_top; //world space, ref to top level;
+        NvpRect ref_up; //local space, ref to up level;
+        NvpRect ref_top; //world space, ref to top level;
 
         NvpLevel* sub; //sub level;
     };

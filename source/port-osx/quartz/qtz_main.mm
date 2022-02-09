@@ -26,7 +26,7 @@ static void toColorNS(NvpColor color)
                                          (CGFloat)color.Alpha / 255);
 }
 
-static NSRect toRectNS(const BaseRect& rect)
+static NSRect toRectNS(const NvpRect& rect)
 {
     NSRect ns_rect;
     ns_rect.origin.x = rect.left;
@@ -77,7 +77,7 @@ void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
     delete[](points);
 }
 
-void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
+void NvpDrawPort::fillRect(const NvpRect& rect, NvpColor colo)
 {
     toColorNS(colo);
     
@@ -86,7 +86,7 @@ void NvpDrawPort::fillRect(const BaseRect &rect, NvpColor colo)
     CGContextFillRect(g_cg_ref, ns_rec);
 }
 
-void NvpDrawPort::frameRect(const BaseRect &rect, NvpColor colo)
+void NvpDrawPort::frameRect(const NvpRect& rect, NvpColor colo)
 {
     toColorNS(colo);
     

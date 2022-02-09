@@ -13,10 +13,10 @@ NvpBaseObj* NvpLayout::g_top_node_view = nullptr;
 NvpBaseObj* NvpLayout::g_top_menu_stat = nullptr;
 ElemIDStorage* NvpLayout::g_all_id_store = nullptr;
 
-void NvpLayout::setBaseRect(NvpBaseObj* base, const BaseRect& rect)
+void NvpLayout::setBaseRect(NvpBaseObj* base, const NvpRect& rect)
 {
     //ref_up is input from user;
-    base->self_layout.layout_body.ref_up = rectCorrect(const_cast<BaseRect&>(rect));
+    base->self_layout.layout_body.ref_up = rectCorrect(const_cast<NvpRect&>(rect));
 
     auto iter = base->self_layout.layout_level.begin();
 
@@ -41,7 +41,7 @@ void NvpLayout::setBaseRect(NvpBaseObj* base, const BaseRect& rect)
     }
 }
 
-bool NvpLayout::ptInRect(mousePt pt, BaseRect rect)
+bool NvpLayout::ptInRect(mousePt pt, NvpRect rect)
 {
     if (rect.left <= pt.x && rect.right > pt.x &&
         rect.top <= pt.y && rect.bottom > pt.y)
@@ -51,7 +51,7 @@ bool NvpLayout::ptInRect(mousePt pt, BaseRect rect)
     return false;
 }
 
-BaseRect& NvpLayout::rectCorrect(BaseRect& rect)
+NvpRect& NvpLayout::rectCorrect(NvpRect& rect)
 {
     float temp;
 

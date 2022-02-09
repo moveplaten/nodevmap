@@ -28,5 +28,5 @@ private:
     void writeSeq();
 
     NvpDraw* draw_seq;
-    BaseRect rect;
+    NvpRect rect;
 };

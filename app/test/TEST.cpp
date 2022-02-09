@@ -13,7 +13,7 @@ class ActInit : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 10;
         rect.right = rect.bottom = 50;
         NvpLayout::setBaseRect(base, rect);
@@ -72,7 +72,7 @@ class Act2Init : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = 50;
         rect.right = 90;
         rect.top = 10;
@@ -149,9 +149,9 @@ class Act1MouseDrag : public BaseAction
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
-        const BaseRect& old_rect = base->getRectRefUp();
+        const NvpRect& old_rect = base->getRectRefUp();
 
-        BaseRect new_rect;
+        NvpRect new_rect;
         new_rect.left = old_rect.left + sub_x;
         new_rect.right = old_rect.right + sub_x;
         new_rect.top = old_rect.top + sub_y;
@@ -170,9 +170,9 @@ class Act2MouseDrag : public BaseAction
         mousePt last_pt = baseMsg->getLastMouseLDown();
         ptSize sub_x = local_pt.x - last_pt.x;
         ptSize sub_y = local_pt.y - last_pt.y;
-        const BaseRect& old_rect = base->getRectRefUp();
+        const NvpRect& old_rect = base->getRectRefUp();
 
-        BaseRect new_rect;
+        NvpRect new_rect;
         new_rect.left = old_rect.left + sub_x;
         new_rect.right = old_rect.right + sub_x;
         new_rect.top = old_rect.top + sub_y;
@@ -187,7 +187,7 @@ class Act3Init : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = 110;
         rect.right = 150;
         rect.top = 10;
@@ -240,7 +240,7 @@ class ActRandomInit : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 100;
         static int move_x = 0;
@@ -276,7 +276,7 @@ class ActSubInit : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 40;
         static int move_x = 0;
@@ -312,7 +312,7 @@ class Act2SubInit : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 20;
         static int move_x = 0;
@@ -348,7 +348,7 @@ class Act3SubInit : public BaseAction
 {
     virtual void realAction(NvpBaseObj* base) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 0;
         rect.right = rect.bottom = 10;
         static int move_x = 0;

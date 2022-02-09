@@ -9,7 +9,7 @@
 #include "draw_priv.h"
 #include "base/base.h"
 
-void NvpDrawReal::Draw_One_Rect(const BaseRect& rect, const NvpStyle& style)
+void NvpDrawReal::Draw_One_Rect(const NvpRect& rect, const NvpStyle& style)
 {
     auto one_style = style.getStyle();
 
@@ -48,7 +48,7 @@ void NvpDrawReal::Draw_Four_Rect_Percent(const NvpBaseObj& base, const NvpStyle&
     auto min_width = (main_rect.right - main_rect.left) * percent_f;
     auto min_height = (main_rect.bottom - main_rect.top) * percent_f;
 
-    BaseRect TL, TR, BL, BR;
+    NvpRect TL, TR, BL, BR;
 
     TL.left = main_rect.left;
     TL.top = main_rect.top;

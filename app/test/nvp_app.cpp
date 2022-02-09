@@ -82,7 +82,7 @@ class NodeViewSelect : public NvpEvent
     void mouseLDrag(NvpBaseObj* base, NvpEventParam& param) override
     {
         mousePt now_pt = param.getLocalPt();
-        BaseRect select;
+        NvpRect select;
         select.left = down_pt.x;
         select.top = down_pt.y;
         select.right = now_pt.x;
@@ -219,7 +219,7 @@ static void initFromStr(NvpDraw* draw, const char* str, float font_size)
     initCmdColStr(draw, cmd_str2, col_str2, font_size);
 }
 
-static void nodeInit(NvpBaseObj* base, const BaseRect& rect, const char* colo, float font_size)
+static void nodeInit(NvpBaseObj* base, const NvpRect& rect, const char* colo, float font_size)
 {
     auto draw = base->getSelfDraw();
     NvpLayout::setBaseRect(base, rect);
@@ -243,7 +243,7 @@ class TempNode1 : public NvpEvent
 {
     void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 30;
         rect.right = rect.bottom = 150;
         
@@ -260,7 +260,7 @@ class TempNode2 : public NvpEvent
 {
     void userInit(NvpBaseObj* base, NvpEventParam& param) override
     {
-        BaseRect rect;
+        NvpRect rect;
         rect.left = rect.top = 30;
         rect.right = rect.bottom = 100;
         

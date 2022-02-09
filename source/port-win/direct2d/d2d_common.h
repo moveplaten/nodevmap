@@ -47,7 +47,7 @@ public:
                             (float)color.Alpha / 255.0f);
     }
 
-    static D2D1_RECT_F toRectF(const BaseRect& rect)
+    static D2D1_RECT_F toRectF(const NvpRect& rect)
     {
         return D2D1::RectF(rect.left, rect.top, rect.right, rect.bottom);
     }
@@ -62,7 +62,7 @@ public:
         
         if (NvpLayout::getTopLayout())
         {
-            BaseRect rect;
+            NvpRect rect;
             rect.left = 0.0f;
             rect.top = 0.0f;
             rect.right = client.width;
@@ -88,7 +88,7 @@ public:
         NvpDrawPort::beginDraw();
     }
 
-    //void fillRect(const BaseRect& rect, COLORREF col, RecordOption opt = BeginEnd);
+    //void fillRect(const NvpRect& rect, COLORREF col, RecordOption opt = BeginEnd);
 
     D2dUtil(HWND hwnd) : m_hwnd(hwnd),
                          m_pD2DFactory(nullptr),

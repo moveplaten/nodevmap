@@ -18,7 +18,7 @@ class NvpDrawReal
 public:
     static void Draw_Null() {}
 
-    static void Draw_One_Rect(const BaseRect& rect, const NvpStyle& style);
+    static void Draw_One_Rect(const NvpRect& rect, const NvpStyle& style);
 
     static void Draw_Text_Left_Right(const NvpBaseObj& base, const NvpStyle& style,
         NvpXyCoord xy, const std::string& str, ptSize font_size);
