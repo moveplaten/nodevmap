@@ -35,26 +35,26 @@
 {
     NSRect wnd_rect = [g_main_wnd.contentView bounds];
     
-    if (NvpLayout::getTopLayout())
+    if (NvpLayout::Build()->getTop())
     {
         NvpRect rect;
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        NvpLayout::setBaseRect(NvpLayout::getTopLayout(), rect);
+        NvpLayout::setLayoutRect(NvpLayout::Build()->getTop(), rect);
 
         rect.left = 0.0f;
         rect.top = 0.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height - 20.0f;
-        NvpLayout::setBaseRect(NvpLayout::getTopNodeView(), rect);
+        NvpLayout::setLayoutRect(NvpLayout::Build()->getNodeView(), rect);
         
         rect.left = 0.0f;
         rect.top = wnd_rect.size.height - 20.0f;
         rect.right = wnd_rect.size.width;
         rect.bottom = wnd_rect.size.height;
-        NvpLayout::setBaseRect(NvpLayout::getTopMenuStat(), rect);
+        NvpLayout::setLayoutRect(NvpLayout::Build()->getMenuStat(), rect);
     }
 }
 
@@ -171,9 +171,9 @@
         g_ct_font_ref = CTFontCreateWithName((CFStringRef)@"Helvetica", 12, NULL);
     }
     
-    if (NvpLayout::getTopLayout())
+    if (NvpLayout::Build()->getTop())
     {
-        auto top_elem = NvpLayout::getTopLayout();
+        auto top_elem = NvpLayout::Build()->getTop();
         NvpDraw::drawAll(top_elem);
     }
 }

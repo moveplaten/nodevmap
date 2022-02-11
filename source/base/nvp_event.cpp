@@ -21,10 +21,15 @@ void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
     }
     else
     {
-        base = hitLayout(param.getWorldPt(), NvpLayout::getTopLayout());
+        base = hitLayout(param.getWorldPt(), NvpLayout::Build()->getTop());
     }
     
     if (!base)
+    {
+        return;
+    }
+
+    if (!base->self_event)
     {
         return;
     }
@@ -36,7 +41,7 @@ void NvpEvent::fromSysEvent(NvpSysEventType type, NvpEventParam& param)
     {
     case SysInit:
     {
-        initAll(NvpLayout::getTopLayout(), param);
+        initAll(NvpLayout::Build()->getTop(), param);
     }
     break;
 
@@ -95,7 +100,10 @@ void NvpEvent::initAll(NvpBaseObj* base, NvpEventParam& param)
             {
                 auto draw = new NvpDraw(base);
                 base->self_draw = draw;
-                base->self_event->userInit(base, param);
+                if (base->self_event)
+                {
+                    base->self_event->userInit(base, param);
+                }
             }
         }
 

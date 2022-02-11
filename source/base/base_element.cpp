@@ -139,9 +139,9 @@ void BaseAction::mousePtToLocal(NvpBaseObj* base, NvpPoint* pt)
 }
 #endif
 
-NvpBaseObj::NvpBaseObj(const elemIDSize id, const std::string& name,
+NvpBaseObj::NvpBaseObj(
     NvpLayout& layout, NvpEvent* event, const bool top)
-    :self_id(id), self_name(name),
+    :
     self_event(event), self_layout(layout), self_top(top)
 {
 

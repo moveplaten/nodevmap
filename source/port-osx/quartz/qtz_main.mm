@@ -135,9 +135,9 @@ void NvpDrawPort::outputImage(const char* file_name)
     //[NSGraphicsContext setCurrentContext:ns_graphic];
 
     g_cg_ref = cg_ref;
-    if (NvpLayout::getTopLayout())
+    if (NvpLayout::Build()->getTop())
     {
-        auto top_elem = NvpLayout::getTopLayout();
+        auto top_elem = NvpLayout::Build()->getTop();
         NvpDraw::drawAll(top_elem);
     }
     
@@ -182,9 +182,9 @@ void NvpDrawPort::outputPDF(const char* file_name)
     ctm = CGContextGetCTM(pdf_ref);
     
     g_cg_ref = pdf_ref;
-    if (NvpLayout::getTopLayout())
+    if (NvpLayout::Build()->getTop())
     {
-        auto top_elem = NvpLayout::getTopLayout();
+        auto top_elem = NvpLayout::Build()->getTop();
         NvpDraw::drawAll(top_elem);
     }
     CGPDFContextEndPage(pdf_ref);

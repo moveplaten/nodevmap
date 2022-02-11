@@ -125,9 +125,9 @@ void NvpDrawPort::beginDraw()
 
     ////////////////////////////////////////////////////////////////////////////
 
-    if (NvpLayout::getTopLayout())
+    if (NvpLayout::Build()->getTop())
     {
-        auto top_elem = NvpLayout::getTopLayout();
+        auto top_elem = NvpLayout::Build()->getTop();
         NvpDraw::drawAll(top_elem);
     }
 
@@ -274,9 +274,9 @@ void NvpDrawPort::outputImage(const char* file_name)
         tempRT = D2dUtil::g_d2dutil->m_pRT;
         D2dUtil::g_d2dutil->m_pRT = reinterpret_cast<ID2D1HwndRenderTarget*>(p_WicRT);
 
-        if (NvpLayout::getTopLayout())
+        if (NvpLayout::Build()->getTop())
         {
-            auto top_elem = NvpLayout::getTopLayout();
+            auto top_elem = NvpLayout::Build()->getTop();
             NvpDraw::drawAll(top_elem);
         }
 

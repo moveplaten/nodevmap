@@ -9,6 +9,8 @@
 #include "test_plist_04.h"
 #include <math.h>
 
+static NvpBaseObj* right_mouse_menu = nullptr;
+
 class TopNodeView : public NvpEvent
 {
     void userInit(NvpBaseObj* base, NvpEventParam& param) override
@@ -21,13 +23,13 @@ class TopNodeView : public NvpEvent
 
     void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
-        auto elem = NvpLayout::findSameLevel("RightMouseMenu", base);
+        auto elem = right_mouse_menu;
         elem->getSelfEvent()->mouseLDown(elem, param);
     }
 
     void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
-        auto elem = NvpLayout::findSameLevel("RightMouseMenu", base);
+        auto elem = right_mouse_menu;
         elem->getSelfEvent()->mouseRDown(elem, param);
     }
 };
@@ -48,7 +50,7 @@ class RandomColorNode : public NvpEvent
         base->getSelfDraw()->pushDraw(one_rect);
 
         auto world_pt = param.getWorldPt();
-        auto up = NvpLayout::getUpElem(base);
+        auto up = NvpLayout::getUpLayout(base);
         auto rect_up = up->getRectRefTop();
         auto width = rect_up.right - rect_up.left;
         auto height = rect_up.bottom - rect_up.top;
@@ -56,7 +58,7 @@ class RandomColorNode : public NvpEvent
         rect.left = world_pt.x - rect_up.left;
         rect.top = world_pt.y - rect_up.top;
         
-        if (up->getSelfName() == "top_node_view")
+        if (up == NvpLayout::Build()->getNodeView())
         {
             rect.right = rect.left + 150;
             rect.bottom = rect.top + 150;
@@ -67,7 +69,7 @@ class RandomColorNode : public NvpEvent
             rect.bottom = rect.top + height * 0.5;
         }
 
-        NvpLayout::setBaseRect(base, rect);
+        NvpLayout::setLayoutRect(base, rect);
 
         static int random = -1; ++random;
         random %= 4;
@@ -130,7 +132,7 @@ class RandomColorNode : public NvpEvent
 
     void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
-        auto right_menu = NvpLayout::findSameLevel("RightMouseMenu", NvpLayout::getTopNodeView());
+        auto right_menu = right_mouse_menu;
         if (right_menu)
         {
             hit_node = true;
@@ -150,12 +152,12 @@ public:
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(colo);
         base->getSelfDraw()->pushDraw(one_rect);
-        NvpLayout::setBaseRect(base, rect);
+        NvpLayout::setLayoutRect(base, rect);
     }
 
     void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
     {
-        auto right_menu = NvpLayout::findSameLevel("RightMouseMenu", NvpLayout::getTopNodeView());
+        auto right_menu = right_mouse_menu;
         if (right_menu)
         {
             hit_node = true;
@@ -184,9 +186,9 @@ protected:
     {
         if (base == nullptr)
         {
-            base = NvpLayout::getTopNodeView();
+            base = NvpLayout::Build()->getNodeView();
         }
-        auto node = NvpLayout::subElemGen("", new RandomColorNode2, base);
+        auto node = NvpLayout::createLayout(new RandomColorNode2, base);
         RandomColorNode2::userInit2(node, rect, colo);
         return node;
     }
@@ -297,7 +299,7 @@ class PlistSeqCache : public NvpDrawSeq
 
 static void saveAllNode()
 {
-    auto node1 = NvpLayout::getSubFirst(NvpLayout::getTopNodeView());
+    auto node1 = NvpLayout::getSubFirst(NvpLayout::Build()->getNodeView());
     auto file = NvpUtil::fileInExePath(io_file_name);
     NvpPlistIO::outputAll(node1, new PlistSeqCache, file);
 
@@ -329,7 +331,7 @@ class RightMouseMenu : public NvpEvent
         font->text_left_right->setStart({ 0, 0 });
         font->text_left_right->setText(" ");
 
-        NvpLayout::setBaseRect(base, { 0 });
+        NvpLayout::setLayoutRect(base, { 0 });
     }
 
     void userInit(NvpBaseObj* base, NvpEventParam& param) override
@@ -356,37 +358,37 @@ class RightMouseMenu : public NvpEvent
     void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
     {
         auto world_pt = param.getWorldPt();
-        if (NvpLayout::ptInRect(world_pt, rect_new))
+        if (NvpLayout::hitLayoutRect(world_pt, rect_new))
         {
             clearMenu(base);
             NvpBaseObj* node = nullptr;
-            if (hit_elem->getSelfName() != "RightMouseMenu")
+            if (hit_elem != right_mouse_menu)
             {
-                node = NvpLayout::subElemGen("", new RandomColorNode, hit_elem);
+                node = NvpLayout::createLayout(new RandomColorNode, hit_elem);
             }
             else
             {
-                node = NvpLayout::subElemGen("", new RandomColorNode, NvpLayout::getTopNodeView());
+                node = NvpLayout::createLayout(new RandomColorNode, NvpLayout::Build()->getNodeView());
             }
             NvpEvent::initAll(node, param);
         }
-        else if (NvpLayout::ptInRect(world_pt, rect_save))
+        else if (NvpLayout::hitLayoutRect(world_pt, rect_save))
         {
             clearMenu(base);
             saveAllNode();
         }
-        else if (NvpLayout::ptInRect(world_pt, rect_dele))
+        else if (NvpLayout::hitLayoutRect(world_pt, rect_dele))
         {
             clearMenu(base);
             if (hit_elem)
             {
-                if (hit_elem->getSelfName() == "RightMouseMenu")
+                if (hit_elem == right_mouse_menu)
                 {
                     hit_elem = nullptr;
                     return;
                 }
             }
-            NvpLayout::subElemDel(hit_elem);
+            NvpLayout::destroyLayout(hit_elem);
             hit_elem = nullptr;
         }
     }
@@ -434,7 +436,7 @@ class RightMouseMenu : public NvpEvent
         rect3.bottom = rect3.top + 15;
         rect_save = rect3;
         rect1.bottom += 15;
-        NvpLayout::setBaseRect(base, rect1);
+        NvpLayout::setLayoutRect(base, rect1);
     }
 
     NvpRect rect_new;
@@ -562,7 +564,8 @@ void nvp_app_init()
     test::codingTest();
     test::cacheTest();
 
-    NvpLayout::subElemGen("top_node_view", new TopNodeView, NvpLayout::getTopLayout());
-    NvpLayout::subElemGen("RightMouseMenu", new RightMouseMenu, NvpLayout::getTopLayout());
+    auto top_node_view = NvpLayout::Build()->getNodeView();
+    top_node_view->setSelfEvent(new TopNodeView);
+    right_mouse_menu = NvpLayout::createLayout(new RightMouseMenu, NvpLayout::Build()->getTop());
     initAllNode();
 }

@@ -78,11 +78,11 @@ NvpBaseObj* NvpDrawSeq::signalSeqEnd(NvpBaseObj* base)
 {
     if (base == nullptr)
     {
-        base = NvpLayout::getTopNodeView();
+        base = NvpLayout::Build()->getNodeView();
     }
 
-    auto node = NvpLayout::subElemGen("", createNewEvent(), base);
-    NvpLayout::setBaseRect(node, rect);
+    auto node = NvpLayout::createLayout(createNewEvent(), base);
+    NvpLayout::setLayoutRect(node, rect);
 
     draw_seq->base_obj = node;
     node->setSelfDraw(draw_seq);

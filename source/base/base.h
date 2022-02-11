@@ -9,7 +9,7 @@
 #pragma once
 
 #include "event.h"
-#include "layout.h"
+#include "layout/nvp_layout.h"
 
 class NvpDraw;
 
@@ -77,9 +77,9 @@ private:
 class NvpBaseObj
 {
 public:
-    elemIDSize getSelfID() const { return self_id; }
+    //elemIDSize getSelfID() const { return self_id; }
     
-    const std::string& getSelfName() { return self_name; }
+    //const std::string& getSelfName() { return self_name; }
 
     bool canBeTop() { return self_top; }
 
@@ -107,6 +107,11 @@ public:
     {
         return self_event;
     }
+
+    void setSelfEvent(NvpEvent* event)
+    {
+        self_event = event;
+    }
     //void setRect(const NvpRect* rect) //use NvpDraw::Record to set;
     //{
     //    self_layout->ref_up = *rect;
@@ -123,14 +128,14 @@ public:
     //}
     //static NvpBaseObj* getNowHitID() { return g_now_hit_id; }
 
-    NvpBaseObj(const elemIDSize id, const std::string& name,
+    NvpBaseObj(
         NvpLayout& layout, NvpEvent* event, const bool top = true);
 
     ~NvpBaseObj();
 
 private:
-    const elemIDSize self_id;
-    const std::string& self_name;
+    //const elemIDSize self_id;
+    //const std::string& self_name;
     const bool self_top;
     bool self_visible = true;
     NvpDraw* self_draw = nullptr;
@@ -139,6 +144,7 @@ private:
 
     NvpLayout self_layout;
 
+    friend class NvpLayoutCache;
     friend class NvpLayout;
     friend class NvpEvent;
 };
