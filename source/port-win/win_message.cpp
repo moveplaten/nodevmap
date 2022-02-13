@@ -27,6 +27,7 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_USER + 100:
     {
         NvpEvent::initAll(NvpLayout::Build()->getTop(), event);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 
