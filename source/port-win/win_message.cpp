@@ -19,13 +19,14 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     pt.x = pt.x / D2dUtil::g_dpi_scale_X;
     pt.y = pt.y / D2dUtil::g_dpi_scale_Y;
 
-    NvpEventParam param(pt);
+    NvpEventRef event;
+    event.setWorldPt(pt);
 
     switch (message)
     {
     case WM_USER + 100:
     {
-        NvpEvent::fromSysEvent(SysInit, param);
+        NvpEvent::initAll(NvpLayout::Build()->getTop(), event);
     }
     break;
 
@@ -33,36 +34,42 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         if ((DWORD)wParam && MK_LBUTTON)
         {
-            NvpEvent::fromSysEvent(MouseLDrag, param);
+            event.setMouseType(NvpEventMouse::MouseLDrag);
+            NvpEvent::handleEvent(NvpEvent::Mouse, event);
         }
         else
         {
-            NvpEvent::fromSysEvent(MouseMove, param);
+            event.setMouseType(NvpEventMouse::MouseMove);
+            NvpEvent::handleEvent(NvpEvent::Mouse, event);
         }
     }
     break;
 
     case WM_LBUTTONDOWN:
     {
-        NvpEvent::fromSysEvent(MouseLDown, param);
+        event.setMouseType(NvpEventMouse::MouseLDown);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 
     case WM_LBUTTONUP:
     {
-        NvpEvent::fromSysEvent(MouseLUp, param);
+        event.setMouseType(NvpEventMouse::MouseLUp);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 
     case WM_RBUTTONDOWN:
     {
-        NvpEvent::fromSysEvent(MouseRDown, param);
+        event.setMouseType(NvpEventMouse::MouseRDown);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 
     case WM_RBUTTONUP:
     {
-        NvpEvent::fromSysEvent(MouseRUp, param);
+        event.setMouseType(NvpEventMouse::MouseRUp);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 

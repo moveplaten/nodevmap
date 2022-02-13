@@ -12,7 +12,7 @@
 #include <string>
 #include <cassert>
 
-#include "base/event.h"
+#include "event/nvp_event.h"
 
 struct NvpRect;
 

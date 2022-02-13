@@ -6,13 +6,14 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(nodevmap_SOURCES
     base/base_element.cpp
-    base/nvp_event.cpp
 
     draw/nvp_draw.cpp
     draw/draw_text.cpp
     draw/draw_rect.cpp
     draw/draw_line.cpp
     draw/draw_coding.cpp
+    event/nvp_event.cpp
+    event/event_mouse.cpp
     layout/nvp_layout.cpp
     layout/layout_priv.cpp
     nvp-io/nvp_plist.cpp

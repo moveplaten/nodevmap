@@ -22,8 +22,8 @@
     
     [self windowDidResize:notification]; //ensure size top_layout before MsgInit;
     
-    NvpEventParam param;
-    NvpEvent::fromSysEvent(SysInit, param);
+    NvpEventRef event;
+    NvpEvent::initAll(NvpLayout::Build()->getTop(), event);
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
@@ -116,48 +116,60 @@
 {
     //NSLog(@"mouse move");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseMove, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseMove);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     NSLog(@"mouse drag");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseLDrag, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseLDrag);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
     NSLog(@"LButton Down");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseLDown, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseLDown);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
     NSLog(@"LButton UP");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseLUp, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseLUp);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)rightMouseDown:(NSEvent *)event
 {
     NSLog(@"RButton Down");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseRDown, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseRDown);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)rightMouseUp:(NSEvent *)event
 {
     NSLog(@"RButton UP");
     NvpPoint pt = [self convertPt:event];
-    NvpEventParam param(pt);
-    NvpEvent::fromSysEvent(MouseRUp, param);
+    NvpEventRef event_ref;
+    event_ref.setWorldPt(pt);
+    event_ref.setMouseType(NvpEventMouse::MouseRUp);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
 - (void)drawRect:(NSRect)dirtyRect

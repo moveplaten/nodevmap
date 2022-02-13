@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "event.h"
+#include "event/nvp_event.h"
 #include "layout/nvp_layout.h"
 
 class NvpDraw;

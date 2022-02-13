@@ -13,7 +13,7 @@ static NvpBaseObj* right_mouse_menu = nullptr;
 
 class TopNodeView : public NvpEvent
 {
-    void userInit(NvpBaseObj* base, NvpEventParam& param) override
+    void initEvent(NvpEventRef& event) override
     {
         NvpColor col = { 40, 40, 45 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -21,16 +21,18 @@ class TopNodeView : public NvpEvent
         base->getSelfDraw()->pushDraw(one_rect);
     }
 
-    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
+    void mouseEvent(NvpEventRef& event) override
     {
-        auto elem = right_mouse_menu;
-        elem->getSelfEvent()->mouseLDown(elem, param);
-    }
-
-    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
-    {
-        auto elem = right_mouse_menu;
-        elem->getSelfEvent()->mouseRDown(elem, param);
+        if (event.getMouseType() == NvpEventMouse::MouseLDown)
+        {
+            auto elem = right_mouse_menu;
+            elem->getSelfEvent()->mouseEvent(event);
+        }
+        else if (event.getMouseType() == NvpEventMouse::MouseRDown)
+        {
+            auto elem = right_mouse_menu;
+            elem->getSelfEvent()->mouseEvent(event);
+        }
     }
 };
 
@@ -41,7 +43,7 @@ static NvpBaseObj* hit_elem = nullptr;
 
 class RandomColorNode : public NvpEvent
 {
-    void userInit(NvpBaseObj* base, NvpEventParam& param) override
+    void initEvent(NvpEventRef& event) override
     {
         NvpColor col = NvpColor::randomColor();
 
@@ -49,7 +51,7 @@ class RandomColorNode : public NvpEvent
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
 
-        auto world_pt = param.getWorldPt();
+        auto world_pt = event.getWorldPt();
         auto up = NvpLayout::getUpLayout(base);
         auto rect_up = up->getRectRefTop();
         auto width = rect_up.right - rect_up.left;
@@ -130,15 +132,18 @@ class RandomColorNode : public NvpEvent
         }
     }
 
-    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
+    void mouseEvent(NvpEventRef& event) override
     {
-        auto right_menu = right_mouse_menu;
-        if (right_menu)
+        if (event.getMouseType() == NvpEventMouse::MouseRDown)
         {
-            hit_node = true;
-            right_menu->getSelfEvent()->mouseRDown(right_menu, param);
-            hit_elem = base;
-            hit_node = false;
+            auto right_menu = right_mouse_menu;
+            if (right_menu)
+            {
+                hit_node = true;
+                right_menu->getSelfEvent()->mouseEvent(event);
+                hit_elem = base;
+                hit_node = false;
+            }
         }
     }
 };
@@ -155,15 +160,18 @@ public:
         NvpLayout::setLayoutRect(base, rect);
     }
 
-    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
+    void mouseEvent(NvpEventRef& event) override
     {
-        auto right_menu = right_mouse_menu;
-        if (right_menu)
+        if (event.getMouseType() == NvpEventMouse::MouseRDown)
         {
-            hit_node = true;
-            right_menu->getSelfEvent()->mouseRDown(right_menu, param);
-            hit_elem = base;
-            hit_node = false;
+            auto right_menu = right_mouse_menu;
+            if (right_menu)
+            {
+                hit_node = true;
+                right_menu->getSelfEvent()->mouseEvent(event);
+                hit_elem = base;
+                hit_node = false;
+            }
         }
     }
 };
@@ -334,7 +342,7 @@ class RightMouseMenu : public NvpEvent
         NvpLayout::setLayoutRect(base, { 0 });
     }
 
-    void userInit(NvpBaseObj* base, NvpEventParam& param) override
+    void initEvent(NvpEventRef& event) override
     {
         NvpColor col = { 120, 120, 120 };
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
@@ -355,88 +363,90 @@ class RightMouseMenu : public NvpEvent
         base->getSelfDraw()->pushDraw(font3);
     }
 
-    void mouseLDown(NvpBaseObj* base, NvpEventParam& param) override
+    void mouseEvent(NvpEventRef& event) override
     {
-        auto world_pt = param.getWorldPt();
-        if (NvpLayout::hitLayoutRect(world_pt, rect_new))
+        if (event.getMouseType() == NvpEventMouse::MouseLDown)
         {
-            clearMenu(base);
-            NvpBaseObj* node = nullptr;
-            if (hit_elem != right_mouse_menu)
+            auto world_pt = event.getWorldPt();
+            if (NvpLayout::hitLayoutRect(world_pt, rect_new))
             {
-                node = NvpLayout::createLayout(new RandomColorNode, hit_elem);
+                clearMenu(base);
+                NvpBaseObj* node = nullptr;
+                if (hit_elem != right_mouse_menu)
+                {
+                    node = NvpLayout::createLayout(new RandomColorNode, hit_elem);
+                }
+                else
+                {
+                    node = NvpLayout::createLayout(new RandomColorNode, NvpLayout::Build()->getNodeView());
+                }
+                NvpEvent::initAll(node, event);
+            }
+            else if (NvpLayout::hitLayoutRect(world_pt, rect_save))
+            {
+                clearMenu(base);
+                saveAllNode();
+            }
+            else if (NvpLayout::hitLayoutRect(world_pt, rect_dele))
+            {
+                clearMenu(base);
+                if (hit_elem)
+                {
+                    if (hit_elem == right_mouse_menu)
+                    {
+                        hit_elem = nullptr;
+                        return;
+                    }
+                }
+                NvpLayout::destroyLayout(hit_elem);
+                hit_elem = nullptr;
+            }
+        }
+        else if (event.getMouseType() == NvpEventMouse::MouseRDown)
+        {
+            hit_elem = base;
+            auto world_pt = event.getWorldPt();
+            auto font = base->getSelfDraw()->getDraw(1);
+            font->text_left_right->setStart({ 10, 12 });
+            if (hit_node)
+            {
+                font->text_left_right->setText("SUB  NODE");
             }
             else
             {
-                node = NvpLayout::createLayout(new RandomColorNode, NvpLayout::Build()->getNodeView());
+                font->text_left_right->setText("NEW  NODE");
             }
-            NvpEvent::initAll(node, param);
-        }
-        else if (NvpLayout::hitLayoutRect(world_pt, rect_save))
-        {
-            clearMenu(base);
-            saveAllNode();
-        }
-        else if (NvpLayout::hitLayoutRect(world_pt, rect_dele))
-        {
-            clearMenu(base);
-            if (hit_elem)
-            {
-                if (hit_elem == right_mouse_menu)
-                {
-                    hit_elem = nullptr;
-                    return;
-                }
-            }
-            NvpLayout::destroyLayout(hit_elem);
-            hit_elem = nullptr;
-        }
-    }
 
-    void mouseRDown(NvpBaseObj* base, NvpEventParam& param) override
-    {
-        hit_elem = base;
-        auto world_pt = param.getWorldPt();
-        auto font = base->getSelfDraw()->getDraw(1);
-        font->text_left_right->setStart({ 10, 12 });
-        if (hit_node)
-        {
-            font->text_left_right->setText("SUB  NODE");
+            auto font2 = base->getSelfDraw()->getDraw(2);
+            font2->text_left_right->setStart({ 10, 28 });
+            font2->text_left_right->setText("DELE  NODE");
+
+            auto font3 = base->getSelfDraw()->getDraw(3);
+            font3->text_left_right->setStart({ 10, 43 });
+            font3->text_left_right->setText("SAVE  ALL");
+
+            NvpRect rect1;
+            rect1.left = world_pt.x;
+            rect1.top = world_pt.y;
+            rect1.right = rect1.left + 90;
+            rect1.bottom = rect1.top + 15;
+            rect_new = rect1;
+            NvpRect rect2;
+            rect2.left = rect1.left;
+            rect2.top = rect1.bottom;
+            rect2.right = rect1.right;
+            rect2.bottom = rect2.top + 15;
+            rect_dele = rect2;
+            rect1.bottom += 15;
+            NvpRect rect3;
+            rect3.left = rect1.left;
+            rect3.top = rect2.bottom;
+            rect3.right = rect1.right;
+            rect3.bottom = rect3.top + 15;
+            rect_save = rect3;
+            rect1.bottom += 15;
+            NvpLayout::setLayoutRect(base, rect1);
         }
-        else
-        {
-            font->text_left_right->setText("NEW  NODE");
-        }
-
-        auto font2 = base->getSelfDraw()->getDraw(2);
-        font2->text_left_right->setStart({ 10, 28 });
-        font2->text_left_right->setText("DELE  NODE");
-
-        auto font3 = base->getSelfDraw()->getDraw(3);
-        font3->text_left_right->setStart({ 10, 43 });
-        font3->text_left_right->setText("SAVE  ALL");
-
-        NvpRect rect1;
-        rect1.left = world_pt.x;
-        rect1.top = world_pt.y;
-        rect1.right = rect1.left + 90;
-        rect1.bottom = rect1.top + 15;
-        rect_new = rect1;
-        NvpRect rect2;
-        rect2.left = rect1.left;
-        rect2.top = rect1.bottom;
-        rect2.right = rect1.right;
-        rect2.bottom = rect2.top + 15;
-        rect_dele = rect2;
-        rect1.bottom += 15;
-        NvpRect rect3;
-        rect3.left = rect1.left;
-        rect3.top = rect2.bottom;
-        rect3.right = rect1.right;
-        rect3.bottom = rect3.top + 15;
-        rect_save = rect3;
-        rect1.bottom += 15;
-        NvpLayout::setLayoutRect(base, rect1);
     }
 
     NvpRect rect_new;
