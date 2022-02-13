@@ -7,7 +7,7 @@
  */
 
 #include "draw_priv.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 NvpColor NvpColor::randomColor()
 {

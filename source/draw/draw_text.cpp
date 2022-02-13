@@ -7,7 +7,7 @@
  */
 
 #include "draw_priv.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 void NvpDrawReal::Draw_Text_Left_Right(const NvpBaseObj& base, const NvpStyle& style,
     NvpXyCoord xy, const std::string& str, float font_size)

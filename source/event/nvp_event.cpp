@@ -6,7 +6,7 @@
  * For more detailed information : https://github.com/moveplaten
  */
 
-#include "base/base.h"
+#include "base/nvp_base.h"
 #include "draw/nvp_draw.h"
 
 void NvpEvent::handleEvent(Type type, NvpEventRef& event)

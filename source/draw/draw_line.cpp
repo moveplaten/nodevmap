@@ -7,7 +7,7 @@
  */
 
 #include "draw_priv.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 void NvpDrawReal::Draw_One_Line(const NvpBaseObj& base, const NvpStyle& style,
     NvpXyCoord p1, NvpXyCoord p2)

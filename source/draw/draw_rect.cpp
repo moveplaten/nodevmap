@@ -7,7 +7,7 @@
  */
 
 #include "draw_priv.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 void NvpDrawReal::Draw_One_Rect(const NvpRect& rect, const NvpStyle& style)
 {

@@ -6,7 +6,7 @@
  * For more detailed information : https://github.com/moveplaten
  */
 
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 void NvpEventMouse::mouseEvent(NvpEventRef& event)
 {

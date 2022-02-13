@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "base/base.h"
+#include "base/nvp_base.h"
 #include "draw/draw_priv.h"
 #include "draw/draw_coding.h"
 #include "nvp-io/nvp_plist.h"

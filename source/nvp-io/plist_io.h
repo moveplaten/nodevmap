@@ -9,7 +9,7 @@
 #pragma once
 
 #include "nvp_plist.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 #include "util/nvp_util.h"
 
 class NvpPlistSeq

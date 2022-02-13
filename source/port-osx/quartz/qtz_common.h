@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include "draw/nvp_draw.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 extern NSWindow* g_main_wnd;
 extern CGContextRef g_cg_ref;

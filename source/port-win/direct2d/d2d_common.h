@@ -15,7 +15,7 @@
 #include <wincodec.h>
 
 #include "draw/nvp_draw.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 
 #define SAFE_RELEASE_PTR(x) if (x) { x->Release(); x = nullptr; }
 

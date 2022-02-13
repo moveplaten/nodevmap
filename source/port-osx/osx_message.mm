@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "quartz/qtz_common.h"
-#include "base/base.h"
+#include "base/nvp_base.h"
 #include "util/nvp_util.h"
 
 ////////////////////////////////////////////////////////////////////////////////
