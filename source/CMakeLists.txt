@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(nodevmap_SOURCES
-    base/base_element.cpp
+    base/nvp_base.cpp
 
     draw/nvp_draw.cpp
     draw/draw_text.cpp
