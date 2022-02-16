@@ -132,6 +132,22 @@
     NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
 }
 
+- (void)otherMouseDragged:(NSEvent *)event
+{
+    NvpEventRef event_ref;
+    [self convertPt:event ref:event_ref];
+    event_ref.setMouseType(NvpEventMouse::WheelDrag);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
+}
+
+- (void)otherMouseDown:(NSEvent *)event
+{
+    NvpEventRef event_ref;
+    [self convertPt:event ref:event_ref];
+    event_ref.setMouseType(NvpEventMouse::WheelPush);
+    NvpEvent::handleEvent(NvpEvent::Mouse, event_ref);
+}
+
 - (void)mouseDown:(NSEvent *)event
 {
     NSLog(@"LButton Down");

@@ -30,6 +30,8 @@ public:
         MouseLDrag,
         WheelUp,
         WheelDown,
+        WheelDrag,
+        WheelPush,
     };
 
     static void mouseEvent(NvpEventRef& event);

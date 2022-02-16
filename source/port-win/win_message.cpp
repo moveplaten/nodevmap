@@ -43,12 +43,17 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
     {
-        if ((DWORD)wParam && MK_LBUTTON)
+        if ((DWORD)wParam == MK_LBUTTON)
         {
             event.setMouseType(NvpEventMouse::MouseLDrag);
             NvpEvent::handleEvent(NvpEvent::Mouse, event);
         }
-        else
+        else if ((DWORD)wParam == MK_MBUTTON)
+        {
+            event.setMouseType(NvpEventMouse::WheelDrag);
+            NvpEvent::handleEvent(NvpEvent::Mouse, event);
+        }
+        else if ((DWORD)wParam == 0)
         {
             event.setMouseType(NvpEventMouse::MouseMove);
             NvpEvent::handleEvent(NvpEvent::Mouse, event);
@@ -97,6 +102,13 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             event.setMouseType(NvpEventMouse::WheelDown);
             NvpEvent::handleEvent(NvpEvent::Mouse, event);
         }
+    }
+    break;
+
+    case WM_MBUTTONDOWN:
+    {
+        event.setMouseType(NvpEventMouse::WheelPush);
+        NvpEvent::handleEvent(NvpEvent::Mouse, event);
     }
     break;
 

@@ -40,7 +40,12 @@ void NvpEventView::mouseEvent(NvpEventRef& event)
 {
     const float zoom_speed = 0.05f;
 
-    if (event.getMouseType() == NvpEventMouse::WheelUp)
+    if (event.getMouseType() == NvpEventMouse::WheelPush)
+    {
+        event_view->last_pt = event.getWindowPt();
+        return;
+    }
+    else if (event.getMouseType() == NvpEventMouse::WheelUp)
     {
         event_view->scale_x = 1 - zoom_speed;
         event_view->scale_y = 1 - zoom_speed;
@@ -49,6 +54,22 @@ void NvpEventView::mouseEvent(NvpEventRef& event)
     {
         event_view->scale_x = 1 + zoom_speed;
         event_view->scale_y = 1 + zoom_speed;
+    }
+    else if (event.getMouseType() == NvpEventMouse::WheelDrag)
+    {
+        auto trans_x = event.getWindowPt().x - event_view->last_pt.x;
+        auto trans_y = event.getWindowPt().y - event_view->last_pt.y;
+        trans_x /= event_view->dpi_scale_x;
+        trans_y /= event_view->dpi_scale_y;
+        event_view->last_pt = event.getWindowPt();
+        event_view->trans_x = trans_x;
+        event_view->trans_y = trans_y;
+
+        auto translate = NvpMatrix32::calcTranslation(trans_x, trans_y);
+        auto product = NvpMatrix32::calcProduct(event_view->current_mtx, translate);
+        event_view->current_mtx = product;
+
+        return;
     }
 
     event_view->center_x = event.getWindowPt().x / event_view->dpi_scale_x;

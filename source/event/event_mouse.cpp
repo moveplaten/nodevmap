@@ -11,7 +11,9 @@
 void NvpEventMouse::mouseEvent(NvpEventRef& event)
 {
     if (event.getMouseType() == NvpEventMouse::WheelUp ||
-        event.getMouseType() == NvpEventMouse::WheelDown)
+        event.getMouseType() == NvpEventMouse::WheelDown ||
+        event.getMouseType() == NvpEventMouse::WheelDrag ||
+        event.getMouseType() == NvpEventMouse::WheelPush)
     {
         NvpEventView::mouseEvent(event);
         return;

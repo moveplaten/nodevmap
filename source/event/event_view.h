@@ -32,4 +32,5 @@ public:
     float dpi_scale_y = 1;
 
     NvpMatrix32 current_mtx;
+    NvpPoint last_pt{ 0 };
 };
