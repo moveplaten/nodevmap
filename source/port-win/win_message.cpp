@@ -16,11 +16,21 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     NvpPoint pt;
     pt.x = LOWORD(lParam);
     pt.y = HIWORD(lParam);
-    pt.x = pt.x / D2dUtil::g_dpi_scale_X;
-    pt.y = pt.y / D2dUtil::g_dpi_scale_Y;
+
+    if (message == WM_MOUSEWHEEL)
+    {
+        POINT PT;
+        PT.x = pt.x;
+        PT.y = pt.y;
+        ScreenToClient(hwnd, &PT);
+        pt.x = PT.x;
+        pt.y = PT.y;
+    }
 
     NvpEventRef event;
-    event.setWorldPt(pt);
+    event.setWindowPt(pt);
+    NvpPoint PT = NvpEventView::convertPt(pt);
+    event.setWorldPt(PT);
 
     switch (message)
     {
@@ -71,6 +81,22 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         event.setMouseType(NvpEventMouse::MouseRUp);
         NvpEvent::handleEvent(NvpEvent::Mouse, event);
+    }
+    break;
+
+    case WM_MOUSEWHEEL:
+    {
+        short wheel = HIWORD(wParam);
+        if (wheel < 0)
+        {
+            event.setMouseType(NvpEventMouse::WheelUp);
+            NvpEvent::handleEvent(NvpEvent::Mouse, event);
+        }
+        else if (wheel > 0)
+        {
+            event.setMouseType(NvpEventMouse::WheelDown);
+            NvpEvent::handleEvent(NvpEvent::Mouse, event);
+        }
     }
     break;
 

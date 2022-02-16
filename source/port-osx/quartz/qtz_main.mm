@@ -41,6 +41,18 @@ void NvpDrawPort::beginDraw()
     [g_main_wnd.contentView setNeedsDisplay:YES];
 }
 
+void NvpDrawPort::setDrawMatrix(const NvpMatrix32& matrix)
+{
+    CGAffineTransform ctm;
+    ctm.a = matrix._11;
+    ctm.b = matrix._12;
+    ctm.c = matrix._21;
+    ctm.d = matrix._22;
+    ctm.tx = matrix._31;
+    ctm.ty = matrix._32;
+    CGContextConcatCTM(g_cg_ref, ctm);
+}
+
 void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,
                                    float font_size, NvpColor colo)
 {

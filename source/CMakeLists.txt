@@ -12,8 +12,10 @@ set(nodevmap_SOURCES
     draw/draw_rect.cpp
     draw/draw_line.cpp
     draw/draw_coding.cpp
+    draw/draw_matrix.cpp
     event/nvp_event.cpp
     event/event_mouse.cpp
+    event/event_view.cpp
     layout/nvp_layout.cpp
     layout/layout_priv.cpp
     nvp-io/nvp_plist.cpp

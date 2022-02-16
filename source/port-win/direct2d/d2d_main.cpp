@@ -112,6 +112,8 @@ HRESULT D2dUtil::createDeviceTarget()
     g_dpi_scale_X = dpiX / 96.0f;
     g_dpi_scale_Y = dpiY / 96.0f;
 
+    NvpEventView::setDpiScale(g_dpi_scale_X, g_dpi_scale_Y);
+
     return hr;
 }
 
@@ -127,6 +129,7 @@ void NvpDrawPort::beginDraw()
 
     if (NvpLayout::Build()->getTop())
     {
+        NvpDrawPort::setDrawMatrix(NvpEventView::event_view->current_mtx);
         auto top_elem = NvpLayout::Build()->getTop();
         NvpDraw::drawAll(top_elem);
     }
@@ -139,6 +142,19 @@ void NvpDrawPort::beginDraw()
     char tempc[30] = { 0 };
     sprintf(tempc, "draw fps : %f", D2dUtil::g_d2dutil->draw_fps);
     SetWindowText(D2dUtil::g_d2dutil->m_hwnd, tempc);
+}
+
+void NvpDrawPort::setDrawMatrix(const NvpMatrix32& matrix)
+{
+    auto target = D2dUtil::g_d2dutil->m_pRT;
+    D2D1::Matrix3x2F mtx;
+    mtx._11 = matrix._11;
+    mtx._12 = matrix._12;
+    mtx._21 = matrix._21;
+    mtx._22 = matrix._22;
+    mtx._31 = matrix._31;
+    mtx._32 = matrix._32;
+    target->SetTransform(mtx);
 }
 
 void NvpDrawPort::drawTextLeftRight(NvpXyCoord start, const std::string& str,

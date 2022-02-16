@@ -9,6 +9,7 @@
 #pragma once
 
 #include "event_mouse.h"
+#include "event_view.h"
 
 class NvpBaseObj;
 
@@ -21,12 +22,16 @@ public:
     void setWorldPt(NvpPoint world) { world_pt = world; }
     NvpPoint getWorldPt() const { return world_pt; }
 
+    void setWindowPt(NvpPoint window) { window_pt = window; }
+    NvpPoint getWindowPt() const { return window_pt; }
+
     void setMouseType(NvpEventMouse::Type type) { type_mouse = type; }
     NvpEventMouse::Type getMouseType() const { return type_mouse; }
 
 private:
     NvpPoint local_pt{ 0 };
     NvpPoint world_pt{ 0 };
+    NvpPoint window_pt{ 0 };
     NvpEventMouse::Type type_mouse;
 };
 

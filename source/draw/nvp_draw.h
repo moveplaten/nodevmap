@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "event/nvp_event.h"
+#include "draw_matrix.h"
 
 struct NvpRect;
 
@@ -32,13 +33,15 @@ typedef NvpPoint NvpXyCoord;
 
 class NvpDrawPort
 {
-private:
+public:
     //where define these functions
     //port-win/direct2d/d2d_main.cpp
     //port-osx/quartz/qtz_main.mm
 
     
     static void beginDraw();
+
+    static void setDrawMatrix(const NvpMatrix32& matrix);
 
     //draw all str from left to right just one line;
     //start from base rect left-top coord;
@@ -54,12 +57,6 @@ private:
     static void outputImage(const char* file_name);
 
     static void outputPDF(const char* file_name);
-
-    friend class NvpDrawReal;
-    friend class NvpEvent;
-    friend class D2dUtil;
-    friend class NvpImageIO;
-    friend class NvpPdfIO;
 };
 
 class NvpDrawCache;

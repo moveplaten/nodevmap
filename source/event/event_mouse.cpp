@@ -10,6 +10,13 @@
 
 void NvpEventMouse::mouseEvent(NvpEventRef& event)
 {
+    if (event.getMouseType() == NvpEventMouse::WheelUp ||
+        event.getMouseType() == NvpEventMouse::WheelDown)
+    {
+        NvpEventView::mouseEvent(event);
+        return;
+    }
+
     NvpBaseObj* base = nullptr;
     base = hitLayout(event.getWorldPt(), NvpLayout::Build()->getTop());
 
