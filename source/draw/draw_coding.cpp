@@ -122,8 +122,16 @@ void NvpDrawSeq::writeSeq()
     auto& plist = getWrite()->plist;
 
     std::string rect_str;
-    NvpCodingRect rect{ base->getRectRefUp() };
-    rect.drawCoding(&rect_str, nullptr);
+    if (NvpLayout::getUpLayout(base) == NvpLayout::Build()->getNodeView())
+    {
+        NvpCodingRect rect{ base->getRectRefTop() };
+        rect.drawCoding(&rect_str, nullptr);
+    }
+    else
+    {
+        NvpCodingRect rect{ base->getRectRefUp() };
+        rect.drawCoding(&rect_str, nullptr);
+    }
 
     NvpPlistPort::ValData rect_dat(rect_str.c_str(), rect_str.size());
     auto rect_data = NvpPlistPort::newData(rect_dat);

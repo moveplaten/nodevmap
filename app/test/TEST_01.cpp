@@ -6,7 +6,7 @@
  * For more detailed information : https://github.com/moveplaten
  */
 
-#include "test_plist_04.h"
+#include "test_plist_05.h"
 #include <math.h>
 
 static NvpBaseObj* right_mouse_menu = nullptr;
@@ -323,7 +323,7 @@ static void saveAllNode()
 static void initAllNode()
 {
     auto file = NvpUtil::fileInExePath(io_file_name);
-    NvpPlistIO::inputAll(new PlistSeqCache, file, plist_array_04);
+    NvpPlistIO::inputAll(new PlistSeqCache, file, plist_array_05);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

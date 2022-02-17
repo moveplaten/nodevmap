@@ -48,6 +48,15 @@ float NvpEventView::calcView(bool coord_x, float value)
     }
 }
 
+void NvpEventView::setCurrentMtx(const NvpMatrix32& mtx)
+{
+    if (!event_view)
+    {
+        event_view = new NvpEventView;
+    }
+    event_view->current_mtx = mtx;
+}
+
 void NvpEventView::handleView(float width, float height, bool set)
 {
     if (!event_view)

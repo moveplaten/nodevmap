@@ -22,10 +22,18 @@ void NvpPlistIO::inputAll(NvpPlistSeq* seq, NvpSysPort::File* file, const char* 
     {
         xml_in = read.buf;
     }
+
     NvpPlistPort root(xml_in);
+    auto plist_array = root.queryDictKey("node");
+    auto plist_mtx = root.queryDictKey("mtx");
+    auto mtx_data = plist_mtx.getValData();
+
+    NvpCodingMtx mtx;
+    mtx.codingMtx(nullptr, mtx_data.data_ptr);
+    NvpEventView::setCurrentMtx(mtx.current_mtx);
 
     NvpPlistIO io(seq);
-    io.inputAllR(root);
+    io.inputAllR(plist_array);
 }
 
 NvpBaseObj* NvpPlistIO::inputAllR(NvpPlistPort& plist, NvpBaseObj* base)
@@ -86,9 +94,20 @@ void NvpPlistIO::prepareNewSeq()
 
 void NvpPlistIO::outputAll(NvpBaseObj* base, NvpPlistSeq* seq, NvpSysPort::File* file)
 {
-    auto root = NvpPlistPort::newEmptyArray();
+    auto plist_array = NvpPlistPort::newEmptyArray();
     NvpPlistIO io(seq);
-    io.outputAllR(base, root);
+    io.outputAllR(base, plist_array);
+
+    NvpCodingMtx mtx;
+    mtx.current_mtx = NvpEventView::event_view->current_mtx;
+    std::string str;
+    mtx.codingMtx(&str, nullptr);
+
+    NvpPlistPort::ValData mtx_data(str.c_str(), str.size());
+    auto plist_mtx = NvpPlistPort::newData(mtx_data);
+    auto root = NvpPlistPort::newEmptyDict();
+    root.insertDictKey(plist_mtx, "mtx");
+    root.insertDictKey(plist_array, "node");
 
     auto xml = root.writeToXml();
     file->Write(xml.xml_str, xml.xml_len);
