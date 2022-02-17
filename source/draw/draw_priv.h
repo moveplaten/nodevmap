@@ -26,7 +26,7 @@ public:
     static void Draw_One_Line(const NvpBaseObj& base, const NvpStyle& style,
         NvpXyCoord p1, NvpXyCoord p2);
 
-    static void Draw_Rect_Same_Elem(const NvpBaseObj& base, const NvpStyle& style);
+    static void Draw_Rect_Same_Layout(const NvpBaseObj& base, const NvpStyle& style);
 
     static void Draw_Four_Rect_Percent(const NvpBaseObj& base, const NvpStyle& style,
         int percent);
@@ -43,7 +43,7 @@ namespace NvpDrawData
 
         One_Line = 1U,
 
-        Rect_Same_Elem = 2U,
+        Rect_Same_Layout = 2U,
 
         Text_Left_Right = 3U,
 
@@ -75,11 +75,11 @@ namespace NvpDrawData
     static Null_Data_ null_data;
     ////////////////////////////////////////////////////////////////////////////
 
-    class Rect_Same_Elem_
+    class Rect_Same_Layout_
     {
         NVP_DRAW_PRIVATE
         (
-            NvpDrawReal::Draw_Rect_Same_Elem(base, style);
+            NvpDrawReal::Draw_Rect_Same_Layout(base, style);
         )
         NVP_DRAW_CODING
         (
@@ -267,7 +267,7 @@ public:
 
         draw_safe<NvpDrawData::One_Line_, NvpDrawData::One_Line> one_line;
 
-        draw_safe<NvpDrawData::Rect_Same_Elem_, NvpDrawData::Rect_Same_Elem> rect_same_elem;
+        draw_safe<NvpDrawData::Rect_Same_Layout_, NvpDrawData::Rect_Same_Layout> rect_same_layout;
 
         draw_safe<NvpDrawData::Text_Left_Right_, NvpDrawData::Text_Left_Right> text_left_right;
 

@@ -32,7 +32,7 @@ void NvpDrawReal::Draw_One_Rect(const NvpRect& rect, const NvpStyle& style)
     }
 }
 
-void NvpDrawReal::Draw_Rect_Same_Elem(const NvpBaseObj& base, const NvpStyle& style)
+void NvpDrawReal::Draw_Rect_Same_Layout(const NvpBaseObj& base, const NvpStyle& style)
 {
     auto& rect = base.getRectRefTop();
 

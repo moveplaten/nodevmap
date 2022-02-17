@@ -143,9 +143,9 @@ void NvpDrawCache::OptSwitch(const Param& param)
     }
     break;
 
-    case NvpDrawData::Rect_Same_Elem:
+    case NvpDrawData::Rect_Same_Layout:
     {
-        NvpOptPush(rect_same_elem, param);
+        NvpOptPush(rect_same_layout, param);
     }
     break;
 

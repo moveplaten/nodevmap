@@ -16,11 +16,11 @@ class TopNodeView : public NvpEvent
     void initEvent(NvpEventRef& event) override
     {
         NvpColor col = { 40, 40, 45 };
-        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Layout);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
         col = { 255, 0, 0 };
-        NvpDrawCache border(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache border(NvpDrawData::Rect_Same_Layout);
         border.setColor(col);
         border.setStyle(NvpStyle::Frame);
         base->getSelfDraw()->pushDraw(border);
@@ -52,7 +52,7 @@ class RandomColorNode : public NvpEvent
     {
         NvpColor col = NvpColor::randomColor();
 
-        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Layout);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
 
@@ -159,7 +159,7 @@ public:
     static void userInit2(NvpBaseObj* base, NvpRect rect, NvpColor colo)
     {
         base->setSelfDraw(new NvpDraw(base));
-        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Layout);
         one_rect.setColor(colo);
         base->getSelfDraw()->pushDraw(one_rect);
         NvpLayout::setLayoutRect(base, rect);
@@ -350,7 +350,7 @@ class RightMouseMenu : public NvpEvent
     void initEvent(NvpEventRef& event) override
     {
         NvpColor col = { 120, 120, 120 };
-        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache one_rect(NvpDrawData::Rect_Same_Layout);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
 
@@ -568,7 +568,7 @@ namespace test
         auto text_ptr2 = cache_text_new.text_left_right->getText().c_str();
         assert(memcmp(text_ptr, text_ptr2, text_size) == 0);
 
-        NvpDrawData::Rect_Same_Elem_ r;
+        NvpDrawData::Rect_Same_Layout_ r;
         std::string dst;
         r.drawCoding(&dst, nullptr);
     }
@@ -579,7 +579,7 @@ class TopMenuStat : public NvpEvent
     void initEvent(NvpEventRef& event) override
     {
         NvpColor col = { 0, 255, 0 };
-        NvpDrawCache border(NvpDrawData::Rect_Same_Elem);
+        NvpDrawCache border(NvpDrawData::Rect_Same_Layout);
         border.setColor(col);
         border.setStyle(NvpStyle::Frame);
         base->getSelfDraw()->pushDraw(border);
