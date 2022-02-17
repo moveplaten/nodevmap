@@ -19,6 +19,8 @@ public:
     static void mouseEvent(NvpEventRef& event);
     static NvpPoint convertPt(const NvpPoint& pt);
     static void setDpiScale(float x, float y);
+    static void handleView(float width, float height, bool set = true);
+    static float calcView(bool coord_x, float value);
     static NvpEventView* event_view;
 
     float trans_x = 0;
@@ -30,6 +32,9 @@ public:
 
     float dpi_scale_x = 1;
     float dpi_scale_y = 1;
+
+    float view_width = 0;
+    float view_height = 0;
 
     NvpMatrix32 current_mtx;
     NvpPoint last_pt{ 0 };

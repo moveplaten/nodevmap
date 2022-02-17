@@ -59,28 +59,8 @@ public:
         size.height = height;
         m_pRT->Resize(size);
         D2D1_SIZE_F client = m_pRT->GetSize();
-        
-        if (NvpLayout::Build()->getTop())
-        {
-            NvpRect rect;
-            rect.left = 0.0f;
-            rect.top = 0.0f;
-            rect.right = client.width;
-            rect.bottom = client.height;
-            NvpLayout::setLayoutRect(NvpLayout::Build()->getTop(), rect);
 
-            rect.left = 0.0f;
-            rect.top = 0.0f;
-            rect.right = client.width;
-            rect.bottom = client.height - 20.0f;
-            NvpLayout::setLayoutRect(NvpLayout::Build()->getNodeView(), rect);
-
-            rect.left = 0.0f;
-            rect.top = client.height - 20.0f;
-            rect.right = client.width;
-            rect.bottom = client.height;
-            NvpLayout::setLayoutRect(NvpLayout::Build()->getMenuStat(), rect);
-        }
+        NvpEventView::handleView(client.width, client.height);
     }
 
     void onRender()

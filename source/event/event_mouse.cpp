@@ -64,13 +64,21 @@ void NvpEventMouse::hitLayoutR(NvpPoint world, NvpBaseObj* base, NvpBaseObj** re
 
         if (base)
         {
-            auto rect = base->getRectRefTop();
-
-            if (rect.left <= world.x && rect.right > world.x &&
-                rect.top <= world.y && rect.bottom > world.y)
+            if (base == NvpLayout::Build()->getTop())
             {
                 *result = base;
                 hit = true;
+            }
+            else
+            {
+                auto rect = base->getRectRefTop();
+
+                if (rect.left <= world.x && rect.right > world.x &&
+                    rect.top <= world.y && rect.bottom > world.y)
+                {
+                    *result = base;
+                    hit = true;
+                }
             }
         }
 

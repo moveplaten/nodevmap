@@ -20,7 +20,7 @@
 {
     NSLog(@"launch finish");
     
-    [self windowDidResize:notification]; //ensure size top_layout before MsgInit;
+    [self windowDidResize:notification]; //ensure size top_layout before Init;
     
     NvpEventRef event;
     NvpEvent::initAll(NvpLayout::Build()->getTop(), event);
@@ -34,28 +34,7 @@
 - (void)windowDidResize:(NSNotification *)notification
 {
     NSRect wnd_rect = [g_main_wnd.contentView bounds];
-    
-    if (NvpLayout::Build()->getTop())
-    {
-        NvpRect rect;
-        rect.left = 0.0f;
-        rect.top = 0.0f;
-        rect.right = wnd_rect.size.width;
-        rect.bottom = wnd_rect.size.height;
-        NvpLayout::setLayoutRect(NvpLayout::Build()->getTop(), rect);
-
-        rect.left = 0.0f;
-        rect.top = 0.0f;
-        rect.right = wnd_rect.size.width;
-        rect.bottom = wnd_rect.size.height - 20.0f;
-        NvpLayout::setLayoutRect(NvpLayout::Build()->getNodeView(), rect);
-        
-        rect.left = 0.0f;
-        rect.top = wnd_rect.size.height - 20.0f;
-        rect.right = wnd_rect.size.width;
-        rect.bottom = wnd_rect.size.height;
-        NvpLayout::setLayoutRect(NvpLayout::Build()->getMenuStat(), rect);
-    }
+    NvpEventView::handleView(wnd_rect.size.width, wnd_rect.size.height);
 }
 
 @end

@@ -6,7 +6,7 @@
  * For more detailed information : https://github.com/moveplaten
  */
 
-#include "nvp_event.h"
+#include "base/nvp_base.h"
 #include "draw/nvp_draw.h"
 
 NvpEventView* NvpEventView::event_view = nullptr;
@@ -34,6 +34,46 @@ void NvpEventView::setDpiScale(float x, float y)
 
     event_view->dpi_scale_x = x;
     event_view->dpi_scale_y = y;
+}
+
+float NvpEventView::calcView(bool coord_x, float value)
+{
+    if (coord_x)
+    {
+        return (value - event_view->current_mtx._31) / event_view->current_mtx._11;
+    }
+    else
+    {
+        return (value - event_view->current_mtx._32) / event_view->current_mtx._22;
+    }
+}
+
+void NvpEventView::handleView(float width, float height, bool set)
+{
+    if (!event_view)
+    {
+        event_view = new NvpEventView;
+    }
+
+    if (set)
+    {
+        event_view->view_width = width;
+        event_view->view_height = height;
+    }
+
+    const float stat_height = 20;
+    NvpRect rect;
+    rect.left = calcView(true, 0);
+    rect.top = calcView(false, 0);
+    rect.right = calcView(true, event_view->view_width);
+    rect.bottom = calcView(false, event_view->view_height - stat_height);
+    NvpLayout::setLayoutRect(NvpLayout::Build()->getNodeView(), rect);
+
+    rect.left = calcView(true, 0);
+    rect.top = calcView(false, event_view->view_height - stat_height);
+    rect.right = calcView(true, event_view->view_width);
+    rect.bottom = calcView(false, event_view->view_height);
+    NvpLayout::setLayoutRect(NvpLayout::Build()->getMenuStat(), rect);
 }
 
 void NvpEventView::mouseEvent(NvpEventRef& event)
@@ -69,6 +109,7 @@ void NvpEventView::mouseEvent(NvpEventRef& event)
         auto product = NvpMatrix32::calcProduct(event_view->current_mtx, translate);
         event_view->current_mtx = product;
 
+        handleView(0, 0, false);
         return;
     }
 
@@ -82,5 +123,5 @@ void NvpEventView::mouseEvent(NvpEventRef& event)
     auto product = NvpMatrix32::calcProduct(event_view->current_mtx, scale);
     event_view->current_mtx = product;
 
-    //NvpDrawPort::setDrawMatrix(event_view->current_mtx);
+    handleView(0, 0, false);
 }

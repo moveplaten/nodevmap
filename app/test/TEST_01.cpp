@@ -19,6 +19,11 @@ class TopNodeView : public NvpEvent
         NvpDrawCache one_rect(NvpDrawData::Rect_Same_Elem);
         one_rect.setColor(col);
         base->getSelfDraw()->pushDraw(one_rect);
+        col = { 255, 0, 0 };
+        NvpDrawCache border(NvpDrawData::Rect_Same_Elem);
+        border.setColor(col);
+        border.setStyle(NvpStyle::Frame);
+        base->getSelfDraw()->pushDraw(border);
     }
 
     void mouseEvent(NvpEventRef& event) override
@@ -569,6 +574,18 @@ namespace test
     }
 }
 
+class TopMenuStat : public NvpEvent
+{
+    void initEvent(NvpEventRef& event) override
+    {
+        NvpColor col = { 0, 255, 0 };
+        NvpDrawCache border(NvpDrawData::Rect_Same_Elem);
+        border.setColor(col);
+        border.setStyle(NvpStyle::Frame);
+        base->getSelfDraw()->pushDraw(border);
+    }
+};
+
 void nvp_app_init()
 {
     test::codingTest();
@@ -576,6 +593,8 @@ void nvp_app_init()
 
     auto top_node_view = NvpLayout::Build()->getNodeView();
     top_node_view->setSelfEvent(new TopNodeView);
+    auto top_menu_stat = NvpLayout::Build()->getMenuStat();
+    top_menu_stat->setSelfEvent(new TopMenuStat);
     right_mouse_menu = NvpLayout::createLayout(new RightMouseMenu, NvpLayout::Build()->getTop());
     initAllNode();
 }
