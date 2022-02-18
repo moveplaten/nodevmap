@@ -87,7 +87,7 @@ void NvpEventView::handleView(float width, float height, bool set)
 
 void NvpEventView::mouseEvent(NvpEventRef& event)
 {
-    const float zoom_speed = 0.05f;
+    const float zoom_speed = 0.08f;
 
     if (event.getMouseType() == NvpEventMouse::WheelPush)
     {
