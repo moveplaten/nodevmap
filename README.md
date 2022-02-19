@@ -37,6 +37,7 @@ text or shape on desktop system.
 
 ## Links
 
+* [Demo Video](https://www.bilibili.com/video/BV17a411C7D2)
 * [Homepage](https://github.com/moveplaten/nodevmap)
 * [E-mail](mailto:moveplaten@gmail.com)
 
